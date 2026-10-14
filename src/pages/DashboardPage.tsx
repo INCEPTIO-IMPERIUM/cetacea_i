@@ -4,7 +4,7 @@ import { Heart, PenLine } from 'lucide-react'
 import { useToast } from '../components/toastContext'
 import { careers, isCareerId, type NodeId, CAREER_IDS } from '../data/careers'
 import { ikigaiCards } from '../data/dashboard'
-import { actions, useWhoAmI } from '../store/whoAmIStore'
+import { actions, getSuggestedCareer, useWhoAmI } from '../store/whoAmIStore'
 import { DashboardHeader } from '../features/dashboard/DashboardHeader'
 import { DashboardSidebar } from '../features/dashboard/DashboardSidebar'
 import { IkigaiSection } from '../features/dashboard/IkigaiSection'
@@ -157,7 +157,7 @@ export function DashboardPage() {
             skillCount={state.skills.length}
             experimentsDone={doneCount}
             experimentsTotal={state.experiments.length}
-            suggestedCareer={state.assessment?.ranked[0]?.id ?? null}
+            suggestedCareer={getSuggestedCareer(state)}
           />
           <IkigaiSection selected={state.ikigai} />
           <SkillMatrixSection skills={state.skills} highlighted={highlightedSkill} onExplorePaths={() => goToSection('roadmap')} />

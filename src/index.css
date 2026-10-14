@@ -243,6 +243,81 @@
     line-height: 1.45;
   }
 
+  /* Visual analogue scale (0–100) */
+  .vas-track {
+    position: relative;
+    height: 44px;
+    cursor: pointer;
+    touch-action: pan-y;
+    border-radius: 12px;
+    outline: none;
+    user-select: none;
+  }
+  .vas-track:focus-visible {
+    box-shadow: 0 0 0 3px rgba(128, 106, 208, 0.35);
+  }
+  .vas-line {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    height: 8px;
+    transform: translateY(-50%);
+    border-radius: 99px;
+    background: #e7e5de;
+    overflow: hidden;
+  }
+  .vas-track.invalid .vas-line {
+    box-shadow: 0 0 0 2px rgba(214, 92, 77, 0.45);
+  }
+  .vas-fill {
+    display: block;
+    height: 100%;
+    background: var(--color-lavender);
+  }
+  .vas-tick {
+    position: absolute;
+    top: 50%;
+    width: 2px;
+    height: 14px;
+    margin-left: -1px;
+    transform: translateY(-50%);
+    border-radius: 2px;
+    background: rgba(23, 23, 23, 0.14);
+    pointer-events: none;
+  }
+  .vas-marker {
+    position: absolute;
+    top: 50%;
+    width: 22px;
+    height: 22px;
+    margin-left: -11px;
+    transform: translateY(-50%);
+    border-radius: 999px;
+    background: var(--color-lemon);
+    border: 1.5px solid var(--color-ink);
+    box-shadow: 0 2px 0 var(--color-ink);
+    pointer-events: none;
+  }
+  .vas-value {
+    position: absolute;
+    bottom: calc(100% + 6px);
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 2px 7px;
+    border-radius: 999px;
+    background: var(--color-ink);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 800;
+    white-space: nowrap;
+  }
+
+  /* Step change: a short fade only (disabled by prefers-reduced-motion). */
+  .step-enter {
+    animation: step-in 0.25s ease-out;
+  }
+
   /* Roadmap */
   .roadmap-stage {
     position: relative;
@@ -437,6 +512,16 @@
   50% {
     opacity: 1;
     transform: scale(1.06);
+  }
+}
+@keyframes step-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 @keyframes modal-in {

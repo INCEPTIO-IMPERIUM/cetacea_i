@@ -142,7 +142,8 @@ export function topCareer(ranking: string[]): CareerId | null {
 
 export const quickDiscovery: AssessmentCategory = {
   id: 'quick',
-  number: '01',
+  // 00 keeps 01 free for the Personality Compass.
+  number: '00',
   title: 'Quick discovery',
   summary: 'Five short questions about what gives you energy, what you are curious about, and how you like to work.',
   estimatedMinutes: 3,
@@ -150,7 +151,7 @@ export const quickDiscovery: AssessmentCategory = {
   gridClassName: 'grid grid-cols-1 xl:grid-cols-2 gap-4',
   questions,
   copy: {
-    eyebrow: '01 / Start with a few questions',
+    eyebrow: '00 / Start with a few questions',
     title: 'Your discovery form',
     description: 'A short guided questionnaire inspired by familiar form tools. There are no right or wrong answers — choose what feels true today.',
     progressEyebrow: 'A little context goes a long way',

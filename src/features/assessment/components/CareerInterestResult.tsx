@@ -1,0 +1,127 @@
+import { RIASEC_TYPES, readInterests, riasecCopy, toRiasecProfile, type RiasecProfile } from '../categories/careerInterest'
+import type { ResultViewProps } from './resultViewTypes'
+
+const SIZE = 300
+const CENTER = SIZE / 2
+const RADIUS = 104
+
+/** Holland's hexagon: R at the top, then I, A, S, E, C clockwise. */
+function vertex(index: number, value = 100) {
+  const angle = -Math.PI / 2 + (index * Math.PI) / 3
+  const r = (RADIUS * value) / 100
+  return { x: CENTER + r * Math.cos(angle), y: CENTER + r * Math.sin(angle) }
+}
+
+const points = (values: number[]) => values.map((value, index) => vertex(index, value)).map(({ x, y }) => `${x.toFixed(1)},${y.toFixed(1)}`).join(' ')
+
+function Hexagon({ profile, top }: { profile: RiasecProfile; top: string[] }) {
+  return (
+    <svg viewBox={`0 0 ${SIZE} ${SIZE}`} className="w-full max-w-[300px] mx-auto" aria-hidden="true">
+      {[25, 50, 75, 100].map((ring) => (
+        <polygon key={ring} points={points(RIASEC_TYPES.map(() => ring))} className={ring === 100 ? 'fill-lilac stroke-ink' : 'fill-none stroke-black/10'} strokeWidth={ring === 100 ? 1.5 : 1} />
+      ))}
+      {RIASEC_TYPES.map((type, index) => {
+        const end = vertex(index)
+        return <line key={type} x1={CENTER} y1={CENTER} x2={end.x} y2={end.y} className="stroke-black/10" />
+      })}
+      <polygon points={points(RIASEC_TYPES.map((type) => profile[type]))} className="fill-lemon/80 stroke-ink" strokeWidth={2} strokeLinejoin="round" />
+      {RIASEC_TYPES.map((type, index) => {
+        const label = vertex(index, 122)
+        const highlighted = top.includes(type)
+        return (
+          <text key={type} x={label.x} y={label.y + 4} textAnchor="middle" className={`text-[11px] ${highlighted ? 'fill-ink font-bold' : 'fill-muted'}`}>
+            {type} · {profile[type]}
+          </text>
+        )
+      })}
+    </svg>
+  )
+}
+
+/** Category 04 result: the six-type hexagon, the Holland code (or "not clear yet"), and what each type looks like. */
+export function CareerInterestResult({ result, onReview }: ResultViewProps) {
+  const profile = toRiasecProfile(result.scores)
+  if (!profile) return null
+  const reading = readInterests(profile)
+
+  return (
+    <div className="rounded-[22px] border-[1.5px] border-ink bg-white shadow-panel overflow-hidden" aria-live="polite">
+      <div className="bg-peach p-5 sm:p-6">
+        <div className="eyebrow text-black/60">Section 04 · Career Interest Explorer</div>
+        {reading.flat ? (
+          <>
+            <h3 className="section-title text-2xl font-extrabold mt-1">ความสนใจของคุณยังไม่ชัด — และนั่นไม่เป็นไรเลย</h3>
+            <p className="text-xs text-black/65 mt-2 max-w-2xl">
+              คะแนนทั้ง 6 แบบใกล้กันมาก (ห่างกันแค่ {reading.spread} คะแนน) ลองทำ Micro-Action เล็ก ๆ ในแบบที่ไม่เคยลอง แล้วกลับมาตอบใหม่ จะช่วยให้เห็นทิศทางชัดขึ้น
+            </p>
+          </>
+        ) : (
+          <>
+            <h3 className="section-title text-2xl font-extrabold mt-1">
+              Holland Code ของคุณ: <span className="tracking-[.12em]">{reading.hollandCode}</span>
+            </h3>
+            <p className="text-xs text-black/65 mt-2 max-w-2xl">
+              สามแบบที่คุณสนใจมากที่สุดคือ {reading.top.map((type) => riasecCopy[type].name).join(' · ')} ความสนใจช่วยชี้ทางว่าควรลองสำรวจอะไร ไม่ได้ทำนายว่าคุณจะประสบความสำเร็จแค่ไหน
+            </p>
+          </>
+        )}
+      </div>
+
+      <div className="p-5 sm:p-6 grid grid-cols-1 md:grid-cols-[minmax(0,300px)_1fr] gap-6 items-start">
+        <div>
+          <Hexagon profile={profile} top={reading.flat ? [] : reading.top} />
+          <table className="sr-only">
+            <caption>คะแนนความสนใจทั้ง 6 แบบ (0–100)</caption>
+            <thead>
+              <tr>
+                <th scope="col">แบบ</th>
+                <th scope="col">คะแนน</th>
+              </tr>
+            </thead>
+            <tbody>
+              {RIASEC_TYPES.map((type) => (
+                <tr key={type}>
+                  <th scope="row">
+                    {riasecCopy[type].name} ({riasecCopy[type].english})
+                  </th>
+                  <td>{profile[type]}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <ul className="space-y-2">
+          {result.ranking.map((key) => {
+            const type = key as keyof typeof riasecCopy
+            const copy = riasecCopy[type]
+            const isTop = !reading.flat && reading.top.includes(type)
+            return (
+              <li key={type} className={`rounded-xl p-3 text-[11px] leading-relaxed ${isTop ? 'bg-lemon-soft border border-ink' : 'border border-black/10'}`}>
+                <div className="flex items-baseline justify-between gap-3">
+                  <span className="font-bold text-xs">
+                    {type} — {copy.name} ({copy.english})
+                  </span>
+                  <span className="section-title font-extrabold">{profile[type]}</span>
+                </div>
+                <p className="mt-1">{copy.description}</p>
+                <p className="text-muted mt-0.5">ตัวอย่างสาขาที่น่าสำรวจ: {copy.examples}</p>
+              </li>
+            )
+          })}
+        </ul>
+      </div>
+
+      <p className="border-t border-black/10 px-5 sm:px-6 py-4 text-[10px] leading-relaxed text-muted">
+        กรอบแนวคิด Holland RIASEC (Holland, 1997) · รูปแบบแบบสำรวจ 8 กิจกรรมต่อแบบอ้างอิง Armstrong, Allison &amp; Rounds (2008) ส่วนข้อกิจกรรมทั้งหมดเขียนขึ้นใหม่โดย Who Am I?
+        และยังอยู่ระหว่างตรวจสอบคุณภาพ · ความสนใจที่ตรงกับงานสัมพันธ์กับผลงานและความพึงพอใจในระดับเล็กถึงปานกลาง จึงใช้เพื่อชี้ทาง ไม่ใช่ทำนายอนาคต
+      </p>
+      {onReview && (
+        <div className="px-5 sm:px-6 pb-5">
+          <button type="button" onClick={onReview} className="rounded-full border border-black/15 px-5 py-3 text-xs font-bold hover:bg-paper">
+            Review my answers
+          </button>
+        </div>
+      )}
+    </div>
+  )
+}

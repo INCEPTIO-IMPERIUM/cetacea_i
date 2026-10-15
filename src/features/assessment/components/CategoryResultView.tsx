@@ -1,4 +1,5 @@
 import { BigFiveResult } from './BigFiveResult'
+import { CareerInterestResult } from './CareerInterestResult'
 import { GenericResult } from './GenericResult'
 import { QuickDiscoveryResult } from './QuickDiscoveryResult'
 import type { ResultViewProps } from './resultViewTypes'
@@ -13,6 +14,8 @@ export function CategoryResultView({ categoryId, ...props }: ResultViewProps & {
       return <BigFiveResult {...props} />
     case 'workStyle':
       return <WorkStyleResult {...props} />
+    case 'careerInterest':
+      return <CareerInterestResult {...props} />
     default:
       return <GenericResult {...props} />
   }

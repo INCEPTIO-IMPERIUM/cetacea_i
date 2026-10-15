@@ -133,7 +133,7 @@ export function DashboardPage() {
     <>
       {sidebarOpen && <div className="fixed inset-0 z-50 bg-black/40 lg:hidden" aria-hidden="true" onClick={() => setSidebarOpen(false)} />}
 
-      <div className="min-h-screen lg:grid lg:grid-cols-[248px_minmax(0,1fr)]">
+      <div className="min-h-screen lg:grid lg:grid-cols-[264px_minmax(0,1fr)]">
         <DashboardSidebar
           open={sidebarOpen}
           activeSection={activeSection}

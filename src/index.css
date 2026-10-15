@@ -14,8 +14,9 @@
   --color-accent: #806ad0;
   --color-danger: #d65c4d;
 
-  --font-sans: Inter, ui-sans-serif, system-ui, sans-serif;
-  --font-display: 'Plus Jakarta Sans', Inter, ui-sans-serif, sans-serif;
+  /* Inter draws Latin text; IBM Plex Sans Thai fills in every Thai glyph Inter lacks. */
+  --font-sans: Inter, 'IBM Plex Sans Thai', ui-sans-serif, system-ui, sans-serif;
+  --font-display: Inter, 'IBM Plex Sans Thai', ui-sans-serif, system-ui, sans-serif;
 
   --shadow-panel: 0 3px 0 rgba(23, 23, 23, 0.92);
   --shadow-soft: 0 12px 30px rgba(23, 23, 23, 0.07);

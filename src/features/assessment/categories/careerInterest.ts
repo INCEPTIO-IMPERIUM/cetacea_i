@@ -1,3 +1,4 @@
+import { L, type Localized } from '../../../i18n/language'
 import { rankScores, scoreScaleDimensions } from '../scoring'
 import type { AssessmentCategory, CategoryAnswers, CategoryResult, ScaleQuestion } from '../types'
 
@@ -24,7 +25,7 @@ interface InterestItem {
   code: string
   type: RiasecType
   th: string
-  /** English gloss kept for review and back-translation. */
+  /** English wording, shown in English mode and kept for back-translation. */
   en: string
 }
 
@@ -99,53 +100,53 @@ export const INTEREST_ITEMS: InterestItem[] = Array.from({ length: 8 }, (_, roun
 const questions: ScaleQuestion[] = INTEREST_ITEMS.map((item) => ({
   id: `riasec${item.code}`,
   kind: 'scale',
-  prompt: item.th,
+  prompt: { th: item.th, en: item.en },
   required: true,
-  help: 'แตะบนเส้นว่าคุณอยากทำกิจกรรมนี้แค่ไหน',
+  help: L('แตะบนเส้นว่าคุณอยากทำกิจกรรมนี้แค่ไหน', 'Tap the line to show how much you would like to do this.'),
   dimension: item.type,
   reverseKeyed: false,
-  minLabel: 'ไม่อยากทำเลย',
-  maxLabel: 'อยากทำมาก',
+  minLabel: L('ไม่อยากทำเลย', 'Would not like it at all'),
+  maxLabel: L('อยากทำมาก', 'Would love to'),
   source: `Who Am I? original RIASEC activity ${item.code} (Holland ${item.type}): "${item.en}"`,
 }))
 
-/** Thai copy per type: name, a plain description, and example activities / fields to explore. */
-export const riasecCopy: Record<RiasecType, { name: string; english: string; description: string; examples: string }> = {
+/** Copy per type: name, a plain description, and example activities / fields to explore. */
+export const riasecCopy: Record<RiasecType, { name: Localized; english: string; description: Localized; examples: Localized }> = {
   R: {
-    name: 'นักลงมือทำ',
+    name: L('นักลงมือทำ', 'Doer'),
     english: 'Realistic',
-    description: 'ชอบลงมือทำ สร้าง ซ่อม หรือใช้เครื่องมือ เห็นผลงานเป็นชิ้นเป็นอัน',
-    examples: 'งานช่างและวิศวกรรม เกษตรและสิ่งแวดล้อม ฮาร์ดแวร์และอิเล็กทรอนิกส์',
+    description: L('ชอบลงมือทำ สร้าง ซ่อม หรือใช้เครื่องมือ เห็นผลงานเป็นชิ้นเป็นอัน', 'Likes hands-on work — building, fixing or using tools — and seeing a tangible result.'),
+    examples: L('งานช่างและวิศวกรรม เกษตรและสิ่งแวดล้อม ฮาร์ดแวร์และอิเล็กทรอนิกส์', 'Trades and engineering, farming and the environment, hardware and electronics'),
   },
   I: {
-    name: 'นักสืบค้น',
+    name: L('นักสืบค้น', 'Thinker'),
     english: 'Investigative',
-    description: 'ชอบตั้งคำถาม วิเคราะห์ ค้นคว้า และแก้ปัญหาที่ต้องใช้ความคิด',
-    examples: 'วิทยาศาสตร์และการวิจัย วิเคราะห์ข้อมูล การแพทย์และสุขภาพ เทคโนโลยี',
+    description: L('ชอบตั้งคำถาม วิเคราะห์ ค้นคว้า และแก้ปัญหาที่ต้องใช้ความคิด', 'Likes asking questions, analysing, researching and solving problems that take real thought.'),
+    examples: L('วิทยาศาสตร์และการวิจัย วิเคราะห์ข้อมูล การแพทย์และสุขภาพ เทคโนโลยี', 'Science and research, data analysis, medicine and health, technology'),
   },
   A: {
-    name: 'นักสร้างสรรค์',
+    name: L('นักสร้างสรรค์', 'Creator'),
     english: 'Artistic',
-    description: 'ชอบสร้างสิ่งใหม่ ออกแบบ และแสดงออกในแบบของตัวเอง',
-    examples: 'ออกแบบกราฟิกและ UX สื่อและวิดีโอ ดนตรี การเขียน แฟชั่น',
+    description: L('ชอบสร้างสิ่งใหม่ ออกแบบ และแสดงออกในแบบของตัวเอง', 'Likes making new things, designing and expressing ideas in their own way.'),
+    examples: L('ออกแบบกราฟิกและ UX สื่อและวิดีโอ ดนตรี การเขียน แฟชั่น', 'Graphic and UX design, media and video, music, writing, fashion'),
   },
   S: {
-    name: 'นักช่วยเหลือ',
+    name: L('นักช่วยเหลือ', 'Helper'),
     english: 'Social',
-    description: 'ชอบสอน ดูแล รับฟัง และช่วยให้คนอื่นเติบโต',
-    examples: 'การศึกษาและการสอน การให้คำปรึกษา งานสุขภาพ งานชุมชน',
+    description: L('ชอบสอน ดูแล รับฟัง และช่วยให้คนอื่นเติบโต', 'Likes teaching, caring, listening and helping others grow.'),
+    examples: L('การศึกษาและการสอน การให้คำปรึกษา งานสุขภาพ งานชุมชน', 'Education and teaching, counselling, health care, community work'),
   },
   E: {
-    name: 'นักริเริ่ม',
+    name: L('นักริเริ่ม', 'Persuader'),
     english: 'Enterprising',
-    description: 'ชอบริเริ่ม โน้มน้าว นำทีม และขับเคลื่อนโครงการให้เกิดขึ้น',
-    examples: 'ธุรกิจและการเป็นผู้ประกอบการ การตลาดและการขาย การบริหารโครงการ',
+    description: L('ชอบริเริ่ม โน้มน้าว นำทีม และขับเคลื่อนโครงการให้เกิดขึ้น', 'Likes starting things, persuading, leading teams and making projects happen.'),
+    examples: L('ธุรกิจและการเป็นผู้ประกอบการ การตลาดและการขาย การบริหารโครงการ', 'Business and entrepreneurship, marketing and sales, project management'),
   },
   C: {
-    name: 'นักจัดระบบ',
+    name: L('นักจัดระบบ', 'Organiser'),
     english: 'Conventional',
-    description: 'ชอบจัดระบบ ดูแลข้อมูล และตรวจรายละเอียดให้ถูกต้อง',
-    examples: 'บัญชีและการเงิน งานปฏิบัติการ การจัดการข้อมูล งานประกันคุณภาพ',
+    description: L('ชอบจัดระบบ ดูแลข้อมูล และตรวจรายละเอียดให้ถูกต้อง', 'Likes organising, looking after data and getting the details right.'),
+    examples: L('บัญชีและการเงิน งานปฏิบัติการ การจัดการข้อมูล งานประกันคุณภาพ', 'Accounting and finance, operations, data management, quality assurance'),
   },
 }
 
@@ -185,23 +186,28 @@ export function readInterests(profile: RiasecProfile): InterestReading {
 export const careerInterest: AssessmentCategory = {
   id: 'careerInterest',
   number: '04',
-  title: 'Career Interest Explorer',
-  summary: 'ความสนใจด้านอาชีพ 6 แบบตามแนวคิด Holland RIASEC จาก 48 กิจกรรม ผลนี้เป็นข้อมูลหลักในการแนะนำเส้นทางอาชีพ',
+  title: L('สำรวจความสนใจด้านอาชีพ', 'Career Interest Explorer'),
+  summary: L(
+    'ความสนใจด้านอาชีพ 6 แบบตามแนวคิด Holland RIASEC จาก 48 กิจกรรม ผลนี้เป็นข้อมูลหลักในการแนะนำเส้นทางอาชีพ',
+    'Your interest in six kinds of work (Holland RIASEC) from 48 activities. This is the main input for career suggestions.',
+  ),
   estimatedMinutes: 8,
   pageSize: 12,
   gridClassName: 'grid grid-cols-1 xl:grid-cols-2 gap-4',
   questions,
   copy: {
-    eyebrow: '04 / Career Interest Explorer',
-    title: 'คุณอยากทำกิจกรรมไหน',
-    description:
+    eyebrow: L('04 / สำรวจความสนใจด้านอาชีพ', '04 / Career Interest Explorer'),
+    title: L('คุณอยากทำกิจกรรมไหน', 'Which activities would you enjoy'),
+    description: L(
       'แต่ละข้อเป็นกิจกรรมหนึ่งอย่าง ให้แตะบนเส้นว่าคุณอยากทำมากแค่ไหน ไม่ต้องคิดว่าทำเป็นหรือไม่ หรือได้เงินเท่าไร ให้นึกแค่ว่าอยากลองทำหรือเปล่า',
-    progressEyebrow: 'ไม่ต้องเก่ง แค่สนใจก็พอ',
-    progressTitle: 'บอกเราว่าอะไรดึงดูดคุณ',
-    progressHint: 'ตอบให้ครบ 48 ข้อเพื่อดูความสนใจทั้ง 6 แบบ',
-    submitLabel: 'ดูความสนใจของฉัน',
-    missingToast: 'ยังมีข้อที่ไฮไลต์ไว้ที่ยังไม่ได้ตอบ',
-    submittedToast: 'แผนที่ความสนใจของคุณพร้อมแล้ว',
+      'Each item is one activity. Tap the line to show how much you would like to do it. Do not worry about whether you can do it or what it pays — just whether you would want to try.',
+    ),
+    progressEyebrow: L('ไม่ต้องเก่ง แค่สนใจก็พอ', 'Interest is enough — skill comes later'),
+    progressTitle: L('บอกเราว่าอะไรดึงดูดคุณ', 'Tell us what draws you in'),
+    progressHint: L('ตอบให้ครบ 48 ข้อเพื่อดูความสนใจทั้ง 6 แบบ', 'Answer all 48 to see your six interest types.'),
+    submitLabel: L('ดูความสนใจของฉัน', 'See my interests'),
+    missingToast: L('ยังมีข้อที่ไฮไลต์ไว้ที่ยังไม่ได้ตอบ', 'Some highlighted activities still need an answer.'),
+    submittedToast: L('แผนที่ความสนใจของคุณพร้อมแล้ว', 'Your interest map is ready.'),
   },
   score: scoreCareerInterest,
 }

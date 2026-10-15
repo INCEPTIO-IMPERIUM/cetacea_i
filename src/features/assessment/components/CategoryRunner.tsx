@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { ArrowLeft, ArrowRight, Clock3 } from 'lucide-react'
 import { useToast } from '../../../components/toastContext'
+import { L, useT } from '../../../i18n/language'
 import { actions, getCategoryRecord, useWhoAmI } from '../../../store/whoAmIStore'
-import { topCareer } from '../categories/quickDiscovery'
 import { categoryProgress, firstMissingOnPage, isAnswered, pageCount, questionsOnPage } from '../scoring'
 import type { AnswerValue, AssessmentCategory } from '../types'
 import { QuestionField } from './QuestionField'
@@ -17,6 +17,7 @@ interface CategoryRunnerProps {
 }
 
 export function CategoryRunner({ category, page, onPageChange, onExit }: CategoryRunnerProps) {
+  const t = useT()
   const state = useWhoAmI()
   const record = getCategoryRecord(state, category.id)
   const showToast = useToast()
@@ -65,7 +66,7 @@ export function CategoryRunner({ category, page, onPageChange, onExit }: Categor
       const field = fieldRefs.current.get(missing.id)
       field?.scrollIntoView({ behavior: 'smooth', block: 'center' })
       field?.querySelector<HTMLElement>('input, textarea, [role="slider"]')?.focus({ preventScroll: true })
-      showToast(isLastPage ? category.copy.missingToast : 'Answer the highlighted questions to continue.')
+      showToast(t(isLastPage ? category.copy.missingToast : L('ตอบข้อที่ไฮไลต์ไว้ก่อนไปต่อ', 'Answer the highlighted questions to continue.')))
       return
     }
     if (!isLastPage) {
@@ -73,9 +74,9 @@ export function CategoryRunner({ category, page, onPageChange, onExit }: Categor
       return
     }
     const result = category.score(record.answers)
-    actions.completeCategory(category.id, result, category.id === 'quick' ? topCareer(result.ranking) : undefined)
+    actions.completeCategory(category.id, result)
     setShowResult(true)
-    showToast(category.copy.submittedToast)
+    showToast(t(category.copy.submittedToast))
     requestAnimationFrame(() => resultRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' }))
   }
 
@@ -89,43 +90,50 @@ export function CategoryRunner({ category, page, onPageChange, onExit }: Categor
     setTouched(new Set())
     setShowResult(false)
     if (page !== 0) onPageChange(0)
-    showToast('Questionnaire answers cleared.')
+    showToast(t(L('ล้างคำตอบหมวดนี้แล้ว', 'Questionnaire answers cleared.')))
   }
 
   return (
     <section className="pt-6 sm:pt-8" aria-labelledby="form-heading">
       <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
         <div>
-          <div className="eyebrow">{category.copy.eyebrow}</div>
+          <div className="eyebrow">{t(category.copy.eyebrow)}</div>
           <h2 id="form-heading" ref={headingRef} tabIndex={-1} className="section-title text-[27px] sm:text-[32px] font-extrabold mt-1 outline-none">
-            {category.copy.title}
+            {t(category.copy.title)}
             <span className="text-[#8b76cf]">.</span>
           </h2>
-          <p className="text-xs sm:text-sm text-muted mt-2 max-w-2xl">{category.copy.description}</p>
+          <p className="text-xs sm:text-sm text-muted mt-2 max-w-2xl">{t(category.copy.description)}</p>
         </div>
         <span className="inline-flex items-center gap-2 rounded-full bg-lilac px-3 py-2 text-[10px] font-bold">
-          <Clock3 size={24} aria-hidden="true" /> About {category.estimatedMinutes} minutes
+          <Clock3 size={24} aria-hidden="true" /> {t({ th: `ประมาณ ${category.estimatedMinutes} นาที`, en: `About ${category.estimatedMinutes} minutes` })}
         </span>
       </div>
 
       <div className="rounded-[22px] overflow-hidden border-[1.5px] border-ink bg-white shadow-panel mb-4">
-        <div className="h-2 bg-lilac" role="progressbar" aria-label="Questions answered" aria-valuemin={0} aria-valuemax={progress.required} aria-valuenow={progress.answeredRequired}>
+        <div
+          className="h-2 bg-lilac"
+          role="progressbar"
+          aria-label={t(L('ตอบแล้ว', 'Questions answered'))}
+          aria-valuemin={0}
+          aria-valuemax={progress.required}
+          aria-valuenow={progress.answeredRequired}
+        >
           <div className="h-full bg-ink transition-all duration-300" style={{ width: `${percent}%` }} />
         </div>
         <div className="p-5 sm:p-6 flex flex-wrap items-center justify-between gap-4">
           <div>
-            <div className="eyebrow">{category.copy.progressEyebrow}</div>
-            <h3 className="section-title text-xl sm:text-2xl font-extrabold mt-1">{category.copy.progressTitle}</h3>
+            <div className="eyebrow">{t(category.copy.progressEyebrow)}</div>
+            <h3 className="section-title text-xl sm:text-2xl font-extrabold mt-1">{t(category.copy.progressTitle)}</h3>
             <p className="text-xs text-muted mt-1">
-              {category.copy.progressHint}
-              {pages > 1 && ` Page ${page + 1} of ${pages}.`}
+              {t(category.copy.progressHint)}
+              {pages > 1 && t({ th: ` หน้า ${page + 1} จาก ${pages}`, en: ` Page ${page + 1} of ${pages}.` })}
             </p>
           </div>
           <div className="text-right min-w-[90px]">
             <div className="section-title text-2xl font-extrabold">
               {progress.answeredRequired} / {progress.required}
             </div>
-            <div className="text-[10px] text-muted">answered</div>
+            <div className="text-[10px] text-muted">{t(L('ตอบแล้ว', 'answered'))}</div>
           </div>
         </div>
       </div>
@@ -162,14 +170,17 @@ export function CategoryRunner({ category, page, onPageChange, onExit }: Categor
         <div className="xl:col-span-2 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
           <div className="flex items-center gap-4">
             <button type="button" onClick={handleBack} className="inline-flex items-center gap-1 text-xs font-semibold text-muted hover:text-ink py-2">
-              <ArrowLeft size={24} aria-hidden="true" /> {page > 0 ? 'Previous page' : 'All sections'}
+              <ArrowLeft size={24} aria-hidden="true" /> {t(page > 0 ? L('หน้าก่อนหน้า', 'Previous page') : L('ทุกหมวด', 'All sections'))}
             </button>
             <button type="button" onClick={handleClear} className="text-xs font-semibold text-muted underline underline-offset-4 hover:text-ink py-2">
-              Clear answers
+              {t(L('ล้างคำตอบ', 'Clear answers'))}
             </button>
           </div>
-          <button type="submit" className="inline-flex items-center justify-center gap-2 rounded-full bg-ink text-white px-5 py-3.5 text-xs font-bold shadow-[0_3px_0_rgba(23,23,23,.2)] hover:-translate-y-0.5 transition">
-            {isLastPage ? category.copy.submitLabel : 'Next page'} <ArrowRight size={24} aria-hidden="true" />
+          <button
+            type="submit"
+            className="inline-flex items-center justify-center gap-2 rounded-full bg-ink text-white px-5 py-3.5 text-xs font-bold shadow-[0_3px_0_rgba(23,23,23,.2)] hover:-translate-y-0.5 transition"
+          >
+            {t(isLastPage ? category.copy.submitLabel : L('หน้าถัดไป', 'Next page'))} <ArrowRight size={24} aria-hidden="true" />
           </button>
         </div>
 

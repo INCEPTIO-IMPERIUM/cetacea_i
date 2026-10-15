@@ -1,4 +1,5 @@
 import { NotebookPen } from 'lucide-react'
+import { L, useT, type Localized } from '../../../i18n/language'
 import type { AnswerValue, ChoiceQuestion, Question, ScaleQuestion, TextQuestion } from '../types'
 import { VasInput } from './VasInput'
 
@@ -13,14 +14,16 @@ interface QuestionFieldProps {
   onChange: (value: AnswerValue) => void
 }
 
-const chipText: Record<Question['kind'], string> = {
-  single: 'Choose one',
-  scenario: 'Choose one',
-  multi: 'Choose all that apply',
-  scale: 'Tap anywhere on the line',
-  shortText: 'Optional',
-  reflection: 'Optional',
+const chipText: Record<Question['kind'], Localized> = {
+  single: L('เลือก 1 ข้อ', 'Choose one'),
+  scenario: L('เลือก 1 ข้อ', 'Choose one'),
+  multi: L('เลือกได้หลายข้อ', 'Choose all that apply'),
+  scale: L('แตะตรงไหนก็ได้บนเส้น', 'Tap anywhere on the line'),
+  shortText: L('ไม่บังคับ', 'Optional'),
+  reflection: L('ไม่บังคับ', 'Optional'),
 }
+
+const defaultHelp = L('กรุณาตอบข้อนี้ก่อนไปต่อ', 'Please answer this question to continue.')
 
 const isTextQuestion = (question: Question): question is TextQuestion => question.kind === 'shortText' || question.kind === 'reflection'
 
@@ -30,6 +33,7 @@ export function QuestionField(props: QuestionFieldProps) {
 }
 
 function FieldsetQuestion({ ref, question, number, total, value, invalid, onChange }: QuestionFieldProps & { question: ChoiceQuestion | ScaleQuestion }) {
+  const t = useT()
   const headingId = `q-${question.id}`
   const helpId = `${headingId}-help`
 
@@ -45,20 +49,20 @@ function FieldsetQuestion({ ref, question, number, total, value, invalid, onChan
       <div className={`flex ${question.kind !== 'scale' && question.wrapHeader ? 'flex-wrap' : ''} items-start justify-between gap-3`}>
         <div>
           {number !== undefined && total !== undefined && (
-            <div className="text-[10px] font-bold text-accent tracking-[.12em] uppercase">Question {number} of {total}</div>
+            <div className="text-[10px] font-bold text-accent tracking-[.12em] uppercase">{t({ th: `ข้อ ${number} จาก ${total}`, en: `Question ${number} of ${total}` })}</div>
           )}
           <h3 id={headingId} className="font-bold text-sm mt-2">
-            {question.prompt}
+            {t(question.prompt)}
             {question.required && (
               <>
                 {' '}
                 <span className="text-[#bd4f42]" aria-hidden="true">*</span>
-                <span className="sr-only">(required)</span>
+                <span className="sr-only">{t(L('(จำเป็น)', '(required)'))}</span>
               </>
             )}
           </h3>
         </div>
-        <span className="rounded-full bg-paper px-2.5 py-1.5 text-[9px] font-semibold text-muted">{chipText[question.kind]}</span>
+        <span className="rounded-full bg-paper px-2.5 py-1.5 text-[9px] font-semibold text-muted">{t(chipText[question.kind])}</span>
       </div>
 
       {question.kind === 'scale' ? (
@@ -68,8 +72,8 @@ function FieldsetQuestion({ ref, question, number, total, value, invalid, onChan
             onChange={onChange}
             labelledBy={headingId}
             describedBy={invalid ? helpId : undefined}
-            minLabel={question.minLabel}
-            maxLabel={question.maxLabel}
+            minLabel={question.minLabel && t(question.minLabel)}
+            maxLabel={question.maxLabel && t(question.maxLabel)}
             invalid={invalid}
           />
         </div>
@@ -88,7 +92,7 @@ function FieldsetQuestion({ ref, question, number, total, value, invalid, onChan
                   onChange(event.target.checked ? [...current, option.value] : current.filter((item) => item !== option.value))
                 }}
               />
-              <span>{option.label}</span>
+              <span>{t(option.label)}</span>
             </label>
           ))}
         </div>
@@ -96,7 +100,7 @@ function FieldsetQuestion({ ref, question, number, total, value, invalid, onChan
 
       {invalid && (
         <p id={helpId} className="text-danger text-[11px] mt-2.5">
-          {question.help ?? 'Please answer this question to continue.'}
+          {t(question.help ?? defaultHelp)}
         </p>
       )}
     </fieldset>
@@ -104,6 +108,7 @@ function FieldsetQuestion({ ref, question, number, total, value, invalid, onChan
 }
 
 function TextField({ ref, question, value, invalid, onChange }: QuestionFieldProps & { question: TextQuestion }) {
+  const t = useT()
   const inputId = `q-${question.id}`
   const text = typeof value === 'string' ? value : ''
 
@@ -112,12 +117,12 @@ function TextField({ ref, question, value, invalid, onChange }: QuestionFieldPro
       <div className="flex items-start justify-between gap-3">
         <div>
           <div className="text-[10px] font-bold text-accent tracking-[.12em] uppercase">
-            {question.required ? 'Reflection' : 'Optional reflection'}
+            {t(question.required ? L('คำถามสะท้อนคิด', 'Reflection') : L('คำถามสะท้อนคิด (ไม่บังคับ)', 'Optional reflection'))}
           </div>
           <label htmlFor={inputId} className="font-bold text-sm block mt-2">
-            {question.prompt}
+            {t(question.prompt)}
           </label>
-          {question.hint && <p className="text-[11px] text-muted mt-1">{question.hint}</p>}
+          {question.hint && <p className="text-[11px] text-muted mt-1">{t(question.hint)}</p>}
         </div>
         <span className="grid place-items-center w-10 h-10 rounded-2xl bg-white" aria-hidden="true">
           <NotebookPen size={24} />
@@ -130,7 +135,7 @@ function TextField({ ref, question, value, invalid, onChange }: QuestionFieldPro
           maxLength={question.maxLength}
           value={text}
           onChange={(event) => onChange(event.target.value)}
-          placeholder={question.placeholder}
+          placeholder={question.placeholder && t(question.placeholder)}
           className="w-full mt-4 rounded-2xl border border-black/10 bg-white px-4 py-3 text-xs outline-none focus:border-black resize-y"
         />
       ) : (
@@ -139,11 +144,11 @@ function TextField({ ref, question, value, invalid, onChange }: QuestionFieldPro
           maxLength={question.maxLength}
           value={text}
           onChange={(event) => onChange(event.target.value)}
-          placeholder={question.placeholder}
+          placeholder={question.placeholder && t(question.placeholder)}
           className="w-full mt-4 rounded-2xl border border-black/10 bg-white px-4 py-3 text-xs outline-none focus:border-black"
         />
       )}
-      {invalid && <p className="text-danger text-[11px] mt-2.5">{question.help ?? 'Please answer this question to continue.'}</p>}
+      {invalid && <p className="text-danger text-[11px] mt-2.5">{t(question.help ?? defaultHelp)}</p>}
     </div>
   )
 }

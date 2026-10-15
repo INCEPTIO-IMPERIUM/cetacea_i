@@ -1,3 +1,5 @@
+import type { Localized } from '../../i18n/language'
+
 /**
  * Shared shape of every Discovery Assessment category.
  * A category supplies questions + a pure `score` function; the flow, storage
@@ -12,10 +14,10 @@ export type CategoryAnswers = Record<string, AnswerValue>
 
 interface QuestionBase {
   id: string
-  prompt: string
+  prompt: Localized
   required: boolean
   /** Shown when a required question is left empty. */
-  help?: string
+  help?: Localized
   /** Extra grid classes for the question card. */
   className?: string
   /** Where the item comes from (instrument + item code) — keeps every item traceable. */
@@ -24,7 +26,7 @@ interface QuestionBase {
 
 export interface ChoiceOption {
   value: string
-  label: string
+  label: Localized
   className?: string
 }
 
@@ -45,16 +47,16 @@ export interface ScaleQuestion extends QuestionBase {
   dimension: string
   /** Scored as `100 − x`. */
   reverseKeyed: boolean
-  minLabel?: string
-  maxLabel?: string
+  minLabel?: Localized
+  maxLabel?: Localized
 }
 
 export interface TextQuestion extends QuestionBase {
   kind: 'shortText' | 'reflection'
   maxLength: number
-  placeholder?: string
+  placeholder?: Localized
   /** Small line under the prompt. */
-  hint?: string
+  hint?: Localized
 }
 
 export type Question = ChoiceQuestion | ScaleQuestion | TextQuestion
@@ -71,25 +73,25 @@ export interface StoredCategoryResult extends CategoryResult {
 
 /** Copy for the generic runner screen, so each category keeps its own voice. */
 export interface CategoryCopy {
-  eyebrow: string
-  title: string
-  description: string
-  progressEyebrow: string
-  progressTitle: string
-  progressHint: string
-  submitLabel: string
+  eyebrow: Localized
+  title: Localized
+  description: Localized
+  progressEyebrow: Localized
+  progressTitle: Localized
+  progressHint: Localized
+  submitLabel: Localized
   /** Toast when required answers are missing on the last page. */
-  missingToast: string
+  missingToast: Localized
   /** Toast after the category is scored. */
-  submittedToast: string
+  submittedToast: Localized
 }
 
 export interface AssessmentCategory {
   id: string
   /** Display order, e.g. "01". */
   number: string
-  title: string
-  summary: string
+  title: Localized
+  summary: Localized
   estimatedMinutes: number
   /** Questions per screen. */
   pageSize: number

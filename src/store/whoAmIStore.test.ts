@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { createDefaultState, getSuggestedCareer, parseStoredState } from './whoAmIStore'
+import { createDefaultState, parseStoredState } from './whoAmIStore'
 
 const v1User = {
   version: 1,
@@ -42,7 +42,6 @@ describe('v1 → v2 migration', () => {
     expect(quick.result?.ranking).toEqual(['product', 'ux', 'front', 'learning', 'coach'])
     expect(quick.result?.scores.product).toBe(100)
     expect(quick.result?.completedAt).toBe('2026-10-14T08:00:00.000Z')
-    expect(getSuggestedCareer(migrated)).toBe('product')
   })
 
   it('migrates a v1 user who never started the form', () => {

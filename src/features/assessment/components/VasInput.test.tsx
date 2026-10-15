@@ -1,7 +1,8 @@
 import { useState } from 'react'
-import { describe, expect, it, vi } from 'vitest'
-import { fireEvent, render, screen } from '@testing-library/react'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { act, fireEvent, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { setLang } from '../../../i18n/language'
 import { VasInput } from './VasInput'
 
 function Harness({ initial, onChange }: { initial?: number; onChange?: (value: number) => void }) {
@@ -26,11 +27,20 @@ function mockTrackRect(slider: HTMLElement, left = 100, width = 200) {
 }
 
 describe('VasInput', () => {
+  beforeEach(() => act(() => setLang('en')))
+
   it('starts unanswered — no value, no marker', () => {
     render(<Harness />)
     const slider = screen.getByRole('slider', { name: 'How much is this like you?' })
     expect(slider).not.toHaveAttribute('aria-valuenow')
     expect(slider).toHaveAttribute('aria-valuetext', 'Not answered yet')
+  })
+
+  it('speaks Thai when the interface is in Thai', () => {
+    act(() => setLang('th'))
+    render(<Harness />)
+    expect(screen.getByRole('slider')).toHaveAttribute('aria-valuetext', 'ยังไม่ได้ตอบ')
+    expect(screen.getByText('ไม่ตรงกับฉันเลย')).toBeInTheDocument()
   })
 
   it('sets the value where the track is pressed', () => {

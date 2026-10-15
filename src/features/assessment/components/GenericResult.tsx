@@ -1,10 +1,13 @@
+import { L, useT } from '../../../i18n/language'
+import { ReviewButton } from './ReviewButton'
 import type { ResultViewProps } from './resultViewTypes'
 
 /** Fallback result card: every score as a 0–100 bar, best first. Categories replace it with their own view. */
 export function GenericResult({ result, onReview }: ResultViewProps) {
+  const t = useT()
   return (
     <div className="rounded-[22px] border-[1.5px] border-ink bg-white shadow-panel p-5 sm:p-6" aria-live="polite">
-      <div className="eyebrow">Your scores</div>
+      <div className="eyebrow">{t(L('คะแนนของคุณ', 'Your scores'))}</div>
       <ul className="mt-4 space-y-3">
         {result.ranking.map((key) => (
           <li key={key} className="grid grid-cols-[minmax(110px,.6fr)_1fr_36px] items-center gap-3 text-xs">
@@ -16,11 +19,7 @@ export function GenericResult({ result, onReview }: ResultViewProps) {
           </li>
         ))}
       </ul>
-      {onReview && (
-        <button type="button" onClick={onReview} className="mt-5 rounded-full border border-black/15 px-5 py-3 text-xs font-bold hover:bg-paper">
-          Review my answers
-        </button>
-      )}
+      {onReview && <ReviewButton onReview={onReview} className="mt-5" />}
     </div>
   )
 }

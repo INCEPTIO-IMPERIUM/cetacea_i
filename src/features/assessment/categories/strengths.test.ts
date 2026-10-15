@@ -1,4 +1,6 @@
 import { describe, expect, it } from 'vitest'
+import { toExperiment } from '../../../data/dashboard'
+import { hasExperiment } from '../../../data/experimentText'
 import { STORAGE_KEY, actions, parseStoredState } from '../../../store/whoAmIStore'
 import { INTEREST_ITEMS, RIASEC_TYPES, type RiasecProfile } from './careerInterest'
 import { CONFIDENCE_ITEMS, GROWTH_ACTIONS, QUADRANTS, scoreStrengths, strengths, strengthsMap } from './strengths'
@@ -51,9 +53,10 @@ describe('Strengths & Potential (RIASEC self-efficacy)', () => {
   })
 
   it('"add as an experiment" puts the Micro-Action on the dashboard list', () => {
-    actions.addExperiment(GROWTH_ACTIONS.A)
+    actions.addExperiment(toExperiment(GROWTH_ACTIONS.A, 'en'))
     const saved = parseStoredState(localStorage.getItem(STORAGE_KEY))
-    const added = saved.experiments.find((experiment) => experiment.title === GROWTH_ACTIONS.A.title)
-    expect(added).toMatchObject({ done: false, tag: 'Strengths · Artistic' })
+    const added = saved.experiments.find((experiment) => experiment.key === 'growth:A')
+    expect(added).toMatchObject({ done: false, title: GROWTH_ACTIONS.A.title.en, tag: 'Strengths · Artistic' })
+    expect(hasExperiment(saved.experiments, 'growth:A')).toBe(true)
   })
 })

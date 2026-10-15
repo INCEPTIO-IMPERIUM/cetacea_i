@@ -102,7 +102,8 @@ function sanitizeShared(parsed: Record<string, unknown>, defaults: WhoAmIState) 
 
 /**
  * v1 kept one five-question form as `draft` + `assessment.ranked`.
- * It becomes the `quick` category; dashboard data carries over untouched.
+ * It is kept under the `quick` key (that form has since been retired, so nothing reads it);
+ * dashboard data carries over untouched.
  */
 export function migrateV1(parsed: Record<string, unknown>): WhoAmIState {
   const defaults = createDefaultState()
@@ -215,11 +216,6 @@ export function getCategoryRecord(current: WhoAmIState, categoryId: string): Cat
   return current.assessment[categoryId] ?? emptyRecord
 }
 
-/** Top career from the quick form, until the career matcher (#7) replaces it. */
-export function getSuggestedCareer(current: WhoAmIState): CareerId | null {
-  const first = current.assessment.quick?.result?.ranking[0]
-  return isCareerId(first) ? first : null
-}
 
 /* ---------- Actions ---------- */
 

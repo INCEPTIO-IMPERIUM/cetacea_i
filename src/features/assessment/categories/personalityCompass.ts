@@ -1,3 +1,4 @@
+import { L, type Localized } from '../../../i18n/language'
 import type { BigFiveDimension, BigFiveScores } from './bigFive'
 
 /**
@@ -9,61 +10,61 @@ import type { BigFiveDimension, BigFiveScores } from './bigFive'
 
 export interface CompassSide {
   id: string
-  label: string
+  label: Localized
   from: BigFiveDimension
   /** The 0% end. */
-  lowPole: string
+  lowPole: Localized
   /** The 100% end. */
-  highPole: string
-  lowDescription: string
-  highDescription: string
+  highPole: Localized
+  lowDescription: Localized
+  highDescription: Localized
 }
 
 export const COMPASS_SIDES: CompassSide[] = [
   {
     id: 'recharge',
-    label: 'แหล่งพลังงาน',
+    label: L('แหล่งพลังงาน', 'Where energy comes from'),
     from: 'extraversion',
-    lowPole: 'เติมพลังจากเวลาส่วนตัว',
-    highPole: 'เติมพลังจากผู้คน',
-    lowDescription: 'ได้พลังกลับมาเมื่อมีเวลาเงียบ ๆ ของตัวเอง และมักคิดให้ชัดก่อนพูด',
-    highDescription: 'ได้พลังจากการพบปะพูดคุย และมักคิดไปพูดไปกับคนอื่น',
+    lowPole: L('เติมพลังจากเวลาส่วนตัว', 'Recharges with time alone'),
+    highPole: L('เติมพลังจากผู้คน', 'Recharges with people'),
+    lowDescription: L('ได้พลังกลับมาเมื่อมีเวลาเงียบ ๆ ของตัวเอง และมักคิดให้ชัดก่อนพูด', 'Gets energy back from quiet time alone and usually thinks things through before speaking.'),
+    highDescription: L('ได้พลังจากการพบปะพูดคุย และมักคิดไปพูดไปกับคนอื่น', 'Gets energy from meeting and talking with people, often thinking out loud with others.'),
   },
   {
     id: 'outlook',
-    label: 'วิธีมองโลก',
+    label: L('วิธีมองโลก', 'How you see things'),
     from: 'intellect',
-    lowPole: 'เน้นสิ่งที่จับต้องได้',
-    highPole: 'เน้นความคิดและความเป็นไปได้',
-    lowDescription: 'สนใจข้อเท็จจริง ประสบการณ์ตรง และสิ่งที่นำไปใช้ได้ทันที',
-    highDescription: 'สนใจภาพรวม ความเชื่อมโยง และสิ่งที่ยังไม่เคยมีใครลอง',
+    lowPole: L('เน้นสิ่งที่จับต้องได้', 'Focus on the concrete'),
+    highPole: L('เน้นความคิดและความเป็นไปได้', 'Focus on ideas and possibilities'),
+    lowDescription: L('สนใจข้อเท็จจริง ประสบการณ์ตรง และสิ่งที่นำไปใช้ได้ทันที', 'Pays attention to facts, direct experience and what can be used right away.'),
+    highDescription: L('สนใจภาพรวม ความเชื่อมโยง และสิ่งที่ยังไม่เคยมีใครลอง', 'Drawn to the big picture, connections and things nobody has tried yet.'),
   },
   {
     id: 'decision',
-    label: 'วิธีตัดสินใจ',
+    label: L('วิธีตัดสินใจ', 'How you decide'),
     from: 'agreeableness',
-    lowPole: 'เน้นเหตุผลตรงไปตรงมา',
-    highPole: 'เน้นความรู้สึกของผู้อื่น',
-    lowDescription: 'ชั่งน้ำหนักจากหลักการและความสมเหตุสมผล แม้คำตอบอาจไม่ถูกใจทุกคน',
-    highDescription: 'คำนึงว่าการตัดสินใจจะส่งผลต่อผู้คนอย่างไร และมองหาทางที่ทุกคนรับได้',
+    lowPole: L('เน้นเหตุผลตรงไปตรงมา', 'Straightforward reasoning'),
+    highPole: L('เน้นความรู้สึกของผู้อื่น', "Others' feelings"),
+    lowDescription: L('ชั่งน้ำหนักจากหลักการและความสมเหตุสมผล แม้คำตอบอาจไม่ถูกใจทุกคน', 'Weighs principles and logic, even when the answer will not please everyone.'),
+    highDescription: L('คำนึงว่าการตัดสินใจจะส่งผลต่อผู้คนอย่างไร และมองหาทางที่ทุกคนรับได้', 'Considers how a decision affects people and looks for an outcome everyone can accept.'),
   },
   {
     id: 'organisation',
-    label: 'วิธีจัดการงาน',
+    label: L('วิธีจัดการงาน', 'How you organise work'),
     from: 'conscientiousness',
-    lowPole: 'ยืดหยุ่น ปรับตามสถานการณ์',
-    highPole: 'วางแผนเป็นระบบ',
-    lowDescription: 'เปิดทางเลือกไว้ ปรับแผนได้เร็ว และทำงานได้ดีเมื่อสถานการณ์เปลี่ยน',
-    highDescription: 'ชอบรู้ว่าจะทำอะไรเมื่อไร วางลำดับงานชัด และปิดงานให้จบ',
+    lowPole: L('ยืดหยุ่น ปรับตามสถานการณ์', 'Flexible, goes with the flow'),
+    highPole: L('วางแผนเป็นระบบ', 'Planned and systematic'),
+    lowDescription: L('เปิดทางเลือกไว้ ปรับแผนได้เร็ว และทำงานได้ดีเมื่อสถานการณ์เปลี่ยน', 'Keeps options open, adjusts plans quickly and works well when things change.'),
+    highDescription: L('ชอบรู้ว่าจะทำอะไรเมื่อไร วางลำดับงานชัด และปิดงานให้จบ', 'Likes knowing what happens when, sets clear priorities and sees work through to the end.'),
   },
   {
     id: 'pressure',
-    label: 'การรับมือแรงกดดัน',
+    label: L('การรับมือแรงกดดัน', 'Handling pressure'),
     from: 'emotionalStability',
-    lowPole: 'ไวต่อความกดดัน',
-    highPole: 'มั่นคงสงบ',
-    lowDescription: 'รับรู้แรงกดดันและอารมณ์ได้ไว ซึ่งช่วยให้เห็นสัญญาณปัญหาตั้งแต่เนิ่น ๆ',
-    highDescription: 'ค่อนข้างนิ่งเมื่อเจอแรงกดดัน และกลับมาตั้งหลักได้เร็ว',
+    lowPole: L('ไวต่อความกดดัน', 'Sensitive to pressure'),
+    highPole: L('มั่นคงสงบ', 'Steady and calm'),
+    lowDescription: L('รับรู้แรงกดดันและอารมณ์ได้ไว ซึ่งช่วยให้เห็นสัญญาณปัญหาตั้งแต่เนิ่น ๆ', 'Picks up on pressure and emotions quickly, which helps spot early signs of trouble.'),
+    highDescription: L('ค่อนข้างนิ่งเมื่อเจอแรงกดดัน และกลับมาตั้งหลักได้เร็ว', 'Stays fairly composed under pressure and regains balance quickly.'),
   },
 ]
 
@@ -80,8 +81,8 @@ export interface CompassReading {
   leansTo: 'low' | 'high' | null
   /** Strength toward the nearer pole, 50–100. */
   percent: number
-  /** Ready-to-show line, e.g. "เอนไปทางเติมพลังจากผู้คน 80%". */
-  text: string
+  /** Ready-to-show line, e.g. th "เอนไปทางเติมพลังจากผู้คน 80%", en "Leans toward recharges with people 80%". */
+  text: Localized
 }
 
 export function readSide(side: CompassSide, score: number): CompassReading {
@@ -89,7 +90,10 @@ export function readSide(side: CompassSide, score: number): CompassReading {
   const balanced = position >= BALANCED_MIN && position <= BALANCED_MAX
   const leansTo = balanced ? null : position > 50 ? 'high' : 'low'
   const percent = leansTo === 'low' ? 100 - position : Math.max(position, 100 - position)
-  const text = balanced ? `สมดุล / ยืดหยุ่น ${percent}%` : `เอนไปทาง${leansTo === 'high' ? side.highPole : side.lowPole} ${percent}%`
+  const pole = leansTo === 'high' ? side.highPole : side.lowPole
+  const text: Localized = balanced
+    ? { th: `สมดุล / ยืดหยุ่น ${percent}%`, en: `Balanced / flexible ${percent}%` }
+    : { th: `เอนไปทาง${pole.th} ${percent}%`, en: `Leans toward ${pole.en.charAt(0).toLowerCase()}${pole.en.slice(1)} ${percent}%` }
   return { side, position, balanced, leansTo, percent, text }
 }
 

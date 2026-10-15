@@ -1,5 +1,6 @@
 import { useId, useState, type FormEvent } from 'react'
 import { Plus } from 'lucide-react'
+import { L, useT } from '../../i18n/language'
 
 interface InlineAddFormProps {
   buttonLabel: string
@@ -12,6 +13,7 @@ interface InlineAddFormProps {
 
 /** A button that opens into a one-line input — replaces the template's window.prompt(). */
 export function InlineAddForm({ buttonLabel, inputLabel, placeholder, maxLength, onAdd }: InlineAddFormProps) {
+  const t = useT()
   const [open, setOpen] = useState(false)
   const [value, setValue] = useState('')
   const inputId = useId()
@@ -58,10 +60,10 @@ export function InlineAddForm({ buttonLabel, inputLabel, placeholder, maxLength,
         className="w-[220px] rounded-full border border-black/20 bg-white px-4 py-2.5 text-xs outline-none focus:border-ink"
       />
       <button type="submit" disabled={!value.trim()} className="rounded-full bg-ink text-white px-4 py-2.5 text-[11px] font-bold disabled:opacity-40">
-        Add
+        {t(L('เพิ่ม', 'Add'))}
       </button>
       <button type="button" onClick={() => setOpen(false)} className="rounded-full px-3 py-2.5 text-[11px] font-semibold text-muted hover:text-ink">
-        Cancel
+        {t(L('ยกเลิก', 'Cancel'))}
       </button>
     </form>
   )

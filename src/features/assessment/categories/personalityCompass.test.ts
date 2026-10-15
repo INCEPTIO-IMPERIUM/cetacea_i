@@ -9,7 +9,7 @@ describe('Personality Compass (derived from Big Five)', () => {
     for (const reading of personalityCompass(flat(50))) {
       expect(reading.balanced).toBe(true)
       expect(reading.percent).toBe(50)
-      expect(reading.text).toBe('สมดุล / ยืดหยุ่น 50%')
+      expect(reading.text).toEqual({ th: 'สมดุล / ยืดหยุ่น 50%', en: 'Balanced / flexible 50%' })
     }
   })
 
@@ -17,12 +17,12 @@ describe('Personality Compass (derived from Big Five)', () => {
     const energyHigh = personalityCompass({ ...flat(50), extraversion: 80 })[0]
     expect(energyHigh.leansTo).toBe('high')
     expect(energyHigh.percent).toBe(80)
-    expect(energyHigh.text).toBe('เอนไปทางเติมพลังจากผู้คน 80%')
+    expect(energyHigh.text).toEqual({ th: 'เอนไปทางเติมพลังจากผู้คน 80%', en: 'Leans toward recharges with people 80%' })
 
     const energyLow = personalityCompass({ ...flat(50), extraversion: 20 })[0]
     expect(energyLow.leansTo).toBe('low')
     expect(energyLow.percent).toBe(80)
-    expect(energyLow.text).toBe('เอนไปทางเติมพลังจากเวลาส่วนตัว 80%')
+    expect(energyLow.text).toEqual({ th: 'เอนไปทางเติมพลังจากเวลาส่วนตัว 80%', en: 'Leans toward recharges with time alone 80%' })
   })
 
   it('treats 45–55 as balanced and 44 / 56 as leaning', () => {

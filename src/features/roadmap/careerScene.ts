@@ -1,5 +1,6 @@
 import * as THREE from 'three'
-import { careers, type NodeId } from '../../data/careers'
+import { careers, type CareerId, type NodeId } from '../../data/careers'
+import type { Lang } from '../../i18n/language'
 
 /**
  * A true 3D career map: perspective camera, depth-separated cards, volumetric
@@ -24,28 +25,41 @@ interface CardSpec {
 
 type Point = [number, number, number]
 
-const cardSpecs: Record<Exclude<NodeId, 'you'>, CardSpec> = {
-  ux: { name: careers.ux.name, subtitle: careers.ux.focus, color: '#FFF66B', size: [3.5, 1.18], position: [-4.15, 2.0, -1.25], icon: '+' },
-  front: { name: 'Frontend Dev', subtitle: careers.front.focus, color: '#EDE5FF', size: [3.5, 1.18], position: [4.1, 2.0, 1.75], icon: '‹›' },
-  learning: { name: careers.learning.name, subtitle: careers.learning.focus, color: '#DDF1DB', size: [3.75, 1.18], position: [-4.2, -2.15, 1.65], icon: '▣' },
-  product: { name: careers.product.name, subtitle: careers.product.focus, color: '#F5DED1', size: [3.55, 1.18], position: [4.1, -1.95, -1.65], icon: '◇' },
-  coach: { name: careers.coach.name, subtitle: careers.coach.focus, color: '#FFFFFF', size: [3.0, 0.96], position: [1.85, -3.28, 2.8], icon: '●' },
-}
+/** Five fixed places around "you"; the careers shown in them come from the caller. */
+const slots: Omit<CardSpec, 'name' | 'subtitle' | 'icon'>[] = [
+  { color: '#FFF66B', size: [3.5, 1.18], position: [-4.15, 2.0, -1.25] },
+  { color: '#EDE5FF', size: [3.5, 1.18], position: [4.1, 2.0, 1.75] },
+  { color: '#DDF1DB', size: [3.75, 1.18], position: [-4.2, -2.15, 1.65] },
+  { color: '#F5DED1', size: [3.55, 1.18], position: [4.1, -1.95, -1.65] },
+  { color: '#FFFFFF', size: [3.0, 0.96], position: [1.85, -3.28, 2.8] },
+]
+export const MAX_ROADMAP_CAREERS = slots.length
 
-const routeSpecs: { from: NodeId; to: NodeId; color: string; points: Point[] }[] = [
-  { from: 'you', to: 'ux', color: '#FFF66B', points: [[-0.48, 0.42, 0.16], [-1.2, 1.04, -0.45], [-2.1, 2.0, -1.9], [-2.45, 2.0, -1.25]] },
-  { from: 'you', to: 'front', color: '#C9B2FF', points: [[0.48, 0.42, 0.18], [1.35, 1.2, 1.15], [2.25, 2.05, 2.5], [2.35, 2.0, 1.75]] },
-  { from: 'you', to: 'learning', color: '#DDF1DB', points: [[-0.48, -0.42, 0.15], [-1.35, -1.1, 1.55], [-2.25, -2.15, 2.45], [-2.35, -2.15, 1.65]] },
-  { from: 'you', to: 'product', color: '#F5DED1', points: [[0.48, -0.42, 0.15], [1.35, -1.05, -0.65], [2.25, -1.95, -2.55], [2.32, -1.95, -1.65]] },
-  { from: 'ux', to: 'product', color: '#C9B2FF', points: [[-2.55, 2.0, -1.25], [-1.7, 1.0, -2.4], [0.7, -0.3, -3.1], [2.45, -1.95, -1.65]] },
-  { from: 'learning', to: 'coach', color: '#C9B2FF', points: [[-2.35, -2.15, 1.65], [-1.1, -3.1, 2.45], [0.15, -3.7, 3.6], [0.35, -3.28, 2.8]] },
-  { from: 'front', to: 'product', color: '#C9B2FF', points: [[2.35, 2.0, 1.75], [3.4, 1.0, 2.8], [3.65, -0.6, 0.7], [2.35, -1.95, -1.65]] },
+/** Routes between slots (-1 = "you"); the first career is always the primary match. */
+const routeSlots: { from: number; to: number; color: string; points: Point[] }[] = [
+  { from: -1, to: 0, color: '#FFF66B', points: [[-0.48, 0.42, 0.16], [-1.2, 1.04, -0.45], [-2.1, 2.0, -1.9], [-2.45, 2.0, -1.25]] },
+  { from: -1, to: 1, color: '#C9B2FF', points: [[0.48, 0.42, 0.18], [1.35, 1.2, 1.15], [2.25, 2.05, 2.5], [2.35, 2.0, 1.75]] },
+  { from: -1, to: 2, color: '#DDF1DB', points: [[-0.48, -0.42, 0.15], [-1.35, -1.1, 1.55], [-2.25, -2.15, 2.45], [-2.35, -2.15, 1.65]] },
+  { from: -1, to: 3, color: '#F5DED1', points: [[0.48, -0.42, 0.15], [1.35, -1.05, -0.65], [2.25, -1.95, -2.55], [2.32, -1.95, -1.65]] },
+  { from: 0, to: 3, color: '#C9B2FF', points: [[-2.55, 2.0, -1.25], [-1.7, 1.0, -2.4], [0.7, -0.3, -3.1], [2.45, -1.95, -1.65]] },
+  { from: 2, to: 4, color: '#C9B2FF', points: [[-2.35, -2.15, 1.65], [-1.1, -3.1, 2.45], [0.15, -3.7, 3.6], [0.35, -3.28, 2.8]] },
+  { from: 1, to: 3, color: '#C9B2FF', points: [[2.35, 2.0, 1.75], [3.4, 1.0, 2.8], [3.65, -0.6, 0.7], [2.35, -1.95, -1.65]] },
 ]
 
 const INITIAL_CAMERA = new THREE.Vector3(5.7, 4.8, 15.5)
 
 /** Returns null when WebGL is unavailable so the caller can show the list fallback. */
-export function createCareerScene(canvas: HTMLCanvasElement, onSelect: (id: NodeId) => void): CareerScene | null {
+/** `careerIds` fills the slots in order (best match first); extra ids beyond the five slots are ignored. */
+export function createCareerScene(canvas: HTMLCanvasElement, onSelect: (id: NodeId) => void, careerIds: CareerId[], lang: Lang): CareerScene | null {
+  const shown = careerIds.slice(0, slots.length)
+  const cardSpecs = shown.map((id, index): [CareerId, CardSpec] => [
+    id,
+    { ...slots[index], name: careers[id].short[lang], subtitle: careers[id].focus[lang], icon: careers[id].icon },
+  ])
+  const routeSpecs = routeSlots
+    .filter((route) => route.to < shown.length && route.from < shown.length)
+    .map((route) => ({ from: (route.from < 0 ? 'you' : shown[route.from]) as NodeId, to: shown[route.to] as NodeId, color: route.color, points: route.points }))
+
   let renderer: THREE.WebGLRenderer
   try {
     renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true, powerPreference: 'high-performance' })
@@ -166,11 +180,11 @@ export function createCareerScene(canvas: HTMLCanvasElement, onSelect: (id: Node
     const ctx = texCanvas.getContext('2d')!
     if (central) {
       ctx.fillStyle = '#171717'
-      ctx.font = '800 74px Inter, sans-serif'
+      ctx.font = '800 74px Inter, "IBM Plex Sans Thai", sans-serif'
       ctx.textAlign = 'center'
       ctx.fillText(title, 450, 118)
       ctx.fillStyle = 'rgba(23,23,23,.62)'
-      ctx.font = '500 40px Inter, sans-serif'
+      ctx.font = '500 40px Inter, "IBM Plex Sans Thai", sans-serif'
       ctx.fillText(subtitle, 450, 178)
     } else {
       ctx.fillStyle = 'rgba(255,255,255,.88)'
@@ -181,16 +195,16 @@ export function createCareerScene(canvas: HTMLCanvasElement, onSelect: (id: Node
       ctx.fill()
       ctx.stroke()
       ctx.fillStyle = '#171717'
-      ctx.font = `700 ${icon.length > 1 ? 42 : 58}px Inter, sans-serif`
+      ctx.font = `700 ${icon.length > 1 ? 42 : 58}px Inter, "IBM Plex Sans Thai", sans-serif`
       ctx.textAlign = 'center'
       ctx.textBaseline = 'middle'
       ctx.fillText(icon, 88, 106)
       ctx.textAlign = 'left'
       ctx.textBaseline = 'alphabetic'
-      ctx.font = '800 48px Inter, sans-serif'
+      ctx.font = '800 48px Inter, "IBM Plex Sans Thai", sans-serif'
       ctx.fillText(title, 155, 112)
       ctx.fillStyle = 'rgba(23,23,23,.66)'
-      ctx.font = '500 35px Inter, sans-serif'
+      ctx.font = '500 35px Inter, "IBM Plex Sans Thai", sans-serif'
       ctx.fillText(subtitle, 70, 207)
     }
     const texture = new THREE.CanvasTexture(texCanvas)
@@ -222,7 +236,7 @@ export function createCareerScene(canvas: HTMLCanvasElement, onSelect: (id: Node
       group.add(eye)
     }
     const smile = makeTube([[-0.23, -0.06, 0.282], [-0.12, -0.16, 0.29], [0, -0.19, 0.29], [0.12, -0.16, 0.29], [0.23, -0.06, 0.282]], 0.025, eyeMaterial, 28, 8)
-    const label = new THREE.Sprite(new THREE.SpriteMaterial({ map: cardTexture('YOU', 'your clues', '', true), transparent: true, depthWrite: false }))
+    const label = new THREE.Sprite(new THREE.SpriteMaterial({ map: cardTexture(lang === 'th' ? 'คุณ' : 'YOU', lang === 'th' ? 'เบาะแสของคุณ' : 'your clues', '', true), transparent: true, depthWrite: false }))
     label.scale.set(2.15, 0.72, 1)
     label.position.set(0, -1.15, 0.1)
     group.add(outer, face, smile, label)
@@ -230,7 +244,7 @@ export function createCareerScene(canvas: HTMLCanvasElement, onSelect: (id: Node
     hitTargets.push(outer)
   }
 
-  const roleCards = (Object.entries(cardSpecs) as [Exclude<NodeId, 'you'>, CardSpec][]).map(([id, spec]) => {
+  const roleCards = cardSpecs.map(([id, spec]) => {
     const group = new THREE.Group()
     group.position.set(...spec.position)
     const [width, height] = spec.size
@@ -287,7 +301,7 @@ export function createCareerScene(canvas: HTMLCanvasElement, onSelect: (id: Node
     ctx.lineWidth = 4
     ctx.stroke()
     ctx.fillStyle = '#171717'
-    ctx.font = '800 54px Inter, sans-serif'
+    ctx.font = '800 54px Inter, "IBM Plex Sans Thai", sans-serif'
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
     ctx.fillText(text, 64, 67)

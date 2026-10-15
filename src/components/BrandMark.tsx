@@ -1,4 +1,5 @@
 import { Link } from 'react-router'
+import { L, useT } from '../i18n/language'
 
 interface BrandMarkProps {
   to?: string
@@ -9,7 +10,10 @@ interface BrandMarkProps {
 }
 
 /** Logo tile + wordmark used in every page header. */
-export function BrandMark({ to = '/', tagline = 'YOUR PERSONAL COMPASS', ariaLabel = 'Who Am I home', variant = 'landing' }: BrandMarkProps) {
+export function BrandMark({ to = '/', tagline: taglineProp, ariaLabel: ariaLabelProp, variant = 'landing' }: BrandMarkProps) {
+  const t = useT()
+  const tagline = taglineProp ?? t(L('เข็มทิศส่วนตัวของคุณ', 'YOUR PERSONAL COMPASS'))
+  const ariaLabel = ariaLabelProp ?? t(L('หน้าแรก Who Am I', 'Who Am I home'))
   if (variant === 'app') {
     return (
       <Link to={to} className="flex items-center gap-3" aria-label={ariaLabel}>

@@ -1,4 +1,5 @@
 import { useRef, type KeyboardEvent, type PointerEvent } from 'react'
+import { L, useT } from '../../../i18n/language'
 import { SCALE_MAX, SCALE_MIN, clampScale } from '../scoring'
 
 interface VasInputProps {
@@ -21,7 +22,8 @@ const PAGE_STEP = 10
  * Point-and-click with no pre-placed marker, per Funke (2016) — drag-only sliders
  * and a default handle raise non-response and anchor answers at the start point.
  */
-export function VasInput({ id, value, onChange, labelledBy, describedBy, minLabel = 'Not like me at all', maxLabel = 'Very much like me', invalid = false }: VasInputProps) {
+export function VasInput({ id, value, onChange, labelledBy, describedBy, minLabel, maxLabel, invalid = false }: VasInputProps) {
+  const t = useT()
   const trackRef = useRef<HTMLDivElement>(null)
   const dragging = useRef(false)
   const answered = typeof value === 'number'
@@ -94,7 +96,7 @@ export function VasInput({ id, value, onChange, labelledBy, describedBy, minLabe
         aria-valuemin={SCALE_MIN}
         aria-valuemax={SCALE_MAX}
         aria-valuenow={answered ? value : undefined}
-        aria-valuetext={answered ? `${value} out of 100` : 'Not answered yet'}
+        aria-valuetext={answered ? t({ th: `${value} จาก 100`, en: `${value} out of 100` }) : t(L('ยังไม่ได้ตอบ', 'Not answered yet'))}
         aria-invalid={invalid || undefined}
         className={`vas-track ${answered ? 'answered' : ''} ${invalid ? 'invalid' : ''}`}
         onPointerDown={handlePointerDown}
@@ -116,8 +118,8 @@ export function VasInput({ id, value, onChange, labelledBy, describedBy, minLabe
         )}
       </div>
       <div className="flex justify-between gap-3 mt-2 text-[10px] font-semibold text-muted" aria-hidden="true">
-        <span>{minLabel}</span>
-        <span className="text-right">{maxLabel}</span>
+        <span>{minLabel ?? t(L('ไม่ตรงกับฉันเลย', 'Not like me at all'))}</span>
+        <span className="text-right">{maxLabel ?? t(L('ตรงกับฉันมาก', 'Very much like me'))}</span>
       </div>
     </div>
   )

@@ -1,3 +1,4 @@
+import { L, type Localized } from '../../../i18n/language'
 import { rankScores, scoreScaleDimensions } from '../scoring'
 import type { AssessmentCategory, CategoryAnswers, CategoryResult, ScaleQuestion } from '../types'
 
@@ -88,42 +89,43 @@ export const IPIP_50_ITEMS: IpipItem[] = [
 const questions: ScaleQuestion[] = IPIP_50_ITEMS.map((item) => ({
   id: `ipip${item.n}`,
   kind: 'scale',
-  prompt: item.th,
+  // English shows the original IPIP wording.
+  prompt: { th: item.th, en: item.en },
   required: true,
-  help: 'แตะบนเส้นเพื่อให้คะแนนข้อนี้',
+  help: L('แตะบนเส้นเพื่อให้คะแนนข้อนี้', 'Tap the line to answer this one.'),
   dimension: item.dimension,
   reverseKeyed: item.keyed === '-',
-  minLabel: 'ไม่ตรงกับฉันเลย',
-  maxLabel: 'ตรงกับฉันมาก',
+  minLabel: L('ไม่ตรงกับฉันเลย', 'Not like me at all'),
+  maxLabel: L('ตรงกับฉันมาก', 'Very much like me'),
   source: `IPIP 50-item Big-Five Markers (Goldberg, 1992) #${item.n} (${item.keyed}${item.dimension}): "${item.en}"`,
 }))
 
 /** Thai labels and both ends of every dimension. Neither end is better. */
-export const bigFiveCopy: Record<BigFiveDimension, { label: string; low: string; high: string }> = {
+export const bigFiveCopy: Record<BigFiveDimension, { label: Localized; low: Localized; high: Localized }> = {
   extraversion: {
-    label: 'การแสดงออกทางสังคม',
-    low: 'ชอบความสงบ คิดก่อนพูด และเติมพลังจากเวลาส่วนตัว',
-    high: 'ชอบพบปะผู้คน พูดคุยง่าย และได้พลังจากการอยู่กับคนอื่น',
+    label: L('การแสดงออกทางสังคม', 'Extraversion'),
+    low: L('ชอบความสงบ คิดก่อนพูด และเติมพลังจากเวลาส่วนตัว', 'Enjoys quiet, thinks before speaking, recharges with time alone'),
+    high: L('ชอบพบปะผู้คน พูดคุยง่าย และได้พลังจากการอยู่กับคนอื่น', 'Enjoys meeting people, chats easily, gains energy from others'),
   },
   agreeableness: {
-    label: 'ความเป็นมิตรและการร่วมมือ',
-    low: 'ตรงไปตรงมา กล้าโต้แย้ง และยืนหยัดในมุมมองของตัวเอง',
-    high: 'อบอุ่น ใส่ใจความรู้สึกคนอื่น และชอบหาทางที่ทุกคนไปด้วยกันได้',
+    label: L('ความเป็นมิตรและการร่วมมือ', 'Agreeableness'),
+    low: L('ตรงไปตรงมา กล้าโต้แย้ง และยืนหยัดในมุมมองของตัวเอง', 'Direct, willing to challenge, stands by their own view'),
+    high: L('อบอุ่น ใส่ใจความรู้สึกคนอื่น และชอบหาทางที่ทุกคนไปด้วยกันได้', 'Warm, attentive to feelings, looks for a way everyone can go along with'),
   },
   conscientiousness: {
-    label: 'ความมีระเบียบและวินัย',
-    low: 'ยืดหยุ่น ปรับตัวตามสถานการณ์ และไม่ติดกับแผน',
-    high: 'วางแผน เป็นระบบ และทำสิ่งที่รับปากไว้ให้เสร็จ',
+    label: L('ความมีระเบียบและวินัย', 'Conscientiousness'),
+    low: L('ยืดหยุ่น ปรับตัวตามสถานการณ์ และไม่ติดกับแผน', 'Flexible, adapts to the moment, not tied to a plan'),
+    high: L('วางแผน เป็นระบบ และทำสิ่งที่รับปากไว้ให้เสร็จ', 'Plans ahead, works systematically, finishes what they promise'),
   },
   emotionalStability: {
-    label: 'ความมั่นคงทางอารมณ์',
-    low: 'รับรู้อารมณ์และแรงกดดันได้ไว จึงมักเห็นความเสี่ยงก่อนคนอื่น',
-    high: 'สงบ หนักแน่น และไม่ค่อยหวั่นไหวกับแรงกดดัน',
+    label: L('ความมั่นคงทางอารมณ์', 'Emotional stability'),
+    low: L('รับรู้อารมณ์และแรงกดดันได้ไว จึงมักเห็นความเสี่ยงก่อนคนอื่น', 'Quick to sense feelings and pressure, so often spots risks early'),
+    high: L('สงบ หนักแน่น และไม่ค่อยหวั่นไหวกับแรงกดดัน', 'Calm, steady and rarely shaken by pressure'),
   },
   intellect: {
-    label: 'ความคิดและจินตนาการ',
-    low: 'ชอบสิ่งที่จับต้องได้ ใช้ได้จริง และวิธีที่พิสูจน์แล้ว',
-    high: 'ชอบความคิดใหม่ ๆ จินตนาการ และการคิดเชิงนามธรรม',
+    label: L('ความคิดและจินตนาการ', 'Intellect / imagination'),
+    low: L('ชอบสิ่งที่จับต้องได้ ใช้ได้จริง และวิธีที่พิสูจน์แล้ว', 'Prefers the concrete, the practical and proven methods'),
+    high: L('ชอบความคิดใหม่ ๆ จินตนาการ และการคิดเชิงนามธรรม', 'Enjoys new ideas, imagination and abstract thinking'),
   },
 }
 
@@ -144,23 +146,28 @@ export function toBigFiveScores(scores: Record<string, number> | undefined): Big
 export const bigFive: AssessmentCategory = {
   id: 'bigFive',
   number: '02',
-  title: 'Personality Spectrum',
-  summary: 'บุคลิกภาพ 5 มิติ (Big Five) จาก 50 ข้อความสั้น ๆ คำตอบชุดนี้ยังใช้คำนวณ Personality Compass (หมวด 01) ด้วย จึงไม่ต้องตอบซ้ำ',
+  title: L('สเปกตรัมบุคลิกภาพ', 'Personality Spectrum'),
+  summary: L(
+    'บุคลิกภาพ 5 มิติ (Big Five) จาก 50 ข้อความสั้น ๆ คำตอบชุดนี้ยังใช้คำนวณเข็มทิศบุคลิกภาพ (หมวด 01) ด้วย จึงไม่ต้องตอบซ้ำ',
+    'Five personality dimensions (Big Five) from 50 short statements. The same answers also give your Personality Compass (section 01), so there is nothing to answer twice.',
+  ),
   estimatedMinutes: 10,
   pageSize: 10,
   gridClassName: 'grid grid-cols-1 xl:grid-cols-2 gap-4',
   questions,
   copy: {
-    eyebrow: '02 / Personality Spectrum',
-    title: 'ข้อความไหนตรงกับคุณ',
-    description:
+    eyebrow: L('02 / สเปกตรัมบุคลิกภาพ', '02 / Personality Spectrum'),
+    title: L('ข้อความไหนตรงกับคุณ', 'Which statements sound like you'),
+    description: L(
       'อ่านแต่ละข้อความแล้วแตะบนเส้นว่าตรงกับตัวคุณมากแค่ไหน ให้นึกถึงตัวคุณในตอนนี้ตามปกติ ไม่ใช่ตัวคุณที่อยากเป็น ไม่มีคำตอบถูกหรือผิด',
-    progressEyebrow: 'ตอบตามความรู้สึกแรก',
-    progressTitle: 'บอกเราว่าคุณเป็นคนแบบไหน',
-    progressHint: 'ตอบให้ครบ 50 ข้อเพื่อดูผลทั้ง 5 มิติ',
-    submitLabel: 'ดูผลบุคลิกภาพของฉัน',
-    missingToast: 'ยังมีข้อที่ไฮไลต์ไว้ที่ยังไม่ได้ตอบ',
-    submittedToast: 'ผลของคุณพร้อมแล้ว',
+      'Read each statement and tap the line to show how well it describes you. Think of how you generally are now, not how you wish to be. There are no right or wrong answers.',
+    ),
+    progressEyebrow: L('ตอบตามความรู้สึกแรก', 'Go with your first instinct'),
+    progressTitle: L('บอกเราว่าคุณเป็นคนแบบไหน', 'Tell us what you are like'),
+    progressHint: L('ตอบให้ครบ 50 ข้อเพื่อดูผลทั้ง 5 มิติ', 'Answer all 50 to see your five dimensions.'),
+    submitLabel: L('ดูผลบุคลิกภาพของฉัน', 'See my personality results'),
+    missingToast: L('ยังมีข้อที่ไฮไลต์ไว้ที่ยังไม่ได้ตอบ', 'Some highlighted statements still need an answer.'),
+    submittedToast: L('ผลของคุณพร้อมแล้ว', 'Your results are ready.'),
   },
   score: scoreBigFive,
 }

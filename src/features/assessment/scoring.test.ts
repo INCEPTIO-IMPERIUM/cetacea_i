@@ -12,18 +12,30 @@ import {
 } from './scoring'
 import type { AssessmentCategory, Question, ScaleQuestion } from './types'
 
-const scale = (id: string, dimension: string, reverseKeyed = false): ScaleQuestion => ({ id, kind: 'scale', prompt: id, required: true, dimension, reverseKeyed })
+const text = (value: string) => ({ th: value, en: value })
+
+const scale = (id: string, dimension: string, reverseKeyed = false): ScaleQuestion => ({ id, kind: 'scale', prompt: text(id), required: true, dimension, reverseKeyed })
 
 const sampleCategory = (questions: Question[], pageSize = 2): AssessmentCategory => ({
   id: 'sample',
   number: '99',
-  title: 'Sample',
-  summary: '',
+  title: text('Sample'),
+  summary: text(''),
   estimatedMinutes: 1,
   pageSize,
   gridClassName: '',
   questions,
-  copy: { eyebrow: '', title: '', description: '', progressEyebrow: '', progressTitle: '', progressHint: '', submitLabel: '', missingToast: '', submittedToast: '' },
+  copy: {
+    eyebrow: text(''),
+    title: text(''),
+    description: text(''),
+    progressEyebrow: text(''),
+    progressTitle: text(''),
+    progressHint: text(''),
+    submitLabel: text(''),
+    missingToast: text(''),
+    submittedToast: text(''),
+  },
   score: () => ({ scores: {}, ranking: [] }),
 })
 
@@ -70,10 +82,10 @@ describe('isAnswered', () => {
   })
 
   it('handles choices and text', () => {
-    expect(isAnswered({ id: 'm', kind: 'multi', prompt: '', required: true, options: [] }, [])).toBe(false)
-    expect(isAnswered({ id: 'm', kind: 'multi', prompt: '', required: true, options: [] }, ['a'])).toBe(true)
-    expect(isAnswered({ id: 's', kind: 'single', prompt: '', required: true, options: [] }, '')).toBe(false)
-    expect(isAnswered({ id: 't', kind: 'reflection', prompt: '', required: false, maxLength: 10 }, '   ')).toBe(false)
+    expect(isAnswered({ id: 'm', kind: 'multi', prompt: text(''), required: true, options: [] }, [])).toBe(false)
+    expect(isAnswered({ id: 'm', kind: 'multi', prompt: text(''), required: true, options: [] }, ['a'])).toBe(true)
+    expect(isAnswered({ id: 's', kind: 'single', prompt: text(''), required: true, options: [] }, '')).toBe(false)
+    expect(isAnswered({ id: 't', kind: 'reflection', prompt: text(''), required: false, maxLength: 10 }, '   ')).toBe(false)
   })
 })
 
@@ -84,7 +96,7 @@ describe('rankScores', () => {
 })
 
 describe('paging and progress', () => {
-  const questions: Question[] = [scale('q1', 'x'), scale('q2', 'x'), scale('q3', 'x'), { id: 'note', kind: 'reflection', prompt: '', required: false, maxLength: 10 }]
+  const questions: Question[] = [scale('q1', 'x'), scale('q2', 'x'), scale('q3', 'x'), { id: 'note', kind: 'reflection', prompt: text(''), required: false, maxLength: 10 }]
   const category = sampleCategory(questions, 2)
 
   it('splits questions into pages', () => {

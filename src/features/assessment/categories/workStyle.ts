@@ -1,3 +1,4 @@
+import { L, type Localized } from '../../../i18n/language'
 import { rankScores, scoreScaleDimensions } from '../scoring'
 import type { AssessmentCategory, CategoryAnswers, CategoryResult, ScaleQuestion } from '../types'
 
@@ -62,13 +63,14 @@ export const IPIP_IPC_ITEMS: IpcItem[] = [
 const questions: ScaleQuestion[] = IPIP_IPC_ITEMS.map((item) => ({
   id: `ipc${item.n}`,
   kind: 'scale',
-  prompt: item.th,
+  // English shows the original IPIP-IPC wording.
+  prompt: { th: item.th, en: item.en },
   required: true,
-  help: 'แตะบนเส้นเพื่อให้คะแนนข้อนี้',
+  help: L('แตะบนเส้นเพื่อให้คะแนนข้อนี้', 'Tap the line to answer this one.'),
   dimension: item.octant,
   reverseKeyed: false,
-  minLabel: 'ไม่ตรงกับฉันเลย',
-  maxLabel: 'ตรงกับฉันมาก',
+  minLabel: L('ไม่ตรงกับฉันเลย', 'Not like me at all'),
+  maxLabel: L('ตรงกับฉันมาก', 'Very much like me'),
   source: `IPIP-IPC (Markey & Markey, 2009) #${item.n} (${item.octant} ${OCTANT_ANGLES[item.octant]}°): "${item.en}"`,
 }))
 
@@ -101,38 +103,38 @@ export function circumplexAxes(octants: Record<Octant, number>): { dominance: nu
 export type Direction = 'navigator' | 'spark' | 'harbor' | 'cartographer'
 
 /** Our own characters, one per quadrant. Dominance up, Warmth right. */
-export const DIRECTIONS: Record<Direction, { compass: string; name: string; english: string; icon: string; quadrant: string; description: string }> = {
+export const DIRECTIONS: Record<Direction, { compass: Localized; name: Localized; english: string; icon: string; quadrant: Localized; description: Localized }> = {
   navigator: {
-    compass: 'เหนือ',
-    name: 'ผู้นำทาง',
+    compass: L('เหนือ', 'North'),
+    name: L('ผู้นำทาง', 'Navigator'),
     english: 'Navigator',
     icon: '🧭',
-    quadrant: 'นำมากกว่า · ใส่ใจเป้าหมายมากกว่าความรู้สึก',
-    description: 'ขับเคลื่อนเป้าหมาย ตัดสินใจเร็ว และกล้ารับผิดชอบเมื่อทีมต้องการทิศทาง',
+    quadrant: L('นำมากกว่า · ใส่ใจเป้าหมายมากกว่าความรู้สึก', 'Leads more · goals before feelings'),
+    description: L('ขับเคลื่อนเป้าหมาย ตัดสินใจเร็ว และกล้ารับผิดชอบเมื่อทีมต้องการทิศทาง', 'Drives toward goals, decides quickly and takes charge when the team needs direction.'),
   },
   spark: {
-    compass: 'ตะวันออก',
-    name: 'ผู้จุดประกาย',
+    compass: L('ตะวันออก', 'East'),
+    name: L('ผู้จุดประกาย', 'Spark'),
     english: 'Spark',
     icon: '✨',
-    quadrant: 'นำมากกว่า · อบอุ่นมากกว่า',
-    description: 'ชวนคนมาร่วมกัน สร้างพลังและไอเดีย และทำให้บรรยากาศมีชีวิตชีวา',
+    quadrant: L('นำมากกว่า · อบอุ่นมากกว่า', 'Leads more · warmer'),
+    description: L('ชวนคนมาร่วมกัน สร้างพลังและไอเดีย และทำให้บรรยากาศมีชีวิตชีวา', 'Brings people together, sparks energy and ideas, and livens up the room.'),
   },
   harbor: {
-    compass: 'ใต้',
-    name: 'ผู้ประสานใจ',
+    compass: L('ใต้', 'South'),
+    name: L('ผู้ประสานใจ', 'Harbor'),
     english: 'Harbor',
     icon: '🤝',
-    quadrant: 'ตามมากกว่า · อบอุ่นมากกว่า',
-    description: 'สนับสนุนทีม รับฟัง และทำให้ทุกคนไปด้วยกันได้',
+    quadrant: L('ตามมากกว่า · อบอุ่นมากกว่า', 'Follows more · warmer'),
+    description: L('สนับสนุนทีม รับฟัง และทำให้ทุกคนไปด้วยกันได้', 'Supports the team, listens, and helps everyone move forward together.'),
   },
   cartographer: {
-    compass: 'ตะวันตก',
-    name: 'ผู้วาดแผนที่',
+    compass: L('ตะวันตก', 'West'),
+    name: L('ผู้วาดแผนที่', 'Cartographer'),
     english: 'Cartographer',
     icon: '🗺️',
-    quadrant: 'ตามมากกว่า · เน้นงานมากกว่าความสัมพันธ์',
-    description: 'ละเอียด เป็นระบบ ใส่ใจความถูกต้อง และคิดให้รอบก่อนลงมือ',
+    quadrant: L('ตามมากกว่า · เน้นงานมากกว่าความสัมพันธ์', 'Follows more · task before relationships'),
+    description: L('ละเอียด เป็นระบบ ใส่ใจความถูกต้อง และคิดให้รอบก่อนลงมือ', 'Thorough, systematic, careful about accuracy and thinks things through before acting.'),
   },
 }
 
@@ -187,22 +189,28 @@ export function scoreWorkStyle(answers: CategoryAnswers): CategoryResult {
 export const workStyle: AssessmentCategory = {
   id: 'workStyle',
   number: '03',
-  title: 'Work Style Compass',
-  summary: 'รูปแบบการทำงานกับผู้อื่นบนสองแกน คือการนำกับความอบอุ่น จาก 32 ข้อความสั้น ๆ แล้วแสดงเป็นทิศบนเข็มทิศ',
+  title: L('เข็มทิศการทำงาน', 'Work Style Compass'),
+  summary: L(
+    'รูปแบบการทำงานกับผู้อื่นบนสองแกน คือการนำกับความอบอุ่น จาก 32 ข้อความสั้น ๆ แล้วแสดงเป็นทิศบนเข็มทิศ',
+    'How you work with others on two axes — leading and warmth — from 32 short statements, shown as a direction on a compass.',
+  ),
   estimatedMinutes: 6,
   pageSize: 8,
   gridClassName: 'grid grid-cols-1 xl:grid-cols-2 gap-4',
   questions,
   copy: {
-    eyebrow: '03 / Work Style Compass',
-    title: 'เวลาอยู่กับคนอื่น คุณเป็นแบบไหน',
-    description: 'อ่านแต่ละข้อความแล้วแตะบนเส้นว่าตรงกับตัวคุณมากแค่ไหน นึกถึงตัวคุณตามปกติเวลาอยู่กับเพื่อน ทีม หรือคนที่เพิ่งรู้จัก ไม่มีคำตอบถูกหรือผิด',
-    progressEyebrow: 'ตอบตามความรู้สึกแรก',
-    progressTitle: 'บอกเราว่าคุณทำงานกับคนอื่นอย่างไร',
-    progressHint: 'ตอบให้ครบ 32 ข้อเพื่อดูทิศของคุณบนเข็มทิศ',
-    submitLabel: 'ดูเข็มทิศการทำงานของฉัน',
-    missingToast: 'ยังมีข้อที่ไฮไลต์ไว้ที่ยังไม่ได้ตอบ',
-    submittedToast: 'เข็มทิศการทำงานของคุณพร้อมแล้ว',
+    eyebrow: L('03 / เข็มทิศการทำงาน', '03 / Work Style Compass'),
+    title: L('เวลาอยู่กับคนอื่น คุณเป็นแบบไหน', 'What are you like with other people'),
+    description: L(
+      'อ่านแต่ละข้อความแล้วแตะบนเส้นว่าตรงกับตัวคุณมากแค่ไหน นึกถึงตัวคุณตามปกติเวลาอยู่กับเพื่อน ทีม หรือคนที่เพิ่งรู้จัก ไม่มีคำตอบถูกหรือผิด',
+      'Read each statement and tap the line to show how well it describes you — think of how you usually are with friends, a team or people you have just met. There are no right or wrong answers.',
+    ),
+    progressEyebrow: L('ตอบตามความรู้สึกแรก', 'Go with your first instinct'),
+    progressTitle: L('บอกเราว่าคุณทำงานกับคนอื่นอย่างไร', 'Tell us how you work with others'),
+    progressHint: L('ตอบให้ครบ 32 ข้อเพื่อดูทิศของคุณบนเข็มทิศ', 'Answer all 32 to see your direction on the compass.'),
+    submitLabel: L('ดูเข็มทิศการทำงานของฉัน', 'See my work style compass'),
+    missingToast: L('ยังมีข้อที่ไฮไลต์ไว้ที่ยังไม่ได้ตอบ', 'Some highlighted statements still need an answer.'),
+    submittedToast: L('เข็มทิศการทำงานของคุณพร้อมแล้ว', 'Your work style compass is ready.'),
   },
   score: scoreWorkStyle,
 }

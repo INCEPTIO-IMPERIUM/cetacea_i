@@ -1,4 +1,5 @@
-import type { Experiment } from '../../../data/dashboard'
+import { minutes, type CatalogExperiment } from '../../../data/dashboard'
+import { L, type Localized } from '../../../i18n/language'
 import { rankScores, scoreScaleDimensions } from '../scoring'
 import type { AssessmentCategory, CategoryAnswers, CategoryResult, ScaleQuestion } from '../types'
 import { RIASEC_TYPES, riasecCopy, type RiasecProfile, type RiasecType } from './careerInterest'
@@ -92,13 +93,13 @@ export const CONFIDENCE_ITEMS: ConfidenceItem[] = Array.from({ length: 8 }, (_, 
 const questions: ScaleQuestion[] = CONFIDENCE_ITEMS.map((item) => ({
   id: `efficacy${item.code}`,
   kind: 'scale',
-  prompt: item.th,
+  prompt: { th: item.th, en: item.en },
   required: true,
-  help: 'แตะบนเส้นว่าคุณมั่นใจแค่ไหนว่าจะทำสิ่งนี้ได้ดี',
+  help: L('แตะบนเส้นว่าคุณมั่นใจแค่ไหนว่าจะทำสิ่งนี้ได้ดี', 'Tap the line to show how confident you are that you would do this well.'),
   dimension: item.type,
   reverseKeyed: false,
-  minLabel: 'ไม่มั่นใจเลย',
-  maxLabel: 'มั่นใจมาก',
+  minLabel: L('ไม่มั่นใจเลย', 'Not confident at all'),
+  maxLabel: L('มั่นใจมาก', 'Very confident'),
   source: `Who Am I? original RIASEC self-efficacy item ${item.code} (Holland ${item.type}; rights: Who Am I?, any use): "${item.en}"`,
 }))
 
@@ -112,11 +113,11 @@ export function scoreStrengths(answers: CategoryAnswers): CategoryResult {
 export type Quadrant = 'love' | 'grow' | 'able' | 'explore'
 
 /** Copy for the 2 × 2 map. Low scores are never called weaknesses. */
-export const QUADRANTS: Record<Quadrant, { icon: string; title: string; hint: string }> = {
-  love: { icon: '💪', title: 'จุดแข็งที่ชอบ', hint: 'สนใจและมั่นใจ — ใช้ด้านนี้นำทางได้เลย' },
-  grow: { icon: '🌱', title: 'ศักยภาพที่ควรฝึก', hint: 'สนใจแต่ยังไม่มั่นใจ — ลองทำทีละขั้นเพื่อสร้างความมั่นใจ' },
-  able: { icon: '🧰', title: 'ทำได้ แต่อาจไม่ใช่สิ่งที่ชอบ', hint: 'มั่นใจแต่ไม่ค่อยสนใจ — เป็นทักษะเสริมที่มีประโยชน์' },
-  explore: { icon: '⬜', title: 'ยังไม่ได้สำรวจ', hint: 'ยังไม่สนใจและยังไม่มั่นใจ — อาจเพราะยังไม่เคยลอง' },
+export const QUADRANTS: Record<Quadrant, { icon: string; title: Localized; hint: Localized }> = {
+  love: { icon: '💪', title: L('จุดแข็งที่ชอบ', 'Strengths you enjoy'), hint: L('สนใจและมั่นใจ — ใช้ด้านนี้นำทางได้เลย', 'Interested and confident — let these lead the way.') },
+  grow: { icon: '🌱', title: L('ศักยภาพที่ควรฝึก', 'Potential to grow'), hint: L('สนใจแต่ยังไม่มั่นใจ — ลองทำทีละขั้นเพื่อสร้างความมั่นใจ', 'Interested but not yet confident — build confidence one step at a time.') },
+  able: { icon: '🧰', title: L('ทำได้ แต่อาจไม่ใช่สิ่งที่ชอบ', 'Can do, may not love'), hint: L('มั่นใจแต่ไม่ค่อยสนใจ — เป็นทักษะเสริมที่มีประโยชน์', 'Confident but less interested — a useful supporting skill.') },
+  explore: { icon: '⬜', title: L('ยังไม่ได้สำรวจ', 'Not explored yet'), hint: L('ยังไม่สนใจและยังไม่มั่นใจ — อาจเพราะยังไม่เคยลอง', 'Neither yet — maybe because you have not tried it.') },
 }
 
 export interface StrengthsPlacement {
@@ -147,77 +148,80 @@ export function strengthsMap(interest: RiasecProfile, confidence: RiasecProfile)
  * A small, step-by-step task per type: mastery experience — succeeding at something — is the
  * strongest source of self-efficacy (Bandura, 1977).
  */
-export const GROWTH_ACTIONS: Record<RiasecType, Omit<Experiment, 'id' | 'done'>> = {
-  R: {
-    title: 'ซ่อมหรือประกอบของชิ้นเล็ก 1 ชิ้น',
-    description: 'ทำตามคลิปสอนทีละขั้นจนเสร็จ แล้วจดว่าขั้นไหนยากที่สุดและผ่านมาได้อย่างไร',
-    duration: '30 MIN',
-    tag: `Strengths · ${riasecCopy.R.english}`,
-    icon: 'custom',
-    tone: 'mint',
-  },
-  I: {
-    title: 'ตอบคำถามที่สงสัยด้วยข้อมูล',
-    description: 'เลือกคำถาม 1 ข้อ หาแหล่งข้อมูลที่น่าเชื่อถือ 3 แหล่ง แล้วสรุปคำตอบสั้น ๆ ด้วยคำพูดของตัวเอง',
-    duration: '30 MIN',
-    tag: `Strengths · ${riasecCopy.I.english}`,
-    icon: 'custom',
-    tone: 'mint',
-  },
-  A: {
-    title: 'สร้างงานชิ้นเล็กในเวลาจำกัด',
-    description: 'วาด เขียน หรือถ่ายงาน 1 ชิ้นภายใน 20 นาที ไม่ต้องสมบูรณ์ แล้วเก็บไว้ดูความก้าวหน้า',
-    duration: '20 MIN',
-    tag: `Strengths · ${riasecCopy.A.english}`,
-    icon: 'custom',
-    tone: 'mint',
-  },
-  S: {
-    title: 'อธิบายเรื่องหนึ่งให้ใครสักคน',
-    description: 'สอนเรื่องที่คุณรู้ให้เพื่อนหรือคนในบ้าน 10 นาที แล้วถามว่าส่วนไหนช่วยให้เข้าใจมากที่สุด',
-    duration: '15 MIN',
-    tag: `Strengths · ${riasecCopy.S.english}`,
-    icon: 'custom',
-    tone: 'mint',
-  },
-  E: {
-    title: 'เสนอไอเดียสั้น ๆ 1 นาที',
-    description: 'เตรียมไอเดียเล็ก ๆ หนึ่งเรื่อง ลองเสนอให้เพื่อนหรือครอบครัวฟัง แล้วขอความเห็น 1 ข้อ',
-    duration: '15 MIN',
-    tag: `Strengths · ${riasecCopy.E.english}`,
-    icon: 'custom',
-    tone: 'mint',
-  },
-  C: {
-    title: 'จัดระบบสิ่งหนึ่งให้เป็นระเบียบ',
-    description: 'เลือกโฟลเดอร์หรือลิ้นชัก 1 ที่ จัดตามระบบที่คุณตั้งเอง แล้วลองใช้ระบบนั้นต่อ 1 สัปดาห์',
-    duration: '20 MIN',
-    tag: `Strengths · ${riasecCopy.C.english}`,
-    icon: 'custom',
-    tone: 'mint',
-  },
+const growth = (type: RiasecType, title: Localized, description: Localized, mins: number): CatalogExperiment => ({
+  key: `growth:${type}`,
+  title,
+  description,
+  duration: minutes(mins),
+  tag: L(`จุดแข็ง · ${riasecCopy[type].name.th}`, `Strengths · ${riasecCopy[type].english}`),
+  icon: 'custom',
+  tone: 'mint',
+})
+
+export const GROWTH_ACTIONS: Record<RiasecType, CatalogExperiment> = {
+  R: growth(
+    'R',
+    L('ซ่อมหรือประกอบของชิ้นเล็ก 1 ชิ้น', 'Fix or assemble one small thing'),
+    L('ทำตามคลิปสอนทีละขั้นจนเสร็จ แล้วจดว่าขั้นไหนยากที่สุดและผ่านมาได้อย่างไร', 'Follow a how-to video step by step to the end, then note which step was hardest and how you got through it.'),
+    30,
+  ),
+  I: growth(
+    'I',
+    L('ตอบคำถามที่สงสัยด้วยข้อมูล', 'Answer a question with evidence'),
+    L('เลือกคำถาม 1 ข้อ หาแหล่งข้อมูลที่น่าเชื่อถือ 3 แหล่ง แล้วสรุปคำตอบสั้น ๆ ด้วยคำพูดของตัวเอง', 'Pick one question, find three trustworthy sources, and sum up the answer briefly in your own words.'),
+    30,
+  ),
+  A: growth(
+    'A',
+    L('สร้างงานชิ้นเล็กในเวลาจำกัด', 'Make something small against the clock'),
+    L('วาด เขียน หรือถ่ายงาน 1 ชิ้นภายใน 20 นาที ไม่ต้องสมบูรณ์ แล้วเก็บไว้ดูความก้าวหน้า', 'Draw, write or shoot one piece in 20 minutes — it does not need to be perfect — and keep it to see your progress.'),
+    20,
+  ),
+  S: growth(
+    'S',
+    L('อธิบายเรื่องหนึ่งให้ใครสักคน', 'Explain something to someone'),
+    L('สอนเรื่องที่คุณรู้ให้เพื่อนหรือคนในบ้าน 10 นาที แล้วถามว่าส่วนไหนช่วยให้เข้าใจมากที่สุด', 'Teach a friend or family member something you know for 10 minutes, then ask which part helped most.'),
+    15,
+  ),
+  E: growth(
+    'E',
+    L('เสนอไอเดียสั้น ๆ 1 นาที', 'Pitch an idea in one minute'),
+    L('เตรียมไอเดียเล็ก ๆ หนึ่งเรื่อง ลองเสนอให้เพื่อนหรือครอบครัวฟัง แล้วขอความเห็น 1 ข้อ', 'Prepare one small idea, pitch it to a friend or family member, and ask for one piece of feedback.'),
+    15,
+  ),
+  C: growth(
+    'C',
+    L('จัดระบบสิ่งหนึ่งให้เป็นระเบียบ', 'Bring order to one thing'),
+    L('เลือกโฟลเดอร์หรือลิ้นชัก 1 ที่ จัดตามระบบที่คุณตั้งเอง แล้วลองใช้ระบบนั้นต่อ 1 สัปดาห์', 'Pick one folder or drawer, organise it with a system of your own, and keep using it for a week.'),
+    20,
+  ),
 }
 
 export const strengths: AssessmentCategory = {
   id: 'strengths',
   number: '05',
-  title: 'Strengths & Potential',
-  summary: 'ความมั่นใจว่าทำได้ดีใน 6 ด้านงาน จาก 48 ข้อ แล้วรวมกับความสนใจในหมวด 04 เป็นแผนที่จุดแข็งและศักยภาพ',
+  title: L('จุดแข็งและศักยภาพ', 'Strengths & Potential'),
+  summary: L(
+    'ความมั่นใจว่าทำได้ดีใน 6 ด้านงาน จาก 48 ข้อ แล้วรวมกับความสนใจในหมวด 04 เป็นแผนที่จุดแข็งและศักยภาพ',
+    'How confident you feel in six kinds of work, from 48 items — combined with your interests from section 04 into a map of strengths and potential.',
+  ),
   estimatedMinutes: 8,
   pageSize: 12,
   gridClassName: 'grid grid-cols-1 xl:grid-cols-2 gap-4',
   questions,
   copy: {
-    eyebrow: '05 / Strengths & Potential',
-    title: 'คุณมั่นใจว่าทำอะไรได้ดี',
-    description:
+    eyebrow: L('05 / จุดแข็งและศักยภาพ', '05 / Strengths & Potential'),
+    title: L('คุณมั่นใจว่าทำอะไรได้ดี', 'What are you confident you do well'),
+    description: L(
       'แต่ละข้อเป็นสิ่งที่อาจต้องทำในงาน ให้แตะบนเส้นว่าคุณมั่นใจแค่ไหนว่าจะทำได้ดี ถ้ายังไม่เคยทำ ให้ตอบตามที่คิดว่าจะทำได้ถ้าได้ลอง ไม่ต้องคิดว่าชอบหรือไม่',
-    progressEyebrow: 'ความมั่นใจเติบโตได้',
-    progressTitle: 'บอกเราว่าคุณมั่นใจด้านไหน',
-    progressHint: 'ตอบให้ครบ 48 ข้อเพื่อดูแผนที่จุดแข็งของคุณ',
-    submitLabel: 'ดูแผนที่จุดแข็งของฉัน',
-    missingToast: 'ยังมีข้อที่ไฮไลต์ไว้ที่ยังไม่ได้ตอบ',
-    submittedToast: 'แผนที่จุดแข็งของคุณพร้อมแล้ว',
+      'Each item is something a job might ask of you. Tap the line to show how confident you are that you would do it well. If you have never tried it, answer how you think you would do. Do not think about whether you like it.',
+    ),
+    progressEyebrow: L('ความมั่นใจเติบโตได้', 'Confidence can grow'),
+    progressTitle: L('บอกเราว่าคุณมั่นใจด้านไหน', 'Tell us where you feel confident'),
+    progressHint: L('ตอบให้ครบ 48 ข้อเพื่อดูแผนที่จุดแข็งของคุณ', 'Answer all 48 to see your strengths map.'),
+    submitLabel: L('ดูแผนที่จุดแข็งของฉัน', 'See my strengths map'),
+    missingToast: L('ยังมีข้อที่ไฮไลต์ไว้ที่ยังไม่ได้ตอบ', 'Some highlighted items still need an answer.'),
+    submittedToast: L('แผนที่จุดแข็งของคุณพร้อมแล้ว', 'Your strengths map is ready.'),
   },
   score: scoreStrengths,
 }

@@ -22,7 +22,7 @@ export function PoleLine({ position, lowLabel, highLabel, valueText, showBalance
           aria-hidden="true"
         />
       </div>
-      <div className="mt-2 grid grid-cols-2 gap-3 text-[10px] text-muted" aria-hidden="true">
+      <div className="mt-2 grid grid-cols-2 gap-3 text-read text-muted" aria-hidden="true">
         <span>{lowLabel}</span>
         <span className="text-right">{highLabel}</span>
       </div>

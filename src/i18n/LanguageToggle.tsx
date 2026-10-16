@@ -15,7 +15,7 @@ export function LanguageToggle({ className = '' }: { className?: string }) {
           aria-pressed={lang === option}
           aria-label={labels[option].name}
           onClick={() => setLang(option)}
-          className={`rounded-full px-2.5 py-1.5 text-[10px] font-bold transition ${lang === option ? 'bg-ink text-white' : 'text-muted hover:text-ink'}`}
+          className={`rounded-full px-2.5 py-1.5 text-ui font-bold transition ${lang === option ? 'bg-ink text-white' : 'text-muted hover:text-ink'}`}
         >
           {labels[option].short}
         </button>

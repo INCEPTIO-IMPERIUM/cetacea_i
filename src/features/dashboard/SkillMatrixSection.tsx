@@ -1,23 +1,32 @@
-import { ArrowUpRight, Orbit } from 'lucide-react'
+import { ArrowUpRight, Orbit, Plus } from 'lucide-react'
 import { skillLabel, type Skill } from '../../data/dashboard'
 import { L, useLang, useT } from '../../i18n/language'
 import { actions } from '../../store/whoAmIStore'
 import { useToast } from '../../components/toastContext'
+import { VasInput } from '../assessment/components/VasInput'
 import { InlineAddForm } from './InlineAddForm'
 import { SectionHeading } from './SectionHeading'
 
 interface SkillMatrixSectionProps {
   skills: Skill[]
+  /** Skills used by the careers the matcher suggested — offered as one-tap additions. */
+  suggestedSkills: string[]
   /** Skill name to briefly highlight after a search hit. */
   highlighted: string | null
   onExplorePaths: () => void
 }
 
-export function SkillMatrixSection({ skills, highlighted, onExplorePaths }: SkillMatrixSectionProps) {
+export function SkillMatrixSection({ skills, suggestedSkills, highlighted, onExplorePaths }: SkillMatrixSectionProps) {
   const t = useT()
   const lang = useLang()
   const showToast = useToast()
-  const topSkills = [...skills].sort((a, b) => b.value - a.value).slice(0, 3)
+  const rated = skills.filter((skill): skill is Skill & { value: number } => skill.value !== null)
+  const topSkills = [...rated].sort((a, b) => b.value - a.value).slice(0, 3)
+  const notYetAdded = suggestedSkills.filter((name) => !skills.some((skill) => skill.name.toLowerCase() === name.toLowerCase()))
+
+  function addSuggested(name: string) {
+    if (actions.addSkill(name)) showToast(t({ th: `เพิ่ม ${skillLabel(name, 'th')} ในตารางแล้ว`, en: `${name} added to your matrix.` }))
+  }
 
   return (
     <section id="skills" className="pt-10 sm:pt-12 scroll-mt-24" aria-labelledby="skills-heading">
@@ -46,43 +55,57 @@ export function SkillMatrixSection({ skills, highlighted, onExplorePaths }: Skil
         <div className="panel p-5 sm:p-6">
           <div className="flex items-start justify-between gap-3 mb-6">
             <div>
-              <h3 className="font-bold text-sm">{t(L('ทักษะที่ฉันกำลังสำรวจ', "Skills I'm exploring"))}</h3>
-              <p className="text-[11px] text-muted mt-1">{t(L('เลื่อนแถบให้ตรงกับความมั่นใจของคุณวันนี้', 'Move the sliders to reflect how confident you feel today.'))}</p>
+              <h3 className="font-bold text-read">{t(L('ทักษะที่ฉันกำลังสำรวจ', "Skills I'm exploring"))}</h3>
+              <p className="text-read text-muted mt-1">
+                {t(L('แตะบนเส้นให้ตรงกับความมั่นใจของคุณวันนี้ ทักษะที่ยังไม่ให้คะแนนจะไม่ถูกนำไปคิดคำแนะนำอาชีพ', 'Tap the line to show how confident you feel today. Skills you have not rated are left out of career suggestions.'))}
+              </p>
             </div>
-            <span className="rounded-full bg-paper px-3 py-1.5 text-[10px] font-bold">{t(L('ประเมินตนเอง', 'SELF-RATED'))}</span>
+            <span className="rounded-full bg-paper px-3 py-1.5 text-ui font-bold shrink-0">{t(L('ประเมินตนเอง', 'SELF-RATED'))}</span>
           </div>
-          <div className="space-y-5">
-            {skills.map((skill) => {
-              const inputId = `skill-${skill.name.replace(/\W+/g, '-').toLowerCase()}`
-              return (
-                <div
-                  key={skill.name}
-                  data-skill={skill.name}
-                  className={`skill-row rounded-xl transition-colors ${highlighted === skill.name ? 'bg-lemon/60 -mx-2 px-2 py-1' : ''}`}
-                >
-                  <label htmlFor={inputId} className="text-xs font-semibold">{skillLabel(skill.name, lang)}</label>
-                  <input
-                    id={inputId}
-                    className="w-full accent-ink"
-                    type="range"
-                    min={0}
-                    max={100}
-                    value={skill.value}
-                    onChange={(event) => actions.setSkillValue(skill.name, Number(event.target.value))}
-                  />
-                  <output htmlFor={inputId} className="text-xs font-bold text-right">{skill.value}</output>
-                </div>
-              )
-            })}
-          </div>
-          <div className="mt-7 border-t border-black/10 pt-4 flex items-center justify-between gap-4">
-            <p className="text-[10px] leading-relaxed text-muted max-w-sm">
-              {t(L('เคล็ดลับ: ความมั่นใจเติบโตได้จากการฝึก ตัวเลขที่ต่ำคือจุดเริ่มต้นที่ดี', 'Tip: confidence grows through practice. A lower number is simply a useful place to begin.'))}
+
+          {skills.length === 0 ? (
+            <p className="rounded-2xl border border-dashed border-black/20 p-5 text-read text-muted">
+              {t(L('ยังไม่มีทักษะในตาราง เพิ่มทักษะที่คุณกำลังฝึกหรืออยากพัฒนาด้วยปุ่ม “เพิ่มทักษะ”', 'No skills yet. Add one you are practising or want to grow with “Add a skill”.'))}
             </p>
-            <button type="button" onClick={() => showToast(t(L('อัปเดตตารางทักษะแล้ว', 'Skill matrix updated.')))} className="shrink-0 text-[11px] font-bold underline underline-offset-4">
-              {t(L('บันทึกตาราง', 'Save matrix'))}
-            </button>
-          </div>
+          ) : (
+            <ul className="space-y-6">
+              {skills.map((skill) => {
+                const labelId = `skill-${skill.name.replace(/\W+/g, '-').toLowerCase()}`
+                return (
+                  <li key={skill.name} data-skill={skill.name} className={`rounded-xl transition-colors ${highlighted === skill.name ? 'bg-lemon/60 -mx-2 px-2 py-1' : ''}`}>
+                    <div className="flex items-baseline justify-between gap-3">
+                      <span id={labelId} className="text-read font-semibold">
+                        {skillLabel(skill.name, lang)}
+                      </span>
+                      <span className="text-ui font-bold text-muted">{skill.value === null ? t(L('ยังไม่ได้ให้คะแนน', 'Not rated yet')) : skill.value}</span>
+                    </div>
+                    <div className="mt-3">
+                      <VasInput
+                        value={skill.value ?? undefined}
+                        onChange={(value) => actions.setSkillValue(skill.name, value)}
+                        labelledBy={labelId}
+                        minLabel={t(L('ยังใหม่มาก', 'Brand new to me'))}
+                        maxLabel={t(L('มั่นใจมาก', 'Very confident'))}
+                      />
+                    </div>
+                  </li>
+                )
+              })}
+            </ul>
+          )}
+
+          {notYetAdded.length > 0 && (
+            <div className="mt-7 border-t border-black/10 pt-4">
+              <p className="text-read font-semibold">{t(L('ทักษะที่อาชีพซึ่งแนะนำให้คุณใช้', 'Skills used by your suggested careers'))}</p>
+              <div className="mt-3 flex flex-wrap gap-2">
+                {notYetAdded.map((name) => (
+                  <button key={name} type="button" className="pill" onClick={() => addSuggested(name)}>
+                    <Plus size={24} className="w-4 h-4" aria-hidden="true" /> {skillLabel(name, lang)}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="rounded-[22px] bg-ink text-white p-5 sm:p-6 relative overflow-hidden min-h-[280px]">
@@ -92,20 +115,24 @@ export function SkillMatrixSection({ skills, highlighted, onExplorePaths }: Skil
               <span className="eyebrow text-lemon">{t(L('ค้นหารูปแบบ', 'Pattern finder'))}</span>
             </div>
             <h3 className="section-title text-2xl font-extrabold mt-3 max-w-[280px]">{t(L('ทักษะของคุณติดตัวไปได้ทุกที่', 'Your skills can travel with you.'))}</h3>
-            <p className="text-xs text-white/60 leading-relaxed mt-3 max-w-[300px]">
-              {t(L('หลายอาชีพผสมทักษะไม่กี่อย่างเข้าด้วยกัน ลองดูว่าจุดแข็งตอนนี้ของคุณเชื่อมไปที่ไหนได้บ้าง', 'Many careers blend a few skills. See where your current strengths might connect.'))}
+            <p className="text-read text-white/70 mt-3 max-w-[300px]">
+              {topSkills.length
+                ? t(L('ทักษะที่คุณให้คะแนนตัวเองสูงสุด ลองดูว่าเชื่อมไปอาชีพไหนได้บ้าง', 'The skills you rated highest — see which careers they connect to.'))
+                : t(L('ให้คะแนนทักษะสักอย่าง แล้วทักษะที่คุณมั่นใจที่สุดจะขึ้นที่นี่', 'Rate a skill and your most confident ones will show up here.'))}
             </p>
-            <div className="mt-6 flex flex-wrap gap-2">
-              {topSkills.map((skill) => (
-                <span key={skill.name} className="rounded-full bg-white/10 border border-white/15 px-3 py-2 text-[11px]">
-                  {skillLabel(skill.name, lang)} <span className="text-white/45">{skill.value}</span>
-                </span>
-              ))}
-            </div>
+            {topSkills.length > 0 && (
+              <div className="mt-6 flex flex-wrap gap-2">
+                {topSkills.map((skill) => (
+                  <span key={skill.name} className="rounded-full bg-white/10 border border-white/15 px-3 py-2 text-ui">
+                    {skillLabel(skill.name, lang)} <span className="text-white/60">{skill.value}</span>
+                  </span>
+                ))}
+              </div>
+            )}
             <button
               type="button"
               onClick={onExplorePaths}
-              className="mt-6 inline-flex items-center gap-2 rounded-full bg-lemon text-ink px-4 py-2.5 text-[11px] font-bold hover:translate-x-1 transition"
+              className="mt-6 inline-flex items-center gap-2 rounded-full bg-lemon text-ink px-4 py-2.5 text-ui font-bold hover:translate-x-1 transition"
             >
               {t(L('สำรวจเส้นทางที่เข้ากัน', 'Explore matching paths'))} <ArrowUpRight size={24} aria-hidden="true" />
             </button>

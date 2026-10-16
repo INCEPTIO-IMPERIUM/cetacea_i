@@ -32,7 +32,7 @@ export function InlineAddForm({ buttonLabel, inputLabel, placeholder, maxLength,
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="inline-flex items-center gap-2 rounded-full border border-ink bg-white px-4 py-2.5 text-[11px] font-bold hover:bg-lemon transition"
+        className="inline-flex items-center gap-2 rounded-full border border-ink bg-white px-4 py-2.5 text-ui font-bold hover:bg-lemon transition"
       >
         <Plus size={24} aria-hidden="true" /> {buttonLabel}
       </button>
@@ -57,12 +57,12 @@ export function InlineAddForm({ buttonLabel, inputLabel, placeholder, maxLength,
           }
         }}
         placeholder={placeholder}
-        className="w-[220px] rounded-full border border-black/20 bg-white px-4 py-2.5 text-xs outline-none focus:border-ink"
+        className="w-[220px] rounded-full border border-black/20 bg-white px-4 py-2.5 text-read outline-none focus:border-ink"
       />
-      <button type="submit" disabled={!value.trim()} className="rounded-full bg-ink text-white px-4 py-2.5 text-[11px] font-bold disabled:opacity-40">
+      <button type="submit" disabled={!value.trim()} className="rounded-full bg-ink text-white px-4 py-2.5 text-ui font-bold disabled:opacity-40">
         {t(L('เพิ่ม', 'Add'))}
       </button>
-      <button type="button" onClick={() => setOpen(false)} className="rounded-full px-3 py-2.5 text-[11px] font-semibold text-muted hover:text-ink">
+      <button type="button" onClick={() => setOpen(false)} className="rounded-full px-3 py-2.5 text-ui font-semibold text-muted hover:text-ink">
         {t(L('ยกเลิก', 'Cancel'))}
       </button>
     </form>

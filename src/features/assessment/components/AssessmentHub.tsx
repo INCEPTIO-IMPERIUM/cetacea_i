@@ -42,7 +42,7 @@ export function AssessmentHub({ onOpenCategory, onOpenSummary }: AssessmentHubPr
             {t(L('เลือกจุดเริ่มต้น', 'Choose where to begin'))}
             <span className="text-[#8b76cf]">.</span>
           </h2>
-          <p className="text-xs sm:text-sm text-muted mt-2 max-w-2xl">
+          <p className="text-read text-muted mt-2 max-w-2xl">
             {t(
               L(
                 'แต่ละหมวดสั้นและบันทึกให้อัตโนมัติ ทำหมวดไหนก่อนก็ได้ หยุดเมื่อไรก็ได้ แล้วกลับมาทำต่อทีหลัง ผลจะขึ้นทันทีที่ทำแต่ละหมวดเสร็จ',
@@ -51,7 +51,7 @@ export function AssessmentHub({ onOpenCategory, onOpenSummary }: AssessmentHubPr
             )}
           </p>
         </div>
-        <span className="inline-flex items-center gap-2 rounded-full bg-lilac px-3 py-2 text-[10px] font-bold">
+        <span className="inline-flex items-center gap-2 rounded-full bg-lilac px-3 py-2 text-ui font-bold">
           <Clock3 size={24} aria-hidden="true" /> {t({ th: `รวมประมาณ ${totalMinutes} นาที`, en: `About ${totalMinutes} minutes in total` })}
         </span>
       </div>
@@ -70,7 +70,7 @@ export function AssessmentHub({ onOpenCategory, onOpenSummary }: AssessmentHubPr
               <button
                 type="button"
                 onClick={() => onOpenCategory(resume.id, lastRecord?.page)}
-                className="inline-flex items-center gap-2 rounded-full bg-lemon border-[1.5px] border-ink shadow-[0_2px_0_#171717] px-4 py-2.5 text-xs font-bold"
+                className="inline-flex items-center gap-2 rounded-full bg-lemon border-[1.5px] border-ink shadow-[0_2px_0_#171717] px-4 py-2.5 text-ui font-bold"
               >
                 {t({ th: `ทำต่อ “${resume.title.th}”`, en: `Continue “${resume.title.en}”` })} <ArrowRight size={24} aria-hidden="true" />
               </button>
@@ -79,7 +79,7 @@ export function AssessmentHub({ onOpenCategory, onOpenSummary }: AssessmentHubPr
               type="button"
               onClick={onOpenSummary}
               disabled={completed === 0}
-              className="rounded-full bg-ink text-white px-4 py-2.5 text-xs font-bold hover:bg-black/80 disabled:opacity-40 disabled:cursor-not-allowed"
+              className="rounded-full bg-ink text-white px-4 py-2.5 text-ui font-bold hover:bg-black/80 disabled:opacity-40 disabled:cursor-not-allowed"
             >
               {t(L('ดูสรุปผลของฉัน', 'See my summary'))}
             </button>
@@ -95,8 +95,8 @@ export function AssessmentHub({ onOpenCategory, onOpenSummary }: AssessmentHubPr
           return (
             <li key={category.id} className="form-question flex flex-col">
               <div className="flex items-start justify-between gap-3">
-                <div className="text-[10px] font-bold text-accent tracking-[.12em] uppercase">{t({ th: `หมวด ${category.number}`, en: `Section ${category.number}` })}</div>
-                <span className={`rounded-full px-2.5 py-1.5 text-[9px] font-bold ${status === 'done' ? 'bg-mint' : status === 'progress' ? 'bg-lemon' : 'bg-paper text-muted'}`}>
+                <div className="text-ui font-bold text-accent tracking-[.12em] uppercase">{t({ th: `หมวด ${category.number}`, en: `Section ${category.number}` })}</div>
+                <span className={`rounded-full px-2.5 py-1.5 text-ui font-bold ${status === 'done' ? 'bg-mint' : status === 'progress' ? 'bg-lemon' : 'bg-paper text-muted'}`}>
                   {status === 'done' ? (
                     <span className="inline-flex items-center gap-1">
                       <CircleCheck size={24} className="w-3 h-3" aria-hidden="true" /> {t(L('เสร็จแล้ว', 'Done'))}
@@ -109,8 +109,8 @@ export function AssessmentHub({ onOpenCategory, onOpenSummary }: AssessmentHubPr
                 </span>
               </div>
               <h3 className="section-title text-xl font-extrabold mt-2">{t(category.title)}</h3>
-              <p className="text-xs text-muted leading-relaxed mt-2">{t(category.summary)}</p>
-              <p className="text-[10px] text-muted mt-3">
+              <p className="text-read text-muted leading-relaxed mt-2">{t(category.summary)}</p>
+              <p className="text-ui text-muted mt-3">
                 {t({ th: `${progress.required} ข้อ`, en: `${progress.required} questions` })}
                 {progress.total > progress.required && t({ th: ` + ไม่บังคับ ${progress.total - progress.required} ข้อ`, en: ` + ${progress.total - progress.required} optional` })}
                 {t({ th: ` · ประมาณ ${category.estimatedMinutes} นาที`, en: ` · about ${category.estimatedMinutes} minutes` })}
@@ -119,7 +119,7 @@ export function AssessmentHub({ onOpenCategory, onOpenSummary }: AssessmentHubPr
                 <button
                   type="button"
                   onClick={() => onOpenCategory(category.id, status === 'progress' ? record.page : 0)}
-                  className="inline-flex items-center gap-2 rounded-full border border-ink bg-white px-4 py-2.5 text-[11px] font-bold hover:bg-lemon transition"
+                  className="inline-flex items-center gap-2 rounded-full border border-ink bg-white px-4 py-2.5 text-ui font-bold hover:bg-lemon transition"
                 >
                   {t(status === 'done' ? L('ดูผลและแก้คำตอบ', 'See result & edit answers') : status === 'progress' ? L('ทำต่อ', 'Continue') : L('เริ่ม', 'Start'))}{' '}
                   <ArrowRight size={24} aria-hidden="true" />
@@ -131,7 +131,7 @@ export function AssessmentHub({ onOpenCategory, onOpenSummary }: AssessmentHubPr
       </ol>
 
       <div className="mt-6 rounded-2xl border border-black/10 bg-white/70 px-4 py-3 flex flex-wrap items-center justify-between gap-3">
-        <p className="flex items-center gap-2 text-[11px] text-muted">
+        <p className="flex items-center gap-2 text-read text-muted">
           <ShieldCheck size={24} className="w-4 h-4 shrink-0" aria-hidden="true" />
           {t(
             L(
@@ -142,7 +142,7 @@ export function AssessmentHub({ onOpenCategory, onOpenSummary }: AssessmentHubPr
         </p>
         {confirmingDelete ? (
           <div className="flex items-center gap-2" role="group" aria-label={t(L('ยืนยันการลบข้อมูลแบบประเมินทั้งหมด', 'Confirm deleting all assessment data'))}>
-            <span className="text-[11px] font-semibold">{t(L('ลบคำตอบและผลทั้งหมดใช่ไหม', 'Delete every answer and result?'))}</span>
+            <span className="text-ui font-semibold">{t(L('ลบคำตอบและผลทั้งหมดใช่ไหม', 'Delete every answer and result?'))}</span>
             <button
               type="button"
               onClick={() => {
@@ -150,11 +150,11 @@ export function AssessmentHub({ onOpenCategory, onOpenSummary }: AssessmentHubPr
                 setConfirmingDelete(false)
                 showToast(t(L('ลบคำตอบและผลแบบประเมินทั้งหมดแล้ว', 'All assessment answers and results were deleted.')))
               }}
-              className="rounded-full bg-danger text-white px-3 py-2 text-[11px] font-bold"
+              className="rounded-full bg-danger text-white px-3 py-2 text-ui font-bold"
             >
               {t(L('ลบเลย', 'Yes, delete'))}
             </button>
-            <button type="button" onClick={() => setConfirmingDelete(false)} className="rounded-full px-3 py-2 text-[11px] font-semibold text-muted hover:text-ink">
+            <button type="button" onClick={() => setConfirmingDelete(false)} className="rounded-full px-3 py-2 text-ui font-semibold text-muted hover:text-ink">
               {t(L('ยกเลิก', 'Cancel'))}
             </button>
           </div>
@@ -163,7 +163,7 @@ export function AssessmentHub({ onOpenCategory, onOpenSummary }: AssessmentHubPr
             type="button"
             onClick={() => setConfirmingDelete(true)}
             disabled={!hasAnyData}
-            className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-muted underline underline-offset-4 hover:text-danger disabled:opacity-40 disabled:no-underline disabled:cursor-not-allowed"
+            className="inline-flex items-center gap-1.5 text-ui font-semibold text-muted underline underline-offset-4 hover:text-danger disabled:opacity-40 disabled:no-underline disabled:cursor-not-allowed"
           >
             <Trash2 size={24} className="w-3.5 h-3.5" aria-hidden="true" /> {t(L('ลบข้อมูลแบบประเมินทั้งหมดของฉัน', 'Delete all my assessment data'))}
           </button>

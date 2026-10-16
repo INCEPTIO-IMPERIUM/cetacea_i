@@ -12,18 +12,12 @@ import { readInterests, riasecCopy, toRiasecProfile } from '../categories/career
 import { personalityCompass } from '../categories/personalityCompass'
 import { QUADRANTS, strengthsMap } from '../categories/strengths'
 import { DIRECTIONS, workStyleFromScores } from '../categories/workStyle'
-import { recommendationsFor, type CareerMatch, type Confidence, type MatchTag } from '../matcher'
+import { MATCH_TAGS, recommendationsFor, type CareerMatch, type Confidence } from '../matcher'
 import { CategoryResultView } from './CategoryResultView'
 import { PersonalityCompassResult } from './PersonalityCompassResult'
 
 /** How many careers the summary recommends (the issue asks for 3–5). */
 const SHOWN_MATCHES = 5
-
-const tagCopy: Record<MatchTag, { label: Localized; tone: string }> = {
-  ready: { label: L('เหมาะจะเริ่มเลย', 'Ready to start'), tone: 'bg-mint' },
-  practice: { label: L('เส้นทางที่ควรฝึก', 'A path to practise'), tone: 'bg-lemon' },
-  explore: { label: L('น่าลองสำรวจ', 'Worth exploring'), tone: 'bg-lilac' },
-}
 
 const confidenceCopy: Record<Confidence, { label: Localized; tone: string }> = {
   none: { label: L('ยังไม่มีข้อมูลพอ', 'Not enough answers yet'), tone: 'bg-paper' },
@@ -143,19 +137,19 @@ function MatchCard({ match, rank }: { match: CareerMatch; rank: number }) {
     <li className="rounded-[20px] border-[1.5px] border-ink bg-white shadow-panel p-5">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <div className="text-[10px] font-bold text-accent tracking-[.12em] uppercase">{t({ th: `ทางเลือกที่ ${rank}`, en: `Option ${rank}` })}</div>
+          <div className="text-ui font-bold text-accent tracking-[.12em] uppercase">{t({ th: `ทางเลือกที่ ${rank}`, en: `Option ${rank}` })}</div>
           <h4 className="section-title text-xl font-extrabold mt-1">{t(career.name)}</h4>
-          <p className="text-[10px] text-muted mt-0.5">
+          <p className="text-ui text-muted mt-0.5">
             O*NET-SOC {career.onet.code} · {career.onet.title}
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <span className={`rounded-full px-2.5 py-1 text-[10px] font-bold ${tagCopy[match.tag].tone}`}>{t(tagCopy[match.tag].label)}</span>
-          <span className="rounded-full bg-paper px-2.5 py-1 text-[10px] font-bold">{t({ th: `ความสอดคล้อง ${match.score}/100`, en: `Fit ${match.score}/100` })}</span>
+          <span className={`rounded-full px-2.5 py-1 text-ui font-bold ${MATCH_TAGS[match.tag].tone}`}>{t(MATCH_TAGS[match.tag].label)}</span>
+          <span className="rounded-full bg-paper px-2.5 py-1 text-ui font-bold">{t({ th: `ความสอดคล้อง ${match.score}/100`, en: `Fit ${match.score}/100` })}</span>
         </div>
       </div>
 
-      <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4 text-[11px] leading-relaxed">
+      <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4 text-read leading-relaxed">
         <div>
           <div className="eyebrow mb-1.5">{t(L('ทำไมถึงแนะนำ', 'Why this is suggested'))}</div>
           <ul className="space-y-1.5 list-disc pl-4">
@@ -180,7 +174,7 @@ function MatchCard({ match, rank }: { match: CareerMatch; rank: number }) {
               <div className="eyebrow mb-1.5">{t(L('ทักษะที่ต้องพัฒนา', 'Skills to develop'))}</div>
               <div className="flex flex-wrap gap-1.5">
                 {match.skillsToGrow.map((skill) => (
-                  <span key={skill} className="pill py-1 text-[10px]">
+                  <span key={skill} className="pill py-1 text-ui">
                     {skillLabel(skill, lang)}
                   </span>
                 ))}
@@ -197,7 +191,7 @@ function MatchCard({ match, rank }: { match: CareerMatch; rank: number }) {
             actions.setRecommendedCareer(match.id)
             navigate(`/dashboard?career=${match.id}#roadmap`)
           }}
-          className="inline-flex items-center gap-1.5 rounded-full bg-ink text-white px-4 py-2.5 text-[11px] font-bold hover:bg-black/80"
+          className="inline-flex items-center gap-1.5 rounded-full bg-ink text-white px-4 py-2.5 text-ui font-bold hover:bg-black/80"
         >
           <Waypoints size={24} className="w-4 h-4" aria-hidden="true" /> {t(L('ดูบน 3D Roadmap', 'View on 3D roadmap'))}
         </button>
@@ -208,7 +202,7 @@ function MatchCard({ match, rank }: { match: CareerMatch; rank: number }) {
             actions.addExperiment(toExperiment(career.starter, lang))
             showToast(t({ th: `เพิ่ม "${career.starter.title.th}" ใน Micro-Actions แล้ว`, en: `Added "${career.starter.title.en}" to Micro-Actions.` }))
           }}
-          className="inline-flex items-center gap-1.5 rounded-full border border-ink bg-white px-4 py-2.5 text-[11px] font-bold hover:bg-lemon disabled:border-black/15 disabled:hover:bg-white disabled:cursor-default"
+          className="inline-flex items-center gap-1.5 rounded-full border border-ink bg-white px-4 py-2.5 text-ui font-bold hover:bg-lemon disabled:border-black/15 disabled:hover:bg-white disabled:cursor-default"
         >
           {added ? <Check size={24} className="w-4 h-4" aria-hidden="true" /> : <Plus size={24} className="w-4 h-4" aria-hidden="true" />}
           {added
@@ -237,7 +231,7 @@ export function AssessmentSummary({ onBack, onOpenCategory }: { onBack: () => vo
           {t(L('สิ่งที่คำตอบของคุณบอก', 'What your answers suggest'))}
           <span className="text-[#8b76cf]">.</span>
         </h2>
-        <p className="text-xs sm:text-sm text-muted mt-2 max-w-2xl">
+        <p className="text-read text-muted mt-2 max-w-2xl">
           {t({
             th: `ทำแล้ว ${done} จาก ${rows.length} หมวด ผลเหล่านี้คือเบาะแสให้ลองสำรวจ ไม่ใช่ป้ายหรือคำตัดสินสุดท้าย`,
             en: `${done} of ${rows.length} sections finished. These are clues to explore, not a label or a final decision.`,
@@ -253,11 +247,11 @@ export function AssessmentSummary({ onBack, onOpenCategory }: { onBack: () => vo
               <details className="group">
                 <summary className="flex flex-wrap items-center justify-between gap-2 cursor-pointer list-none">
                   <span>
-                    <span className="text-[10px] font-bold text-accent tracking-[.12em] uppercase">{t({ th: `หมวด ${row.number}`, en: `Section ${row.number}` })}</span>
-                    <span className="block font-bold text-sm">{t(row.title)}</span>
-                    <span className="block text-xs text-muted mt-0.5">{t(row.line)}</span>
+                    <span className="text-ui font-bold text-accent tracking-[.12em] uppercase">{t({ th: `หมวด ${row.number}`, en: `Section ${row.number}` })}</span>
+                    <span className="block font-bold text-read">{t(row.title)}</span>
+                    <span className="block text-read text-muted mt-0.5">{t(row.line)}</span>
                   </span>
-                  <span className="rounded-full border border-black/15 px-3 py-1.5 text-[10px] font-bold group-open:bg-paper">
+                  <span className="rounded-full border border-black/15 px-3 py-1.5 text-ui font-bold group-open:bg-paper">
                     <span className="group-open:hidden">{t(L('ดูรายละเอียด', 'Show details'))}</span>
                     <span className="hidden group-open:inline">{t(L('ซ่อนรายละเอียด', 'Hide details'))}</span>
                   </span>
@@ -267,14 +261,14 @@ export function AssessmentSummary({ onBack, onOpenCategory }: { onBack: () => vo
             ) : (
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <span>
-                  <span className="text-[10px] font-bold text-muted tracking-[.12em] uppercase">{t({ th: `หมวด ${row.number}`, en: `Section ${row.number}` })}</span>
-                  <span className="block font-bold text-sm">{t(row.title)}</span>
-                  <span className="block text-xs text-muted mt-0.5">{t(L('ยังไม่ได้ทำ', 'Not done yet'))}</span>
+                  <span className="text-ui font-bold text-muted tracking-[.12em] uppercase">{t({ th: `หมวด ${row.number}`, en: `Section ${row.number}` })}</span>
+                  <span className="block font-bold text-read">{t(row.title)}</span>
+                  <span className="block text-ui text-muted mt-0.5">{t(L('ยังไม่ได้ทำ', 'Not done yet'))}</span>
                 </span>
                 <button
                   type="button"
                   onClick={() => onOpenCategory(row.categoryId)}
-                  className="inline-flex items-center gap-1.5 rounded-full border border-ink bg-white px-3.5 py-2 text-[11px] font-bold hover:bg-lemon"
+                  className="inline-flex items-center gap-1.5 rounded-full border border-ink bg-white px-3.5 py-2 text-ui font-bold hover:bg-lemon"
                 >
                   {t(L('ไปทำหมวดนี้', 'Go to this section'))} <ArrowRight size={24} className="w-3.5 h-3.5" aria-hidden="true" />
                 </button>
@@ -293,7 +287,7 @@ export function AssessmentSummary({ onBack, onOpenCategory }: { onBack: () => vo
               {t(L('อาชีพที่น่าสำรวจ', 'Careers to explore'))}
             </h3>
           </div>
-          <span className={`rounded-full px-3 py-1.5 text-[10px] font-bold ${confidenceCopy[recommendations.confidence].tone}`}>{t(confidenceCopy[recommendations.confidence].label)}</span>
+          <span className={`rounded-full px-3 py-1.5 text-ui font-bold ${confidenceCopy[recommendations.confidence].tone}`}>{t(confidenceCopy[recommendations.confidence].label)}</span>
         </div>
         {shown.length > 0 ? (
           <ol className="space-y-4">
@@ -302,7 +296,7 @@ export function AssessmentSummary({ onBack, onOpenCategory }: { onBack: () => vo
             ))}
           </ol>
         ) : (
-          <div className="rounded-[20px] border border-dashed border-black/20 p-6 text-sm text-muted">
+          <div className="rounded-[20px] border border-dashed border-black/20 p-6 text-read text-muted">
             {t(
               L(
                 'คำแนะนำอาชีพอิงความสนใจ (หมวด 04) และความมั่นใจ (หมวด 05) เป็นหลัก ไม่ได้อิงบุคลิกภาพอย่างเดียว ',
@@ -315,8 +309,8 @@ export function AssessmentSummary({ onBack, onOpenCategory }: { onBack: () => vo
           </div>
         )}
         <div className="mt-4 rounded-2xl bg-lemon-soft/70 px-4 py-3">
-          <div className="text-[11px] font-bold">{t(L('ข้อจำกัดของคำแนะนำนี้', 'Limits of these suggestions'))}</div>
-          <ul className="mt-1 list-disc pl-4 text-[11px] leading-relaxed text-black/70 space-y-0.5">
+          <div className="text-read font-bold">{t(L('ข้อจำกัดของคำแนะนำนี้', 'Limits of these suggestions'))}</div>
+          <ul className="mt-1 list-disc pl-4 text-read leading-relaxed text-black/70 space-y-0.5">
             {recommendations.limitations.map((line) => (
               <li key={line.en}>{t(line)}</li>
             ))}
@@ -325,16 +319,16 @@ export function AssessmentSummary({ onBack, onOpenCategory }: { onBack: () => vo
       </div>
 
       <div className="mt-6 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
-        <button type="button" onClick={onBack} className="inline-flex items-center gap-1 text-xs font-semibold text-muted hover:text-ink py-2">
+        <button type="button" onClick={onBack} className="inline-flex items-center gap-1 text-ui font-semibold text-muted hover:text-ink py-2">
           <ArrowLeft size={24} aria-hidden="true" /> {t(L('กลับไปแก้คำตอบ', 'Back to edit answers'))}
         </button>
-        <Link to="/dashboard" className="inline-flex items-center justify-center gap-2 rounded-full bg-ink text-white px-5 py-3.5 text-xs font-bold hover:-translate-y-0.5 transition">
+        <Link to="/dashboard" className="inline-flex items-center justify-center gap-2 rounded-full bg-ink text-white px-5 py-3.5 text-ui font-bold hover:-translate-y-0.5 transition">
           {t(L('เปิด Dashboard ของฉัน', 'Open my dashboard'))} <ArrowRight size={24} aria-hidden="true" />
         </Link>
       </div>
 
       {/* References and credits */}
-      <details className="mt-8 rounded-2xl border border-black/10 bg-white/70 p-4 text-[11px] leading-relaxed text-muted">
+      <details className="mt-8 rounded-2xl border border-black/10 bg-white/70 p-4 text-read text-muted">
         <summary className="cursor-pointer font-bold text-ink">{t(L('แหล่งอ้างอิงและเครดิต', 'References and credits'))}</summary>
         <ul className="mt-3 space-y-2 list-disc pl-4">
           <li>

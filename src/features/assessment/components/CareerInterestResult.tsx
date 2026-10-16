@@ -35,7 +35,7 @@ function Hexagon({ profile, top }: { profile: RiasecProfile; top: string[] }) {
         const label = vertex(index, 122)
         const highlighted = top.includes(type)
         return (
-          <text key={type} x={label.x} y={label.y + 4} textAnchor="middle" className={`text-[11px] ${highlighted ? 'fill-ink font-bold' : 'fill-muted'}`}>
+          <text key={type} x={label.x} y={label.y + 4} textAnchor="middle" className={`text-[16px] ${highlighted ? 'fill-ink font-bold' : 'fill-muted'}`}>
             {type} · {profile[type]}
           </text>
         )
@@ -59,7 +59,7 @@ export function CareerInterestResult({ result, onReview }: ResultViewProps) {
         {reading.flat ? (
           <>
             <h3 className="section-title text-2xl font-extrabold mt-1">{t(L('ความสนใจของคุณยังไม่ชัด — และนั่นไม่เป็นไรเลย', 'Your interests are not clear yet — and that is fine'))}</h3>
-            <p className="text-xs text-black/65 mt-2 max-w-2xl">
+            <p className="text-read text-black/65 mt-2 max-w-2xl">
               {t({
                 th: `คะแนนทั้ง 6 แบบใกล้กันมาก (ห่างกันแค่ ${reading.spread} คะแนน) ลองทำ Micro-Action เล็ก ๆ ในแบบที่ไม่เคยลอง แล้วกลับมาตอบใหม่ จะช่วยให้เห็นทิศทางชัดขึ้น`,
                 en: `All six scores are very close (only ${reading.spread} points apart). Try a small Micro-Action in an area you have not explored, then answer again to see a clearer direction.`,
@@ -72,7 +72,7 @@ export function CareerInterestResult({ result, onReview }: ResultViewProps) {
               {t(L('Holland Code ของคุณ: ', 'Your Holland code: '))}
               <span className="tracking-[.12em]">{reading.hollandCode}</span>
             </h3>
-            <p className="text-xs text-black/65 mt-2 max-w-2xl">
+            <p className="text-read text-black/65 mt-2 max-w-2xl">
               {t({
                 th: `สามแบบที่คุณสนใจมากที่สุดคือ ${reading.top.map((type) => riasecCopy[type].name.th).join(' · ')} ความสนใจช่วยชี้ทางว่าควรลองสำรวจอะไร ไม่ได้ทำนายว่าคุณจะประสบความสำเร็จแค่ไหน`,
                 en: `Your three strongest interests are ${reading.top.map((type) => riasecCopy[type].english).join(' · ')}. Interests point to what is worth exploring; they do not predict how successful you will be.`,
@@ -109,9 +109,9 @@ export function CareerInterestResult({ result, onReview }: ResultViewProps) {
             const copy = riasecCopy[type]
             const isTop = !reading.flat && reading.top.includes(type)
             return (
-              <li key={type} className={`rounded-xl p-3 text-[11px] leading-relaxed ${isTop ? 'bg-lemon-soft border border-ink' : 'border border-black/10'}`}>
+              <li key={type} className={`rounded-xl p-3 text-read leading-relaxed ${isTop ? 'bg-lemon-soft border border-ink' : 'border border-black/10'}`}>
                 <div className="flex items-baseline justify-between gap-3">
-                  <span className="font-bold text-xs">
+                  <span className="font-bold text-read">
                     {type} — {typeName(type)}
                   </span>
                   <span className="section-title font-extrabold">{profile[type]}</span>
@@ -127,7 +127,7 @@ export function CareerInterestResult({ result, onReview }: ResultViewProps) {
         </ul>
       </div>
 
-      <p className="border-t border-black/10 px-5 sm:px-6 py-4 text-[10px] leading-relaxed text-muted">
+      <p className="border-t border-black/10 px-5 sm:px-6 py-4 text-read text-muted">
         {t(
           L(
             'กรอบแนวคิด Holland RIASEC (Holland, 1997) · รูปแบบแบบสำรวจ 8 กิจกรรมต่อแบบอ้างอิง Armstrong, Allison & Rounds (2008) ส่วนข้อกิจกรรมทั้งหมดเขียนขึ้นใหม่โดย Who Am I? และยังอยู่ระหว่างตรวจสอบคุณภาพ · ความสนใจที่ตรงกับงานสัมพันธ์กับผลงานและความพึงพอใจในระดับเล็กถึงปานกลาง จึงใช้เพื่อชี้ทาง ไม่ใช่ทำนายอนาคต',

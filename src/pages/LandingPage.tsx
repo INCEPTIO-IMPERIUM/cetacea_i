@@ -92,10 +92,10 @@ export function LandingPage() {
           </nav>
           <div className="flex items-center gap-2">
             <LanguageToggle />
-            <Link to="/dashboard" className="hidden lg:inline-flex items-center gap-2 rounded-full px-4 py-3 text-xs font-bold hover:bg-white transition">
+            <Link to="/dashboard" className="hidden lg:inline-flex items-center gap-2 rounded-full px-4 py-3 text-ui font-bold hover:bg-white transition">
               <LayoutDashboard size={24} aria-hidden="true" /> {t(L('เปิดพื้นที่ของฉัน', 'Open my space'))}
             </Link>
-            <Link to="/assessment" className="hidden sm:inline-flex items-center gap-2 rounded-full bg-ink text-white px-4 sm:px-5 py-3 text-xs font-bold hover:-translate-y-0.5 transition">
+            <Link to="/assessment" className="hidden sm:inline-flex items-center gap-2 rounded-full bg-ink text-white px-4 sm:px-5 py-3 text-ui font-bold hover:-translate-y-0.5 transition">
               {t(L('หาทิศทางของฉัน', 'Find my direction'))} <ArrowUpRight size={24} aria-hidden="true" />
             </Link>
           </div>
@@ -107,7 +107,7 @@ export function LandingPage() {
         <section className={`${container} pt-8 sm:pt-12 lg:pt-16 pb-12`}>
           <div className="grid lg:grid-cols-[minmax(0,1.05fr)_minmax(410px,.95fr)] gap-7 lg:gap-12 items-center">
             <div className="py-3 sm:py-8">
-              <div className="inline-flex items-center gap-2 rounded-full bg-white border border-black/10 px-3.5 py-2 text-[10px] font-bold uppercase tracking-[.12em]">
+              <div className="inline-flex items-center gap-2 rounded-full bg-white border border-black/10 px-3.5 py-2 text-ui font-bold uppercase tracking-[.12em]">
                 <span className="w-2 h-2 bg-[#8EA88D] rounded-full" /> {t(L('พื้นที่เล็ก ๆ ให้ค่อย ๆ คิด', 'A little space to figure things out'))}
               </div>
               <h1 className="display text-[45px] sm:text-[60px] lg:text-[72px] xl:text-[78px] font-extrabold leading-[1.05] mt-6 max-w-[760px]">
@@ -137,7 +137,7 @@ export function LandingPage() {
                   {t(L('สำรวจเข็มทิศ', 'Explore the compass'))} <Compass size={24} aria-hidden="true" />
                 </Link>
               </div>
-              <div className="flex flex-wrap items-center gap-x-5 gap-y-2 mt-6 text-[11px] text-muted">
+              <div className="flex flex-wrap items-center gap-x-5 gap-y-2 mt-6 text-ui text-muted">
                 <span className="inline-flex items-center gap-1.5">
                   <Clock3 size={24} aria-hidden="true" /> {t(L('4 หมวดสั้น ๆ', '4 short sections'))}
                 </span>
@@ -158,13 +158,13 @@ export function LandingPage() {
         <section id="how-it-works" className="bg-white border-y border-black/10 py-14 sm:py-20">
           <div className={container}>
             <div className="max-w-2xl reveal">
-              <div className="text-[10px] uppercase tracking-[.16em] font-extrabold text-accent">{t(L('ใช้งานอย่างไร', 'How it works'))}</div>
+              <div className="text-ui uppercase tracking-[.16em] font-extrabold text-accent">{t(L('ใช้งานอย่างไร', 'How it works'))}</div>
               <h2 className="display text-3xl sm:text-5xl font-extrabold mt-3">
                 {t(L('ไม่ใช่คำตัดสิน', 'Not a verdict.'))}
                 <br />
                 {t(L('แต่เป็นจุดเริ่มต้น', 'A starting point.'))}
               </h2>
-              <p className="text-sm sm:text-base text-muted leading-relaxed sm:leading-6 mt-4">
+              <p className="text-read text-muted leading-relaxed mt-4">
                 {t(
                   L(
                     'คำตอบของคุณคือเบาะแส ไม่ใช่ป้าย เรารวมเบาะแสเหล่านั้นให้คุณเห็นความเป็นไปได้ ลองทำอะไรเล็ก ๆ และตัดสินใจเองว่าอะไรใช่สำหรับคุณ',
@@ -179,9 +179,9 @@ export function LandingPage() {
                   <div className={`w-12 h-12 grid place-items-center rounded-2xl ${step.iconTone} border border-black/10`}>
                     <Icon size={24} aria-hidden="true" />
                   </div>
-                  <div className="text-[10px] uppercase tracking-widest text-muted font-bold mt-6">{t(step.label)}</div>
+                  <div className="text-ui uppercase tracking-widest text-muted font-bold mt-6">{t(step.label)}</div>
                   <h3 className="display font-extrabold text-xl mt-2">{t(step.title)}</h3>
-                  <p className="text-sm text-muted leading-relaxed mt-3">{t(step.copy)}</p>
+                  <p className="text-read text-muted leading-relaxed mt-3">{t(step.copy)}</p>
                 </article>
               ))}
             </div>
@@ -192,13 +192,13 @@ export function LandingPage() {
         <section id="your-journey" className={`${container} py-14 sm:py-20`}>
           <div className="grid lg:grid-cols-[.9fr_1.1fr] gap-8 lg:gap-14 items-start">
             <div className="reveal">
-              <div className="text-[10px] uppercase tracking-[.16em] font-extrabold text-accent">{t(L('เริ่มจากตรงที่คุณอยู่', 'Meet yourself where you are'))}</div>
+              <div className="text-ui uppercase tracking-[.16em] font-extrabold text-accent">{t(L('เริ่มจากตรงที่คุณอยู่', 'Meet yourself where you are'))}</div>
               <h2 className="display text-3xl sm:text-5xl font-extrabold mt-3">
                 {t(L('วันนี้คุณอยู่', 'Where are you'))}
                 <br />
                 {t(L('ตรงไหน', 'today?'))}
               </h2>
-              <p className="text-sm sm:text-base text-muted leading-relaxed sm:leading-6 mt-4 max-w-lg">
+              <p className="text-read text-muted leading-relaxed mt-4 max-w-lg">
                 {t(
                   L(
                     'ไม่ต้องมีแผนที่สมบูรณ์แบบก็เริ่มได้ เลือกความรู้สึกที่ใกล้กับคุณที่สุด แล้วเราจะช่วยเลือกจุดเริ่มต้นที่สบายใจ',
@@ -206,7 +206,7 @@ export function LandingPage() {
                   ),
                 )}
               </p>
-              <div className="mt-6 flex items-center gap-2 text-[11px] text-muted">
+              <div className="mt-6 flex items-center gap-2 text-ui text-muted">
                 <ShieldCheck size={24} aria-hidden="true" /> {t(L('ข้อมูลเก็บในเครื่องนี้ · ไม่ต้องสมัครบัญชี', 'Private local demo · no account needed'))}
               </div>
             </div>
@@ -232,14 +232,14 @@ export function LandingPage() {
                 />
               </div>
               <div className="mt-5 rounded-2xl bg-paper p-5 sm:p-6" aria-live="polite">
-                <div className="text-[10px] uppercase tracking-[.14em] text-muted font-extrabold">{t(current.eyebrow)}</div>
+                <div className="text-ui uppercase tracking-[.14em] text-muted font-extrabold">{t(current.eyebrow)}</div>
                 <h3 className="display font-extrabold text-2xl mt-2">{t(current.title)}</h3>
-                <p className="text-sm text-muted leading-relaxed mt-3">{t(current.copy)}</p>
+                <p className="text-read text-muted leading-relaxed mt-3">{t(current.copy)}</p>
                 <div className="mt-5 flex flex-col sm:flex-row gap-3">
-                  <Link to={`/assessment?mode=${mood}`} className="inline-flex items-center justify-center gap-2 rounded-full bg-ink text-white px-5 py-3.5 text-xs font-bold">
+                  <Link to={`/assessment?mode=${mood}`} className="inline-flex items-center justify-center gap-2 rounded-full bg-ink text-white px-5 py-3.5 text-ui font-bold">
                     {t(current.cta)} <ArrowRight size={24} aria-hidden="true" />
                   </Link>
-                  <Link to="/dashboard" className="inline-flex items-center justify-center gap-2 rounded-full bg-white border border-black/10 px-5 py-3.5 text-xs font-bold hover:border-black/40 transition">
+                  <Link to="/dashboard" className="inline-flex items-center justify-center gap-2 rounded-full bg-white border border-black/10 px-5 py-3.5 text-ui font-bold hover:border-black/40 transition">
                     {t(L('สำรวจเส้นทางของฉัน', 'Explore my paths'))} <Waypoints size={24} aria-hidden="true" />
                   </Link>
                 </div>
@@ -252,12 +252,12 @@ export function LandingPage() {
         <section id="why-compass" className="bg-lemon border-y-[1.5px] border-ink py-14 sm:py-20">
           <div className={`${container} grid md:grid-cols-[1fr_auto] items-center gap-8`}>
             <div className="max-w-3xl reveal">
-              <div className="text-[10px] uppercase tracking-[.16em] font-extrabold text-black/55">{t(L('ความเชื่อเบื้องหลัง Who Am I?', 'The belief behind Who Am I?'))}</div>
+              <div className="text-ui uppercase tracking-[.16em] font-extrabold text-black/55">{t(L('ความเชื่อเบื้องหลัง Who Am I?', 'The belief behind Who Am I?'))}</div>
               <h2 className="display text-3xl sm:text-5xl font-extrabold mt-3">
                 {t(L('เข็มทิศเดินแทนคุณไม่ได้', "A compass can't walk for you."))}
                 <br className="hidden sm:block" /> {t(L('แต่ช่วยให้คุณเลือกทิศทางได้', 'But it can help you choose a direction.'))}
               </h2>
-              <p className="text-sm sm:text-base text-black/65 leading-relaxed sm:leading-6 mt-5 max-w-2xl">
+              <p className="text-read text-black/65 leading-relaxed mt-5 max-w-2xl">
                 {t(
                   L(
                     'เราจะไม่บอกว่าคุณต้องเป็นอะไร แต่จะช่วยให้คุณเห็นสิ่งที่สำคัญ สำรวจเส้นทางที่เป็นไปได้ และก้าวไปหนึ่งก้าวที่เป็นของคุณเอง',
@@ -268,7 +268,7 @@ export function LandingPage() {
             </div>
             <div className="reveal flex flex-col items-center justify-center rounded-full w-36 h-36 sm:w-44 sm:h-44 bg-white border-[1.5px] border-ink shadow-panel">
               <Compass size={24} strokeWidth={1.5} aria-hidden="true" />
-              <span className="text-[10px] font-extrabold mt-2 tracking-[.14em]">{t(L('ทางของคุณ', 'YOUR WAY'))}</span>
+              <span className="text-ui font-extrabold mt-2 tracking-[.14em]">{t(L('ทางของคุณ', 'YOUR WAY'))}</span>
             </div>
           </div>
         </section>
@@ -277,13 +277,13 @@ export function LandingPage() {
         <section className={`${container} py-14 sm:py-20`}>
           <div className="rounded-[28px] bg-white border-[1.5px] border-ink shadow-panel p-6 sm:p-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 reveal">
             <div className="max-w-2xl">
-              <div className="text-[10px] uppercase tracking-[.16em] font-extrabold text-accent">{t(L('ไม่ต้องมีแผนที่สมบูรณ์แบบ', 'No perfect plan required'))}</div>
+              <div className="text-ui uppercase tracking-[.16em] font-extrabold text-accent">{t(L('ไม่ต้องมีแผนที่สมบูรณ์แบบ', 'No perfect plan required'))}</div>
               <h2 className="display text-3xl sm:text-4xl font-extrabold mt-3">
                 {t(L('คุณไม่ได้ช้ากว่าใคร', 'You are not behind.'))}
                 <br />
                 {t(L('คุณกำลังค้นพบ', 'You are discovering.'))}
               </h2>
-              <p className="text-sm text-muted leading-relaxed mt-4">
+              <p className="text-read text-muted leading-relaxed mt-4">
                 {t(
                   L(
                     'ใช้เวลาสักครู่ทำความเข้าใจเบาะแสของคุณ จะกลับมา เปลี่ยนใจ หรือเริ่มใหม่เมื่อไรก็ได้',
@@ -300,7 +300,7 @@ export function LandingPage() {
       </main>
 
       <footer className="border-t border-black/10 bg-white">
-        <div className={`${container} py-7 flex flex-col sm:flex-row gap-2 sm:items-center justify-between text-[10px] text-muted`}>
+        <div className={`${container} py-7 flex flex-col sm:flex-row gap-2 sm:items-center justify-between text-ui text-muted`}>
           <span>{t(L('© 2026 Who Am I? · เข็มทิศส่วนตัวของคุณ', '© 2026 Who Am I? · Your personal compass.'))}</span>
           <span>
             {t(L('สำรวจอย่างอ่อนโยน เติบโตตามจังหวะของคุณ', 'Explore gently. Grow at your own pace.'))}{' '}
@@ -331,7 +331,7 @@ function MoodButton({ mood, current, onSelect, icon, iconTone, title, copy }: Mo
         {icon}
       </span>
       <span className="block font-extrabold">{title}</span>
-      <span className="block text-xs text-black/60 leading-relaxed mt-2">{copy}</span>
+      <span className="block text-read text-black/60 leading-relaxed mt-2">{copy}</span>
     </button>
   )
 }
@@ -342,7 +342,7 @@ function HeroIllustration() {
   return (
     <div className="relative min-h-[450px] sm:min-h-[540px] rounded-[30px] border-[1.5px] border-ink bg-white overflow-hidden shadow-panel">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_24%,rgba(255,246,107,.36),transparent_26%),radial-gradient(circle_at_80%_78%,rgba(201,178,255,.34),transparent_32%)]" />
-      <div className="absolute left-5 top-5 z-10 rounded-full bg-white/85 border border-black/10 px-3 py-2 text-[10px] font-bold">
+      <div className="absolute left-5 top-5 z-10 rounded-full bg-white/85 border border-black/10 px-3 py-2 text-ui font-bold">
         <span className="inline-block w-2 h-2 rounded-full bg-lemon border border-black mr-1.5" /> {t(L('เส้นทางของคุณเปลี่ยนได้เสมอ', 'Your journey is allowed to change'))}
       </div>
       <svg className="absolute inset-0 w-full h-full" viewBox="0 0 600 600" preserveAspectRatio="xMidYMid meet" fill="none" aria-hidden="true">
@@ -356,21 +356,21 @@ function HeroIllustration() {
         <path d="M130 150l4 9 9 4-9 4-4 9-4-9-9-4 9-4 4-9Z" fill="#FFF66B" stroke="#171717" strokeWidth="1.5" className="sparkle" />
       </svg>
       <div className={`${note} left-[7%] top-[23%] sm:left-[10%] bg-lemon rotate-[-5deg]`}>
-        <div className="text-[9px] uppercase font-bold tracking-[.1em] text-black/55">{t(L('เบาะแส', 'A clue'))}</div>
+        <div className="text-ui uppercase font-bold tracking-[.1em] text-black/55">{t(L('เบาะแส', 'A clue'))}</div>
         <div className="font-bold text-sm mt-0.5">{t(L('อะไรให้พลังกับฉัน?', 'What gives me energy?'))}</div>
       </div>
       <div className={`${note} right-[5%] top-[42%] sm:right-[7%] bg-lilac rotate-[4deg]`}>
-        <div className="text-[9px] uppercase font-bold tracking-[.1em] text-black/55">{t(L('ความเป็นไปได้', 'A possibility'))}</div>
+        <div className="text-ui uppercase font-bold tracking-[.1em] text-black/55">{t(L('ความเป็นไปได้', 'A possibility'))}</div>
         <div className="font-bold text-sm mt-0.5">{t(L('ฉันลองทำอะไรได้บ้าง?', 'What could I try?'))}</div>
       </div>
       <div className={`${note} bottom-[7%] left-[8%] sm:left-[12%] bg-mint rotate-[2deg]`}>
-        <div className="text-[9px] uppercase font-bold tracking-[.1em] text-black/55">{t(L('ก้าวต่อไป', 'A next step'))}</div>
+        <div className="text-ui uppercase font-bold tracking-[.1em] text-black/55">{t(L('ก้าวต่อไป', 'A next step'))}</div>
         <div className="font-bold text-sm mt-0.5">{t(L('การทดลองเล็ก ๆ หนึ่งอย่าง', 'One small experiment'))}</div>
       </div>
       <div className="absolute z-20 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[150px] sm:w-[180px]" role="img" aria-label={t(L('มาสคอตเข็มทิศสีเหลืองที่เป็นมิตร', 'Friendly yellow compass mascot'))}>
         <Mascot className="float w-full h-auto drop-shadow-[0_7px_0_rgba(23,23,23,.1)]" />
       </div>
-      <div className="absolute z-10 right-5 bottom-5 flex items-center gap-2 bg-white/90 border border-black/10 rounded-full px-3 py-2 text-[10px] font-bold">
+      <div className="absolute z-10 right-5 bottom-5 flex items-center gap-2 bg-white/90 border border-black/10 rounded-full px-3 py-2 text-ui font-bold">
         <Compass size={24} aria-hidden="true" /> {t(L('คุณเป็นคนเลือกทิศทาง', 'You choose the direction'))}
       </div>
     </div>

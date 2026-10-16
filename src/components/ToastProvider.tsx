@@ -22,7 +22,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
       <div
         role="status"
         aria-live="polite"
-        className={`toast fixed bottom-5 left-1/2 z-[100] rounded-full bg-ink text-white px-5 py-3 shadow-xl text-xs font-semibold flex items-center gap-2 ${visible ? 'show' : ''}`}
+        className={`toast fixed bottom-5 left-1/2 z-[100] rounded-full bg-ink text-white px-5 py-3 shadow-xl text-ui font-semibold flex items-center gap-2 ${visible ? 'show' : ''}`}
       >
         <CircleCheck size={24} className="text-lemon" aria-hidden="true" />
         <span>{message}</span>

@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import { CSS2DObject, CSS2DRenderer } from 'three/examples/jsm/renderers/CSS2DRenderer.js'
 import { careers, type CareerId, type NodeId } from '../../data/careers'
 import type { Lang } from '../../i18n/language'
 
@@ -27,11 +28,11 @@ type Point = [number, number, number]
 
 /** Five fixed places around "you"; the careers shown in them come from the caller. */
 const slots: Omit<CardSpec, 'name' | 'subtitle' | 'icon'>[] = [
-  { color: '#FFF66B', size: [3.5, 1.18], position: [-4.15, 2.0, -1.25] },
-  { color: '#EDE5FF', size: [3.5, 1.18], position: [4.1, 2.0, 1.75] },
-  { color: '#DDF1DB', size: [3.75, 1.18], position: [-4.2, -2.15, 1.65] },
-  { color: '#F5DED1', size: [3.55, 1.18], position: [4.1, -1.95, -1.65] },
-  { color: '#FFFFFF', size: [3.0, 0.96], position: [1.85, -3.28, 2.8] },
+  { color: '#FFF66B', size: [3.9, 1.45], position: [-4.15, 2.0, -1.25] },
+  { color: '#EDE5FF', size: [3.9, 1.45], position: [4.1, 2.0, 1.75] },
+  { color: '#DDF1DB', size: [3.9, 1.45], position: [-4.2, -2.15, 1.65] },
+  { color: '#F5DED1', size: [3.9, 1.45], position: [4.1, -1.95, -1.65] },
+  { color: '#FFFFFF', size: [3.5, 1.3], position: [1.85, -3.4, 2.8] },
 ]
 export const MAX_ROADMAP_CAREERS = slots.length
 
@@ -67,6 +68,26 @@ export function createCareerScene(canvas: HTMLCanvasElement, onSelect: (id: Node
     console.warn('3D roadmap unavailable; showing the accessible career list instead.', error)
     return null
   }
+  /*
+   * Card names are real HTML laid over the canvas (CSS2DRenderer), not text painted into the card
+   * texture: painted text shrinks with the camera and fell to about 8px, while these stay at the
+   * interface's 14px at every zoom level.
+   */
+  const labelRenderer = new CSS2DRenderer()
+  labelRenderer.domElement.className = 'roadmap-labels'
+  labelRenderer.domElement.setAttribute('aria-hidden', 'true')
+  canvas.parentElement?.appendChild(labelRenderer.domElement)
+  const htmlLabel = (title: string, subtitle: string, extraClass = '') => {
+    const element = document.createElement('div')
+    element.className = `roadmap-label ${extraClass}`.trim()
+    const strong = document.createElement('strong')
+    strong.textContent = title
+    const small = document.createElement('span')
+    small.textContent = subtitle
+    element.append(strong, small)
+    return element
+  }
+
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.8))
   renderer.setClearColor(0x000000, 0)
   renderer.outputColorSpace = THREE.SRGBColorSpace
@@ -85,6 +106,7 @@ export function createCareerScene(canvas: HTMLCanvasElement, onSelect: (id: Node
     frame = requestAnimationFrame(() => {
       frame = 0
       renderer.render(scene, camera)
+      labelRenderer.render(scene, camera)
     })
   }
   const updateCamera = () => {
@@ -174,6 +196,7 @@ export function createCareerScene(canvas: HTMLCanvasElement, onSelect: (id: Node
   }
 
   function cardTexture(title: string, subtitle: string, icon: string, central = false) {
+    // Words are drawn only for the central coin's fallback; cards carry HTML labels instead.
     const texCanvas = document.createElement('canvas')
     texCanvas.width = 900
     texCanvas.height = 300
@@ -199,13 +222,6 @@ export function createCareerScene(canvas: HTMLCanvasElement, onSelect: (id: Node
       ctx.textAlign = 'center'
       ctx.textBaseline = 'middle'
       ctx.fillText(icon, 88, 106)
-      ctx.textAlign = 'left'
-      ctx.textBaseline = 'alphabetic'
-      ctx.font = '800 48px Inter, "IBM Plex Sans Thai", sans-serif'
-      ctx.fillText(title, 155, 112)
-      ctx.fillStyle = 'rgba(23,23,23,.66)'
-      ctx.font = '500 35px Inter, "IBM Plex Sans Thai", sans-serif'
-      ctx.fillText(subtitle, 70, 207)
     }
     const texture = new THREE.CanvasTexture(texCanvas)
     texture.colorSpace = THREE.SRGBColorSpace
@@ -236,9 +252,8 @@ export function createCareerScene(canvas: HTMLCanvasElement, onSelect: (id: Node
       group.add(eye)
     }
     const smile = makeTube([[-0.23, -0.06, 0.282], [-0.12, -0.16, 0.29], [0, -0.19, 0.29], [0.12, -0.16, 0.29], [0.23, -0.06, 0.282]], 0.025, eyeMaterial, 28, 8)
-    const label = new THREE.Sprite(new THREE.SpriteMaterial({ map: cardTexture(lang === 'th' ? 'คุณ' : 'YOU', lang === 'th' ? 'เบาะแสของคุณ' : 'your clues', '', true), transparent: true, depthWrite: false }))
-    label.scale.set(2.15, 0.72, 1)
-    label.position.set(0, -1.15, 0.1)
+    const label = new CSS2DObject(htmlLabel(lang === 'th' ? 'คุณ' : 'YOU', lang === 'th' ? 'เบาะแสของคุณ' : 'your clues', 'roadmap-label-you'))
+    label.position.set(0, -1.35, 0.1)
     group.add(outer, face, smile, label)
     nodeGroup.add(group)
     hitTargets.push(outer)
@@ -269,10 +284,14 @@ export function createCareerScene(canvas: HTMLCanvasElement, onSelect: (id: Node
     )
     front.position.z = 0.205
     front.userData.nodeId = id
-    group.add(base, edge, front)
+    const labelElement = htmlLabel(spec.name, spec.subtitle)
+    const label = new CSS2DObject(labelElement)
+    // Centre of the area right of the icon (the icon sits in the card's left fifth).
+    label.position.set(width * 0.1, 0, 0.3)
+    group.add(base, edge, front, label)
     nodeGroup.add(group)
     hitTargets.push(base)
-    return { id, group, baseMaterial, edgeMaterial }
+    return { id, group, baseMaterial, edgeMaterial, labelElement }
   })
 
   /* ---------- XYZ axes ---------- */
@@ -308,17 +327,17 @@ export function createCareerScene(canvas: HTMLCanvasElement, onSelect: (id: Node
     const texture = new THREE.CanvasTexture(c)
     texture.colorSpace = THREE.SRGBColorSpace
     const sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: texture, transparent: true, depthTest: false }))
-    sprite.scale.set(0.34, 0.34, 1)
+    sprite.scale.set(0.75, 0.75, 1)
     sprite.position.set(...position)
     axisGroup.add(sprite)
   }
   axisGroup.position.set(-5.35, -2.78, 1.25)
   axisLine([1.15, 0, 0], '#171717')
-  axisLabel('X', '#FFF66B', [1.38, 0, 0])
+  axisLabel('X', '#FFF66B', [1.6, 0, 0])
   axisLine([0, 1.15, 0], '#8B76CF')
-  axisLabel('Y', '#C9B2FF', [0, 1.38, 0])
+  axisLabel('Y', '#C9B2FF', [0, 1.6, 0])
   axisLine([0, 0, 1.15], '#D5C64B')
-  axisLabel('Z', '#DDF1DB', [0, 0, 1.38])
+  axisLabel('Z', '#DDF1DB', [0, 0, 1.6])
 
   /* ---------- Selection ---------- */
   function setActive(id: NodeId) {
@@ -337,6 +356,7 @@ export function createCareerScene(canvas: HTMLCanvasElement, onSelect: (id: Node
       card.baseMaterial.emissive.set(active ? '#161616' : '#000000')
       card.baseMaterial.emissiveIntensity = active ? 0.055 : 0
       card.group.scale.setScalar(active ? 1.035 : 1)
+      card.labelElement.classList.toggle('active', active)
     }
     requestRender()
   }
@@ -411,6 +431,7 @@ export function createCareerScene(canvas: HTMLCanvasElement, onSelect: (id: Node
     const rect = canvas.getBoundingClientRect()
     if (!rect.width || !rect.height) return
     renderer.setSize(rect.width, rect.height, false)
+    labelRenderer.setSize(rect.width, rect.height)
     camera.aspect = rect.width / rect.height
     camera.updateProjectionMatrix()
     requestRender()
@@ -443,6 +464,7 @@ export function createCareerScene(canvas: HTMLCanvasElement, onSelect: (id: Node
         }
       })
       renderer.dispose()
+      labelRenderer.domElement.remove()
     },
   }
 }

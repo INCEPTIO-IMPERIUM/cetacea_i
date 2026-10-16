@@ -51,14 +51,14 @@ export function ReflectionModal({ onClose, onSave }: ReflectionModalProps) {
           <div>
             <div className="eyebrow">{t(L('พื้นที่ส่วนตัวของคุณ', 'Your private space'))}</div>
             <h2 id="modalTitle" className="section-title text-2xl font-extrabold mt-1">{t(L('สะท้อนคิดสั้น ๆ', 'A quick reflection'))}</h2>
-            <p className="text-xs text-muted mt-1">{t(L('เก็บเบาะแสจากการสำรวจวันนี้', "Capture a clue from today's exploration."))}</p>
+            <p className="text-read text-muted mt-1">{t(L('เก็บเบาะแสจากการสำรวจวันนี้', "Capture a clue from today's exploration."))}</p>
           </div>
           <button type="button" onClick={onClose} className="w-9 h-9 rounded-xl bg-paper grid place-items-center hover:bg-lemon" aria-label={t(L('ปิดหน้าต่าง', 'Close dialog'))}>
             <X size={24} aria-hidden="true" />
           </button>
         </div>
         <form className="p-5 sm:p-6" onSubmit={handleSubmit}>
-          <label htmlFor="reflectionText" className="block text-xs font-bold mb-2">{t(L('คุณสังเกตเห็นอะไร?', 'What did you notice?'))}</label>
+          <label htmlFor="reflectionText" className="block text-read font-bold mb-2">{t(L('คุณสังเกตเห็นอะไร?', 'What did you notice?'))}</label>
           <textarea
             ref={textareaRef}
             id="reflectionText"
@@ -67,21 +67,21 @@ export function ReflectionModal({ onClose, onSave }: ReflectionModalProps) {
             value={text}
             onChange={(event) => setText(event.target.value)}
             placeholder={t(L('ฉันสังเกตว่าฉันสนุกกับ... / ฉันรู้สึกอยากรู้เมื่อ... / ครั้งหน้าฉันอยากลอง...', 'I noticed that I enjoyed... / I felt curious when... / Next time, I want to try...'))}
-            className="w-full rounded-2xl border border-black/15 bg-paper px-4 py-3 text-sm outline-none focus:border-black resize-y"
+            className="w-full rounded-2xl border border-black/15 bg-paper px-4 py-3 text-read outline-none focus:border-black resize-y"
             required
           />
           <div className="flex items-center justify-between mt-2">
-            <span className="text-[10px] text-muted">{t(L('สำหรับคุณคนเดียว บันทึกไว้ในเครื่องนี้เท่านั้น', 'Just for you. Saved only on this device.'))}</span>
-            <span className="text-[10px] text-muted">{text.length} / {MAX_LENGTH}</span>
+            <span className="text-ui text-muted">{t(L('สำหรับคุณคนเดียว บันทึกไว้ในเครื่องนี้เท่านั้น', 'Just for you. Saved only on this device.'))}</span>
+            <span className="text-ui text-muted">{text.length} / {MAX_LENGTH}</span>
           </div>
           <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-2 mt-5">
-            <button type="button" onClick={onClose} className="rounded-full border border-black/15 px-5 py-3 text-xs font-bold hover:bg-paper">
+            <button type="button" onClick={onClose} className="rounded-full border border-black/15 px-5 py-3 text-ui font-bold hover:bg-paper">
               {t(L('ไว้ทีหลัง', 'Maybe later'))}
             </button>
             <button
               type="submit"
               disabled={!text.trim()}
-              className="rounded-full bg-ink text-white px-5 py-3 text-xs font-bold hover:bg-black/80 disabled:opacity-40"
+              className="rounded-full bg-ink text-white px-5 py-3 text-ui font-bold hover:bg-black/80 disabled:opacity-40"
             >
               {t(L('บันทึก', 'Save reflection'))} <Check size={24} className="inline ml-1" aria-hidden="true" />
             </button>

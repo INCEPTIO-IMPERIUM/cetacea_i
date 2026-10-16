@@ -12,16 +12,18 @@ interface OverviewSectionProps {
   experimentsTotal: number
   /** Top career from the completed assessment, if any. */
   suggestedCareer: CareerId | null
+  /** Estimated minutes left across unfinished discovery-form sections. */
+  minutesLeft: number
 }
 
-export function OverviewSection({ interestsSelected, interestsTotal, skillCount, experimentsDone, experimentsTotal, suggestedCareer }: OverviewSectionProps) {
+export function OverviewSection({ interestsSelected, interestsTotal, skillCount, experimentsDone, experimentsTotal, suggestedCareer, minutesLeft }: OverviewSectionProps) {
   const t = useT()
   return (
     <section id="overview" className="pt-7 sm:pt-9 scroll-mt-28" aria-label={t(L('ภาพรวม', 'Overview'))}>
       <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1.5fr)_minmax(280px,.75fr)] gap-5">
         <div className="relative overflow-hidden rounded-[25px] bg-lemon border-[1.5px] border-ink shadow-panel min-h-[255px] sm:min-h-[285px] p-6 sm:p-8 flex flex-col justify-between">
           <div className="relative z-10 max-w-[580px]">
-            <div className="inline-flex items-center gap-2 rounded-full bg-white/70 border border-black/10 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[.12em]">
+            <div className="inline-flex items-center gap-2 rounded-full bg-white/70 border border-black/10 px-3 py-1.5 text-ui font-bold uppercase tracking-[.12em]">
               <span className="w-2 h-2 rounded-full bg-[#74a875]" /> {t(L('เส้นทางของคุณ กติกาของคุณ', 'Your journey, your rules'))}
             </div>
             <h1 className="section-title text-[38px] sm:text-[50px] leading-[1.02] font-extrabold mt-5 max-w-[590px]">
@@ -29,7 +31,7 @@ export function OverviewSection({ interestsSelected, interestsTotal, skillCount,
               <br className="hidden sm:block" /> {t(L('ไม่ได้มีทางเดียว', 'a single choice'))}
               <span className="text-[#7360bf]">.</span>
             </h1>
-            <p className="text-sm sm:text-[15px] leading-relaxed mt-4 max-w-[440px] text-black/70">
+            <p className="text-read leading-relaxed mt-4 max-w-[440px] text-black/70">
               {t(
                 L(
                   'ค้นหาสิ่งที่สำคัญกับคุณ เชื่อมกับความเป็นไปได้ในโลกจริง และลองก้าวเล็ก ๆ ก่อนตัดสินใจเรื่องใหญ่',
@@ -41,12 +43,15 @@ export function OverviewSection({ interestsSelected, interestsTotal, skillCount,
           <div className="relative z-10 flex flex-wrap items-center gap-3 mt-6">
             <Link
               to="/assessment"
-              className="inline-flex items-center gap-2 rounded-full bg-ink text-white text-xs font-bold px-5 py-3 hover:-translate-y-0.5 transition shadow-[0_3px_0_rgba(23,23,23,.25)]"
+              className="inline-flex items-center gap-2 rounded-full bg-ink text-white text-ui font-bold px-5 py-3 hover:-translate-y-0.5 transition shadow-[0_3px_0_rgba(23,23,23,.25)]"
             >
               {t(suggestedCareer ? L('กลับไปดูแบบสำรวจของคุณ', 'Revisit your discovery form') : L('เริ่มแบบสำรวจค้นหาตัวเอง', 'Start your discovery form'))} <ArrowUpRight size={24} aria-hidden="true" />
             </Link>
-            <span className="text-[11px] font-medium text-black/60 flex items-center gap-1.5">
-              <Clock3 size={24} aria-hidden="true" /> {t(L('วันนี้แค่ 5 นาที', 'Just 5 minutes today'))}
+            <span className="text-ui font-medium text-black/60 flex items-center gap-1.5">
+              <Clock3 size={24} aria-hidden="true" />{' '}
+              {minutesLeft > 0
+                ? t({ th: `อีกประมาณ ${minutesLeft} นาทีจะทำแบบสำรวจครบ`, en: `About ${minutesLeft} minutes left in the discovery form` })
+                : t(L('ทำแบบสำรวจครบทุกหมวดแล้ว', 'Every discovery-form section is done'))}
             </span>
           </div>
           <div className="absolute right-[-6px] bottom-[-20px] sm:right-4 sm:bottom-0 w-[150px] sm:w-[210px] opacity-95 pointer-events-none" aria-hidden="true">
@@ -70,7 +75,7 @@ export function OverviewSection({ interestsSelected, interestsTotal, skillCount,
               <Telescope size={24} />
             </div>
           </div>
-          <p className="text-xs text-muted leading-relaxed mt-2">
+          <p className="text-read text-muted leading-relaxed mt-2">
             {suggestedCareer
               ? t({
                   th: `แบบสำรวจชี้ไปทาง${careers[suggestedCareer].name.th} — เป็นหนึ่งในหลายเส้นทาง ลองทำการทดลองเล็ก ๆ ก่อนตัดสินใจ`,
@@ -92,12 +97,12 @@ export function OverviewSection({ interestsSelected, interestsTotal, skillCount,
 function Stat({ label, value, total, caption, tone }: { label: string; value: number; total?: number; caption: string; tone: string }) {
   return (
     <div className={`rounded-2xl ${tone} p-3`}>
-      <span className="text-[10px] text-muted block">{label}</span>
+      <span className="text-ui text-muted block">{label}</span>
       <span className="section-title text-2xl font-extrabold">
         {value}
-        {total !== undefined && <span className="text-xs font-medium text-muted">/{total}</span>}
+        {total !== undefined && <span className="text-ui font-medium text-muted">/{total}</span>}
       </span>
-      <span className="text-[9px] text-muted block mt-1">{caption}</span>
+      <span className="text-ui text-muted block mt-1">{caption}</span>
     </div>
   )
 }

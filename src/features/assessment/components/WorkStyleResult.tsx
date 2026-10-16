@@ -21,10 +21,10 @@ function toScreen(warmth: number, dominance: number, scale = RADIUS / 100) {
 }
 
 const directionLabels: { id: Direction; x: number; y: number; anchor: 'middle' | 'start' | 'end' }[] = [
-  { id: 'navigator', x: CX, y: 14, anchor: 'middle' },
-  { id: 'spark', x: CX + RADIUS + 8, y: CY + 4, anchor: 'start' },
-  { id: 'harbor', x: CX, y: HEIGHT - 6, anchor: 'middle' },
-  { id: 'cartographer', x: CX - RADIUS - 8, y: CY + 4, anchor: 'end' },
+  { id: 'navigator', x: CX, y: 24, anchor: 'middle' },
+  { id: 'spark', x: CX + RADIUS + 10, y: CY + 8, anchor: 'start' },
+  { id: 'harbor', x: CX, y: HEIGHT - 10, anchor: 'middle' },
+  { id: 'cartographer', x: CX - RADIUS - 10, y: CY + 8, anchor: 'end' },
 ]
 
 const listNames = (directions: Direction[]): Localized => ({
@@ -59,13 +59,15 @@ function CompassDial({ reading }: { reading: WorkStyleReading }) {
       {/* The two measured axes run diagonally once the circle is turned. */}
       <line x1={follow.x} y1={follow.y} x2={lead.x} y2={lead.y} className="stroke-ink/40" strokeDasharray="4 4" />
       <line x1={task.x} y1={task.y} x2={warm.x} y2={warm.y} className="stroke-ink/40" strokeDasharray="4 4" />
-      <text x={lead.x + 4} y={lead.y - 4} className="fill-muted text-[9px]">{t(L('นำ', 'Lead'))}</text>
-      <text x={follow.x - 4} y={follow.y + 11} textAnchor="end" className="fill-muted text-[9px]">{t(L('ตาม', 'Follow'))}</text>
-      <text x={warm.x + 4} y={warm.y + 11} className="fill-muted text-[9px]">{t(L('อบอุ่น', 'Warm'))}</text>
-      <text x={task.x - 4} y={task.y - 4} textAnchor="end" className="fill-muted text-[9px]">{t(L('เน้นงาน', 'Task-first'))}</text>
+      <text x={lead.x + 6} y={lead.y - 6} className="fill-muted text-[19px]">{t(L('นำ', 'Lead'))}</text>
+      <text x={follow.x - 6} y={follow.y + 16} textAnchor="end" className="fill-muted text-[19px]">{t(L('ตาม', 'Follow'))}</text>
+      <text x={warm.x + 6} y={warm.y + 16} className="fill-muted text-[19px]">{t(L('อบอุ่น', 'Warm'))}</text>
+      <text x={task.x - 6} y={task.y - 6} textAnchor="end" className="fill-muted text-[19px]">{t(L('เน้นงาน', 'Task'))}</text>
+      {/* Icons only: the names are in the cards beside the dial, at a real 12px, because text inside
+          this SVG shrinks with it and would drop below 12px on a phone. */}
       {directionLabels.map(({ id, x, y, anchor }) => (
-        <text key={id} x={x} y={y} textAnchor={anchor} className={`text-[10px] ${reading.directions.includes(id) ? 'fill-ink font-bold' : 'fill-muted'}`}>
-          {DIRECTIONS[id].icon} {t(DIRECTIONS[id].name)}
+        <text key={id} x={x} y={y} textAnchor={anchor} className={`text-[24px] ${reading.directions.includes(id) ? 'opacity-100' : 'opacity-40'}`}>
+          {DIRECTIONS[id].icon}
         </text>
       ))}
       <line x1={CX} y1={CY} x2={point.x} y2={point.y} className="stroke-ink" strokeWidth={2} />
@@ -92,7 +94,7 @@ export function WorkStyleResult({ result, onReview }: ResultViewProps) {
       <div className="bg-mint p-5 sm:p-6">
         <div className="eyebrow text-black/60">{t(L('หมวด 03 · เข็มทิศการทำงาน', 'Section 03 · Work Style Compass'))}</div>
         <h3 className="section-title text-2xl font-extrabold mt-1">{t(heading)}</h3>
-        <p className="text-xs text-black/65 mt-2 max-w-2xl">
+        <p className="text-read text-black/65 mt-2 max-w-2xl">
           {t(
             L(
               'คนส่วนใหญ่ผสมหลายทิศ และขยับไปตามสถานการณ์และคนที่ทำงานด้วย ทิศหลักคือจุดที่คุณมักเริ่มต้น ไม่ใช่ขอบเขตของคุณ',
@@ -108,8 +110,8 @@ export function WorkStyleResult({ result, onReview }: ResultViewProps) {
             const direction = DIRECTIONS[id]
             const active = reading.directions.includes(id)
             return (
-              <div key={id} className={`rounded-xl p-3 text-[11px] leading-relaxed ${active ? 'bg-lemon-soft border border-ink' : 'border border-black/10'}`}>
-                <div className="font-bold text-xs">
+              <div key={id} className={`rounded-xl p-3 text-read leading-relaxed ${active ? 'bg-lemon-soft border border-ink' : 'border border-black/10'}`}>
+                <div className="font-bold text-read">
                   <span aria-hidden="true">{direction.icon}</span> {t(direction.compass)} — {t({ th: `${direction.name.th} (${direction.english})`, en: direction.english })}
                   {active && <span className="sr-only">{t(L(' (ทิศของคุณ)', ' (your direction)'))}</span>}
                 </div>
@@ -118,7 +120,7 @@ export function WorkStyleResult({ result, onReview }: ResultViewProps) {
               </div>
             )
           })}
-          <p className="text-[11px] text-muted">
+          <p className="text-read text-muted">
             {t({
               th: `ความชัดของทิศ ${reading.intensity} / 100 — ยิ่งใกล้ศูนย์กลาง ยิ่งปรับตัวได้หลายแบบ`,
               en: `Direction strength ${reading.intensity} / 100 — the closer to the centre, the more ways you adapt.`,
@@ -126,7 +128,7 @@ export function WorkStyleResult({ result, onReview }: ResultViewProps) {
           </p>
         </div>
       </div>
-      <p className="border-t border-black/10 px-5 sm:px-6 py-4 text-[10px] leading-relaxed text-muted">
+      <p className="border-t border-black/10 px-5 sm:px-6 py-4 text-read text-muted">
         {t(
           L(
             'ข้อคำถามจาก IPIP-IPC (Markey & Markey, 2009) ซึ่งเป็น public domain — ipip.ori.org · วัดสองแกนคือการนำ (Dominance) กับความอบอุ่น (Warmth) การแบ่งวงกลมเป็นสี่ทิศและชื่อตัวละครเป็นการตีความของ Who Am I? เอง ไม่ใช่ส่วนหนึ่งของเครื่องมือ · แบบสำรวจนี้ใช้เพื่อการรู้จักตัวเอง ไม่ใช่การวินิจฉัย',

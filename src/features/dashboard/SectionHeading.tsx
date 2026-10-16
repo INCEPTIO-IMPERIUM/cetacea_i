@@ -17,7 +17,7 @@ export function SectionHeading({ eyebrow, title, description, id, action }: Sect
           {title}
           <span className="text-[#8b76cf]">.</span>
         </h2>
-        <p className="text-xs sm:text-sm text-muted mt-2">{description}</p>
+        <p className="text-read text-muted mt-2">{description}</p>
       </div>
       {action}
     </div>

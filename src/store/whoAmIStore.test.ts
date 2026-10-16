@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { createDefaultState, parseStoredState } from './whoAmIStore'
+import { createDefaultState, parseStoredState, removeUntouchedSamples } from './whoAmIStore'
 
 const v1User = {
   version: 1,
@@ -22,11 +22,11 @@ const v1User = {
   reflections: [{ text: 'I enjoyed it', createdAt: '2026-10-14T08:42:31.000Z' }],
 }
 
-describe('v1 → v2 migration', () => {
+describe('v1 → v3 migration', () => {
   const migrated = parseStoredState(null, JSON.stringify(v1User))
 
   it('keeps every piece of dashboard data', () => {
-    expect(migrated.version).toBe(2)
+    expect(migrated.version).toBe(3)
     expect(migrated.recommendedCareer).toBe('ux')
     expect(migrated.ikigai).toEqual(['Design', 'Storytelling'])
     expect(migrated.skills).toEqual(v1User.skills)
@@ -50,7 +50,7 @@ describe('v1 → v2 migration', () => {
     expect(fresh.skills).toEqual(v1User.skills)
   })
 
-  it('prefers v2 data when both keys exist', () => {
+  it('prefers the main key when both keys exist', () => {
     const v2 = { ...createDefaultState(), ikigai: ['Freedom'] }
     expect(parseStoredState(JSON.stringify(v2), JSON.stringify(v1User)).ikigai).toEqual(['Freedom'])
   })
@@ -77,5 +77,61 @@ describe('parseStoredState robustness', () => {
     expect(parsed.assessment.good.page).toBe(2)
     expect(parsed.assessment.broken).toBeUndefined()
     expect(parsed.assessment.badResult).toEqual({ answers: {}, page: 0, result: null })
+  })
+})
+
+describe('no sample data', () => {
+  const sample = {
+    ikigai: ['Design', 'Technology', 'Teaching', 'Visual thinking'],
+    skills: [
+      { name: 'Visual thinking', value: 82 },
+      { name: 'Communication', value: 74 },
+      { name: 'Problem solving', value: 68 },
+      { name: 'Research', value: 62 },
+      { name: 'Coding fundamentals', value: 48 },
+    ],
+    experiments: ['portfolio', 'interview', 'learning-map'].map((id) => ({ id, title: id, description: '', duration: '', tag: '', icon: 'custom' as const, tone: 'white' as const, done: false })),
+  }
+
+  it('a new user starts with nothing pre-filled', () => {
+    const fresh = createDefaultState()
+    expect(fresh.ikigai).toEqual([])
+    expect(fresh.skills).toEqual([])
+    expect(fresh.experiments).toEqual([])
+    expect(fresh.reflections).toEqual([])
+  })
+
+  it('v2 → v3 removes sample entries the user never touched', () => {
+    const v2 = { ...createDefaultState(), version: 2, ...sample }
+    const loaded = parseStoredState(JSON.stringify(v2))
+    expect(loaded.version).toBe(3)
+    expect(loaded.ikigai).toEqual([])
+    expect(loaded.skills).toEqual([])
+    expect(loaded.experiments).toEqual([])
+  })
+
+  it('keeps anything the user changed or added', () => {
+    const touched = removeUntouchedSamples({
+      ikigai: ['Design', 'Freedom'],
+      skills: [{ name: 'Visual thinking', value: 90 }, { name: 'Communication', value: 74 }, { name: 'Public speaking', value: 20 }],
+      experiments: [{ ...sample.experiments[0], done: true }, sample.experiments[1], { ...sample.experiments[1], id: 'custom-1' }],
+    })
+    expect(touched.ikigai).toEqual(['Design', 'Freedom'])
+    expect(touched.skills.map((skill) => skill.name)).toEqual(['Visual thinking', 'Public speaking'])
+    expect(touched.experiments.map((experiment) => experiment.id)).toEqual(['portfolio', 'custom-1'])
+  })
+
+  it('does not strip v3 data again — choosing the old sample values on purpose is kept', () => {
+    const v3 = { ...createDefaultState(), ...sample }
+    expect(parseStoredState(JSON.stringify(v3)).skills).toHaveLength(5)
+  })
+
+  it('stores unrated skills as null and repairs bad values', () => {
+    const raw = { ...createDefaultState(), skills: [{ name: 'A', value: null }, { name: 'B', value: 140 }, { name: 'C' }, { value: 3 }, 'x'] }
+    expect(parseStoredState(JSON.stringify(raw)).skills).toEqual([
+      { name: 'A', value: null },
+      { name: 'B', value: 100 },
+      { name: 'C', value: null },
+    ])
   })
 })

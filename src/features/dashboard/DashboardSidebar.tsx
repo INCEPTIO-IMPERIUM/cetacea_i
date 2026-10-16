@@ -1,5 +1,5 @@
 import { Link } from 'react-router'
-import { ArrowUpRight, ListChecks, Settings2, Sprout } from 'lucide-react'
+import { ArrowUpRight, ListChecks, ShieldCheck, Sprout } from 'lucide-react'
 import { BrandMark } from '../../components/BrandMark'
 import { L, useT } from '../../i18n/language'
 import { sectionNav, type SectionId } from './sections'
@@ -7,12 +7,12 @@ import { sectionNav, type SectionId } from './sections'
 interface DashboardSidebarProps {
   open: boolean
   activeSection: SectionId
+  /** Share of discovery-form sections finished, 0–100. */
   progress: number
   onNavigate: (id: SectionId) => void
-  onProfile: () => void
 }
 
-export function DashboardSidebar({ open, activeSection, progress, onNavigate, onProfile }: DashboardSidebarProps) {
+export function DashboardSidebar({ open, activeSection, progress, onNavigate }: DashboardSidebarProps) {
   const t = useT()
   const [first, ...rest] = sectionNav
   const renderNav = ({ id, label, icon: Icon, index }: (typeof sectionNav)[number]) => (
@@ -25,7 +25,7 @@ export function DashboardSidebar({ open, activeSection, progress, onNavigate, on
     >
       <span className="nav-icon"><Icon size={24} aria-hidden="true" /></span>
       <span className="text-sm">{t(label)}</span>
-      <span className="ml-auto text-[10px] text-black/50">{index}</span>
+      <span className="ml-auto text-ui text-black/50">{index}</span>
     </button>
   )
 
@@ -56,26 +56,20 @@ export function DashboardSidebar({ open, activeSection, progress, onNavigate, on
         </div>
         <div className="flex items-end gap-2">
           <span className="section-title text-3xl font-extrabold">{progress}%</span>
-          <span className="text-[11px] text-black/60 mb-1">{t(L('ของโปรไฟล์คุณ', 'of your profile'))}</span>
+          <span className="text-ui text-black/60 mb-1">{t(L('ของแบบสำรวจที่ทำแล้ว', 'of the discovery form done'))}</span>
         </div>
         <div className="meter mt-3 bg-white/80" role="progressbar" aria-label={t(L('ความคืบหน้า', 'Discovery progress'))} aria-valuenow={progress} aria-valuemin={0} aria-valuemax={100}>
           <span style={{ width: `${progress}%` }} />
         </div>
-        <p className="text-[11px] leading-relaxed text-black/65 mt-3">{t(L('ทุกการทดลองเล็ก ๆ เพิ่มเบาะแสให้คุณ ไม่ต้องรีบหาคำตอบทั้งหมด', 'Every small experiment adds a clue. There’s no rush to have it all figured out.'))}</p>
+        <p className="text-read text-black/65 mt-3">{t(L('ทุกการทดลองเล็ก ๆ เพิ่มเบาะแสให้คุณ ไม่ต้องรีบหาคำตอบทั้งหมด', 'Every small experiment adds a clue. There’s no rush to have it all figured out.'))}</p>
       </div>
 
       <div className="mt-auto pt-8">
-        <div className="rounded-[18px] bg-paper border border-black/10 p-4 flex items-center gap-3">
-          <div className="w-9 h-9 rounded-full bg-lemon border border-ink grid place-items-center font-bold text-xs" aria-hidden="true">J</div>
-          <div className="min-w-0 flex-1">
-            <div className="text-sm font-bold truncate">{t(L('นักสำรวจขี้สงสัย', 'Curious explorer'))}</div>
-            <div className="text-[10px] text-muted">{t(L('ใช้ฟรี · เดโมในเครื่อง', 'Free journey · Local demo'))}</div>
-          </div>
-          <button type="button" onClick={onProfile} className="p-2 rounded-xl hover:bg-white" aria-label={t(L('แก้ไขโปรไฟล์', 'Edit profile'))}>
-            <Settings2 size={24} aria-hidden="true" />
-          </button>
+        <div className="rounded-[18px] bg-paper border border-black/10 p-4 flex items-start gap-3">
+          <ShieldCheck size={24} className="shrink-0" aria-hidden="true" />
+          <p className="text-read text-muted">{t(L('ข้อมูลทั้งหมดของคุณเก็บไว้ในเครื่องนี้เท่านั้น ไม่มีบัญชีและไม่ได้ส่งไปที่ไหน', 'Everything you add stays on this device — no account, nothing sent anywhere.'))}</p>
         </div>
-        <p className="text-[9px] leading-relaxed text-muted px-2 mt-4">{t(L('เครื่องมือสะท้อนคิด ไม่ใช่คำตัดสิน คุณเป็นคนกำหนดเองว่าอนาคตที่ดีหน้าตาเป็นอย่างไร', 'A reflection tool, not a verdict. You get to define what a good future looks like.'))}</p>
+        <p className="text-read text-muted px-2 mt-4">{t(L('เครื่องมือสะท้อนคิด ไม่ใช่คำตัดสิน คุณเป็นคนกำหนดเองว่าอนาคตที่ดีหน้าตาเป็นอย่างไร', 'A reflection tool, not a verdict. You get to define what a good future looks like.'))}</p>
       </div>
     </aside>
   )

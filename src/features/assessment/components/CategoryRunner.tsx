@@ -102,9 +102,9 @@ export function CategoryRunner({ category, page, onPageChange, onExit }: Categor
             {t(category.copy.title)}
             <span className="text-[#8b76cf]">.</span>
           </h2>
-          <p className="text-xs sm:text-sm text-muted mt-2 max-w-2xl">{t(category.copy.description)}</p>
+          <p className="text-read text-muted mt-2 max-w-2xl">{t(category.copy.description)}</p>
         </div>
-        <span className="inline-flex items-center gap-2 rounded-full bg-lilac px-3 py-2 text-[10px] font-bold">
+        <span className="inline-flex items-center gap-2 rounded-full bg-lilac px-3 py-2 text-ui font-bold">
           <Clock3 size={24} aria-hidden="true" /> {t({ th: `ประมาณ ${category.estimatedMinutes} นาที`, en: `About ${category.estimatedMinutes} minutes` })}
         </span>
       </div>
@@ -124,7 +124,7 @@ export function CategoryRunner({ category, page, onPageChange, onExit }: Categor
           <div>
             <div className="eyebrow">{t(category.copy.progressEyebrow)}</div>
             <h3 className="section-title text-xl sm:text-2xl font-extrabold mt-1">{t(category.copy.progressTitle)}</h3>
-            <p className="text-xs text-muted mt-1">
+            <p className="text-read text-muted mt-1">
               {t(category.copy.progressHint)}
               {pages > 1 && t({ th: ` หน้า ${page + 1} จาก ${pages}`, en: ` Page ${page + 1} of ${pages}.` })}
             </p>
@@ -133,7 +133,7 @@ export function CategoryRunner({ category, page, onPageChange, onExit }: Categor
             <div className="section-title text-2xl font-extrabold">
               {progress.answeredRequired} / {progress.required}
             </div>
-            <div className="text-[10px] text-muted">{t(L('ตอบแล้ว', 'answered'))}</div>
+            <div className="text-ui text-muted">{t(L('ตอบแล้ว', 'answered'))}</div>
           </div>
         </div>
       </div>
@@ -169,16 +169,16 @@ export function CategoryRunner({ category, page, onPageChange, onExit }: Categor
 
         <div className="xl:col-span-2 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
           <div className="flex items-center gap-4">
-            <button type="button" onClick={handleBack} className="inline-flex items-center gap-1 text-xs font-semibold text-muted hover:text-ink py-2">
+            <button type="button" onClick={handleBack} className="inline-flex items-center gap-1 text-ui font-semibold text-muted hover:text-ink py-2">
               <ArrowLeft size={24} aria-hidden="true" /> {t(page > 0 ? L('หน้าก่อนหน้า', 'Previous page') : L('ทุกหมวด', 'All sections'))}
             </button>
-            <button type="button" onClick={handleClear} className="text-xs font-semibold text-muted underline underline-offset-4 hover:text-ink py-2">
+            <button type="button" onClick={handleClear} className="text-ui font-semibold text-muted underline underline-offset-4 hover:text-ink py-2">
               {t(L('ล้างคำตอบ', 'Clear answers'))}
             </button>
           </div>
           <button
             type="submit"
-            className="inline-flex items-center justify-center gap-2 rounded-full bg-ink text-white px-5 py-3.5 text-xs font-bold shadow-[0_3px_0_rgba(23,23,23,.2)] hover:-translate-y-0.5 transition"
+            className="inline-flex items-center justify-center gap-2 rounded-full bg-ink text-white px-5 py-3.5 text-ui font-bold shadow-[0_3px_0_rgba(23,23,23,.2)] hover:-translate-y-0.5 transition"
           >
             {t(isLastPage ? category.copy.submitLabel : L('หน้าถัดไป', 'Next page'))} <ArrowRight size={24} aria-hidden="true" />
           </button>

@@ -46,7 +46,6 @@ export type CareerRiasec = Record<'R' | 'I' | 'A' | 'S' | 'E' | 'C', number>
 export interface NodeInfo {
   name: Localized
   type: Localized
-  match: Localized
   description: Localized
   /** Skill names in English — the ids the skill matrix uses; show them with `skillLabel`. */
   skills: string[]
@@ -65,7 +64,7 @@ export interface Career extends NodeInfo {
   starter: CatalogExperiment
 }
 
-const snapshot = { type: L('ภาพรวมอาชีพ', 'CAREER SNAPSHOT'), match: L('เส้นทางที่เป็นไปได้', 'POSSIBLE PATH') }
+const snapshot = { type: L('ภาพรวมอาชีพ', 'CAREER SNAPSHOT') }
 
 const starter = (id: string, title: Localized, description: Localized, mins: number, tag: Localized): CatalogExperiment => ({
   key: `career:${id}`,
@@ -84,7 +83,6 @@ export const careers: Record<CareerId, Career> = {
     short: L('นักออกแบบ UX', 'UX Designer'),
     focus: L('ออกแบบ · เข้าใจคน', 'Design · Empathy'),
     icon: '+',
-    match: L('น่าสำรวจ', 'GOOD TO EXPLORE'),
     description: L(
       'ออกแบบประสบการณ์ดิจิทัลที่ช่วยผู้คนได้จริง โดยเข้าใจว่าผู้ใช้ต้องการอะไร แล้วเปลี่ยนสิ่งที่ค้นพบเป็นหน้าจอที่ชัดเจน',
       'Design helpful digital experiences by understanding what people need and turning insights into clear interfaces.',
@@ -127,7 +125,6 @@ export const careers: Record<CareerId, Career> = {
     short: L('นักออกแบบการเรียนรู้', 'Learning Designer'),
     focus: L('การสอน · ระบบ', 'Teaching · Systems'),
     icon: '▣',
-    match: L('น่าสำรวจ', 'GOOD TO EXPLORE'),
     description: L(
       'สร้างประสบการณ์การเรียนรู้ที่ทำให้เรื่องยากเข้าใจ ฝึก และจดจำได้ง่ายขึ้น',
       'Create learning experiences that make complex topics easier to understand, practice, and remember.',
@@ -170,7 +167,6 @@ export const careers: Record<CareerId, Career> = {
     short: L('โค้ชอาชีพ', 'Career Coach'),
     focus: L('การฟัง · การแนะแนว', 'Listening · Guidance'),
     icon: '●',
-    match: L('อีกทางเลือก', 'ANOTHER DIRECTION'),
     description: L(
       'ช่วยให้ผู้คนเข้าใจทางเลือกของตัวเอง มองเห็นจุดแข็ง และเปลี่ยนเป้าหมายเป็นก้าวเล็ก ๆ ที่ทำได้จริง',
       'Help people make sense of their options, recognize their strengths, and turn goals into manageable next steps.',
@@ -464,16 +460,12 @@ export const careers: Record<CareerId, Career> = {
 export const startingPoint: NodeInfo = {
   name: L('จุดเริ่มต้นของคุณ', 'Your starting point'),
   type: L('ภาพรวมของคุณ', 'YOUR SNAPSHOT'),
-  match: L('เริ่มที่นี่', 'START HERE'),
   description: L(
     'คุณคือส่วนผสมของความสนใจ คุณค่า ทักษะ และประสบการณ์ที่เปลี่ยนแปลงได้เสมอ เริ่มต้นด้วยความอยากรู้แทนความกดดัน',
     'You are a collection of interests, values, skills, and experiences that can change over time. Start with curiosity instead of pressure.',
   ),
   skills: ['Curiosity', 'Reflection', 'Experimenting'],
 }
-
-/** Shown on the roadmap before the assessment has suggested anything. */
-export const DEFAULT_ROADMAP_CAREERS: CareerId[] = ['ux', 'front', 'learning', 'product', 'coach']
 
 export function isCareerId(value: unknown): value is CareerId {
   return typeof value === 'string' && (CAREER_IDS as readonly string[]).includes(value)

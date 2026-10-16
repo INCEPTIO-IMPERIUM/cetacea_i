@@ -69,7 +69,7 @@ export function MicroActionsSection({ experiments }: { experiments: Experiment[]
       />
 
       {total === 0 ? (
-        <p className="rounded-[20px] border border-dashed border-black/20 p-6 text-sm text-muted">
+        <p className="rounded-[20px] border border-dashed border-black/20 p-6 text-read text-muted">
           {t(
             L(
               'ยังไม่มีการทดลอง เพิ่มเองด้านบน หรือเลือกอาชีพบนแผนที่แล้วกด “เพิ่มการทดลองเล็ก ๆ”',
@@ -89,12 +89,12 @@ export function MicroActionsSection({ experiments }: { experiments: Experiment[]
                   <span className={`grid place-items-center w-10 h-10 rounded-2xl ${tone.icon}`} aria-hidden="true">
                     <Icon size={24} />
                   </span>
-                  <span className={`rounded-full ${tone.chip} px-2.5 py-1.5 text-[9px] font-bold text-muted`}>{text.duration}</span>
+                  <span className={`rounded-full ${tone.chip} px-2.5 py-1.5 text-ui font-bold text-muted`}>{text.duration}</span>
                 </div>
                 <h3 className="task-title font-bold mt-4">{text.title}</h3>
-                <p className="text-xs text-muted mt-2 leading-relaxed">{text.description}</p>
+                <p className="text-read text-muted mt-2 leading-relaxed">{text.description}</p>
                 <div className="mt-auto pt-5 flex items-center justify-between gap-3">
-                  <span className="text-[10px] text-muted flex items-center gap-1.5">
+                  <span className="text-ui text-muted flex items-center gap-1.5">
                     <Target size={24} aria-hidden="true" /> {text.tag}
                   </span>
                   <button
@@ -110,7 +110,7 @@ export function MicroActionsSection({ experiments }: { experiments: Experiment[]
                         ),
                       )
                     }}
-                    className={`inline-flex items-center gap-2 rounded-full ${tone.chip === 'bg-paper' ? 'bg-paper' : 'bg-white'} px-3 py-2 text-[10px] font-bold hover:bg-lemon transition`}
+                    className={`inline-flex items-center gap-2 rounded-full ${tone.chip === 'bg-paper' ? 'bg-paper' : 'bg-white'} px-3 py-2 text-ui font-bold hover:bg-lemon transition`}
                   >
                     <span className="task-check" aria-hidden="true">
                       <Check size={24} />
@@ -129,8 +129,8 @@ export function MicroActionsSection({ experiments }: { experiments: Experiment[]
           <CalendarCheck2 size={24} />
         </div>
         <div className="flex-1">
-          <h3 className="font-bold text-sm">{t(L('ตัวติดตามการทดลองประจำสัปดาห์', 'Your weekly experiment tracker'))}</h3>
-          <p className="text-[11px] text-muted mt-1">{t(message)}</p>
+          <h3 className="font-bold text-read">{t(L('ตัวติดตามการทดลอง', 'Your experiment tracker'))}</h3>
+          <p className="text-read text-muted mt-1">{t(message)}</p>
           <div
             className="meter mt-3 max-w-[420px]"
             role="progressbar"
@@ -147,7 +147,7 @@ export function MicroActionsSection({ experiments }: { experiments: Experiment[]
             <span>{done}</span>
             <span className="text-muted text-sm font-medium"> / {total}</span>
           </div>
-          <div className="text-[10px] text-muted">{t(L('การทดลองที่ได้ลอง', 'experiments tried'))}</div>
+          <div className="text-ui text-muted">{t(L('การทดลองที่ได้ลอง', 'experiments tried'))}</div>
         </div>
       </div>
     </section>

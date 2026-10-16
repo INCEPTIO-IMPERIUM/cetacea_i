@@ -11,7 +11,7 @@ export function PersonalitySpectrumResult({ result }: Pick<ResultViewProps, 'res
       <div className="bg-lilac p-5 sm:p-6">
         <div className="eyebrow text-black/60">{t(L('หมวด 02 · สเปกตรัมบุคลิกภาพ', 'Section 02 · Personality Spectrum'))}</div>
         <h3 className="section-title text-2xl font-extrabold mt-1">{t(L('บุคลิกภาพ 5 มิติของคุณ', 'Your five personality dimensions'))}</h3>
-        <p className="text-xs text-black/65 mt-2 max-w-2xl">
+        <p className="text-read text-black/65 mt-2 max-w-2xl">
           {t(
             L(
               'คะแนน 0–100 แสดงว่าคุณอยู่ตรงไหนระหว่างสองด้านของแต่ละมิติ ทั้งสองด้านมีจุดแข็งของตัวเอง ไม่มีด้านไหนดีกว่า และนี่ไม่ใช่การเทียบกับคนอื่น',
@@ -28,7 +28,7 @@ export function PersonalitySpectrumResult({ result }: Pick<ResultViewProps, 'res
           return (
             <li key={dimension}>
               <div className="flex items-baseline justify-between gap-3">
-                <h4 className="font-bold text-sm">{t(copy.label)}</h4>
+                <h4 className="font-bold text-read">{t(copy.label)}</h4>
                 <span className="section-title font-extrabold">{score}</span>
               </div>
               <div className="mt-3">
@@ -38,7 +38,7 @@ export function PersonalitySpectrumResult({ result }: Pick<ResultViewProps, 'res
           )
         })}
       </ul>
-      <p className="border-t border-black/10 px-5 sm:px-6 py-4 text-[10px] leading-relaxed text-muted">
+      <p className="border-t border-black/10 px-5 sm:px-6 py-4 text-read text-muted">
         {t(
           L(
             'ข้อคำถามจาก IPIP 50-item Big-Five Factor Markers (Goldberg, 1992) ซึ่งเป็น public domain — ipip.ori.org · แบบสำรวจนี้ใช้เพื่อการรู้จักตัวเอง ไม่ใช่การวินิจฉัยสุขภาพจิต และยังไม่มีเกณฑ์เทียบกับผู้ใช้ชาวไทย',

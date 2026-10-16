@@ -49,9 +49,9 @@ function FieldsetQuestion({ ref, question, number, total, value, invalid, onChan
       <div className={`flex ${question.kind !== 'scale' && question.wrapHeader ? 'flex-wrap' : ''} items-start justify-between gap-3`}>
         <div>
           {number !== undefined && total !== undefined && (
-            <div className="text-[10px] font-bold text-accent tracking-[.12em] uppercase">{t({ th: `ข้อ ${number} จาก ${total}`, en: `Question ${number} of ${total}` })}</div>
+            <div className="text-ui font-bold text-accent tracking-[.12em] uppercase">{t({ th: `ข้อ ${number} จาก ${total}`, en: `Question ${number} of ${total}` })}</div>
           )}
-          <h3 id={headingId} className="font-bold text-sm mt-2">
+          <h3 id={headingId} className="font-bold text-read mt-2">
             {t(question.prompt)}
             {question.required && (
               <>
@@ -62,7 +62,7 @@ function FieldsetQuestion({ ref, question, number, total, value, invalid, onChan
             )}
           </h3>
         </div>
-        <span className="rounded-full bg-paper px-2.5 py-1.5 text-[9px] font-semibold text-muted">{t(chipText[question.kind])}</span>
+        <span className="rounded-full bg-paper px-2.5 py-1.5 text-ui font-semibold text-muted">{t(chipText[question.kind])}</span>
       </div>
 
       {question.kind === 'scale' ? (
@@ -99,7 +99,7 @@ function FieldsetQuestion({ ref, question, number, total, value, invalid, onChan
       )}
 
       {invalid && (
-        <p id={helpId} className="text-danger text-[11px] mt-2.5">
+        <p id={helpId} className="text-danger text-ui mt-2.5">
           {t(question.help ?? defaultHelp)}
         </p>
       )}
@@ -116,13 +116,13 @@ function TextField({ ref, question, value, invalid, onChange }: QuestionFieldPro
     <div ref={ref} className={`form-question bg-[#F4EFFF] ${invalid ? 'invalid' : ''} ${question.className ?? ''}`} data-question-id={question.id}>
       <div className="flex items-start justify-between gap-3">
         <div>
-          <div className="text-[10px] font-bold text-accent tracking-[.12em] uppercase">
+          <div className="text-ui font-bold text-accent tracking-[.12em] uppercase">
             {t(question.required ? L('คำถามสะท้อนคิด', 'Reflection') : L('คำถามสะท้อนคิด (ไม่บังคับ)', 'Optional reflection'))}
           </div>
-          <label htmlFor={inputId} className="font-bold text-sm block mt-2">
+          <label htmlFor={inputId} className="font-bold text-read block mt-2">
             {t(question.prompt)}
           </label>
-          {question.hint && <p className="text-[11px] text-muted mt-1">{t(question.hint)}</p>}
+          {question.hint && <p className="text-ui text-muted mt-1">{t(question.hint)}</p>}
         </div>
         <span className="grid place-items-center w-10 h-10 rounded-2xl bg-white" aria-hidden="true">
           <NotebookPen size={24} />
@@ -136,7 +136,7 @@ function TextField({ ref, question, value, invalid, onChange }: QuestionFieldPro
           value={text}
           onChange={(event) => onChange(event.target.value)}
           placeholder={question.placeholder && t(question.placeholder)}
-          className="w-full mt-4 rounded-2xl border border-black/10 bg-white px-4 py-3 text-xs outline-none focus:border-black resize-y"
+          className="w-full mt-4 rounded-2xl border border-black/10 bg-white px-4 py-3 text-read outline-none focus:border-black resize-y"
         />
       ) : (
         <input
@@ -145,10 +145,10 @@ function TextField({ ref, question, value, invalid, onChange }: QuestionFieldPro
           value={text}
           onChange={(event) => onChange(event.target.value)}
           placeholder={question.placeholder && t(question.placeholder)}
-          className="w-full mt-4 rounded-2xl border border-black/10 bg-white px-4 py-3 text-xs outline-none focus:border-black"
+          className="w-full mt-4 rounded-2xl border border-black/10 bg-white px-4 py-3 text-read outline-none focus:border-black"
         />
       )}
-      {invalid && <p className="text-danger text-[11px] mt-2.5">{t(question.help ?? defaultHelp)}</p>}
+      {invalid && <p className="text-danger text-ui mt-2.5">{t(question.help ?? defaultHelp)}</p>}
     </div>
   )
 }

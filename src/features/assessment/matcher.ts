@@ -74,6 +74,13 @@ export interface MatchInputs {
 
 export type MatchTag = 'ready' | 'practice' | 'explore'
 
+/** Label and colour for each tag — shared by the summary page and the roadmap. */
+export const MATCH_TAGS: Record<MatchTag, { label: Localized; tone: string }> = {
+  ready: { label: L('เหมาะจะเริ่มเลย', 'Ready to start'), tone: 'bg-mint' },
+  practice: { label: L('เส้นทางที่ควรฝึก', 'A path to practise'), tone: 'bg-lemon' },
+  explore: { label: L('น่าลองสำรวจ', 'Worth exploring'), tone: 'bg-lilac' },
+}
+
 export interface CareerMatch {
   id: CareerId
   /** 0–100 weighted score used for ranking. */

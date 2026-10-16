@@ -26,7 +26,7 @@ export function IkigaiSection({ selected }: { selected: string[] }) {
               actions.clearIkigai()
               showToast(t(L('ล้างเบาะแสแล้ว — เริ่มใหม่ได้เลย', 'Clues reset — start fresh.')))
             }}
-            className="text-[11px] font-semibold underline underline-offset-4 text-muted hover:text-ink"
+            className="text-ui font-semibold underline underline-offset-4 text-muted hover:text-ink"
           >
             {t(L('ล้างที่เลือก', 'Reset selections'))}
           </button>
@@ -41,10 +41,10 @@ export function IkigaiSection({ selected }: { selected: string[] }) {
                 <div className="w-10 h-10 rounded-2xl bg-white/70 border border-black/10 grid place-items-center" aria-hidden="true">
                   <Icon size={24} />
                 </div>
-                <span className="text-[9px] font-bold uppercase tracking-[.12em] text-black/50">0{index + 1}</span>
+                <span className="text-ui font-bold uppercase tracking-[.12em] text-black/50">0{index + 1}</span>
               </div>
-              <h3 className="font-bold text-sm mt-4">{t(card.title)}</h3>
-              <p className="text-[11px] leading-relaxed text-black/60 mt-1 mb-4">{t(card.hint)}</p>
+              <h3 className="font-bold text-read mt-4">{t(card.title)}</h3>
+              <p className="text-read leading-relaxed text-black/60 mt-1 mb-4">{t(card.hint)}</p>
               <div className="flex flex-wrap gap-2" role="group" aria-label={t(card.title)}>
                 {card.options.map((option) => (
                   <button key={option.id} type="button" className="pill" aria-pressed={selected.includes(option.id)} onClick={() => actions.toggleIkigai(option.id)}>
@@ -62,8 +62,8 @@ export function IkigaiSection({ selected }: { selected: string[] }) {
             <Lightbulb size={24} />
           </span>
           <div>
-            <p className="text-xs font-bold">{t(L('การสะท้อนคิดของคุณ ไม่ใช่คะแนน', 'Your reflection, not a score'))}</p>
-            <p className="text-[11px] text-muted mt-0.5" aria-live="polite">
+            <p className="text-read font-bold">{t(L('การสะท้อนคิดของคุณ ไม่ใช่คะแนน', 'Your reflection, not a score'))}</p>
+            <p className="text-read text-muted mt-0.5" aria-live="polite">
               {count
                 ? t({
                     th: `เลือกเบาะแสแล้ว ${count} อย่าง ลองมองหาธีมที่ปรากฏมากกว่าหนึ่งด้าน`,
@@ -77,7 +77,7 @@ export function IkigaiSection({ selected }: { selected: string[] }) {
         <button
           type="button"
           onClick={() => showToast(t({ th: `บันทึกเบาะแสส่วนตัว ${count} อย่างแล้ว`, en: `${count} personal clues saved.` }))}
-          className="rounded-full bg-ink text-white px-4 py-2.5 text-[11px] font-bold hover:bg-black/80 transition"
+          className="rounded-full bg-ink text-white px-4 py-2.5 text-ui font-bold hover:bg-black/80 transition"
         >
           {t(L('บันทึกเบาะแสของฉัน', 'Save my clues'))} <ArrowRight size={24} className="inline ml-1" aria-hidden="true" />
         </button>

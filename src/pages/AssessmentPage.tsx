@@ -50,7 +50,7 @@ export function AssessmentPage() {
           <BrandMark variant="app" to="/dashboard" tagline={t(L('ค้นหาตัวเองและเส้นทางอาชีพ', 'CAREER & SELF-DISCOVERY'))} ariaLabel={t(L('กลับไปที่ Dashboard ของ Who Am I', 'Back to Who Am I dashboard'))} />
           <div className="flex items-center gap-2">
             <LanguageToggle />
-            <Link to="/dashboard" className="inline-flex items-center gap-2 rounded-full border border-black/15 bg-white px-4 py-2.5 text-xs font-bold hover:bg-lemon transition">
+            <Link to="/dashboard" className="inline-flex items-center gap-2 rounded-full border border-black/15 bg-white px-4 py-2.5 text-ui font-bold hover:bg-lemon transition">
               <ArrowLeft size={24} aria-hidden="true" />
               <span className="hidden sm:inline">{t(L('กลับไปที่ Dashboard', 'Back to dashboard'))}</span>
               <span className="sm:hidden">{t(L('กลับ', 'Back'))}</span>
@@ -61,7 +61,7 @@ export function AssessmentPage() {
 
       <main className="max-w-6xl mx-auto px-4 sm:px-6 pb-16">
         <div className="pt-7 sm:pt-9 mb-2">
-          <div className="inline-flex items-center gap-2 rounded-full bg-lilac px-3 py-2 text-[10px] font-bold">
+          <div className="inline-flex items-center gap-2 rounded-full bg-lilac px-3 py-2 text-ui font-bold">
             <ListChecks size={24} aria-hidden="true" /> {t(L('เส้นทางค้นหาตัวเองของคุณ', 'YOUR DISCOVERY JOURNEY'))} · {badge}
           </div>
           <h1 className="section-title text-3xl sm:text-4xl font-extrabold mt-4">
@@ -69,7 +69,7 @@ export function AssessmentPage() {
             {t(L('ใกล้ความเป็น', 'A little closer to '))}
             <span className="text-accent">{t(L('คุณอีกนิด', 'you.'))}</span>
           </h1>
-          <p className="text-sm text-muted mt-2 max-w-2xl">
+          <p className="text-read text-muted mt-2 max-w-2xl">
             {t(
               L(
                 'ทำแบบสำรวจนี้ตามจังหวะของคุณ คำตอบคือเบาะแสให้สำรวจต่อ ไม่ใช่ป้ายหรือคำตัดสินสุดท้าย',
@@ -89,7 +89,7 @@ export function AssessmentPage() {
           )}
         </div>
 
-        <footer className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 pt-8 text-[10px] text-muted">
+        <footer className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 pt-8 text-ui text-muted">
           <span>{t(L('© 2026 Who Am I? · สร้างเพื่อคนช่างสงสัย', '© 2026 Who Am I? · Built for curious minds.'))}</span>
           <span>{t(L('สำรวจอย่างอ่อนโยน เติบโตตามจังหวะของคุณ', 'Explore gently. Grow at your own pace.'))}</span>
         </footer>

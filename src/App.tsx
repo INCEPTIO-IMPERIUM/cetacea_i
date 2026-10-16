@@ -28,7 +28,7 @@ function RouteEffects() {
 
 function DashboardFallback() {
   const t = useT()
-  return <div className="min-h-screen grid place-items-center text-xs text-muted">{t(L('กำลังเปิดพื้นที่ของคุณ…', 'Opening your space…'))}</div>
+  return <div className="min-h-screen grid place-items-center text-ui text-muted">{t(L('กำลังเปิดพื้นที่ของคุณ…', 'Opening your space…'))}</div>
 }
 
 export default function App() {

@@ -67,20 +67,11 @@ export const ikigaiCards: IkigaiCard[] = [
   },
 ]
 
-export const defaultIkigai = ['Design', 'Technology', 'Teaching', 'Visual thinking']
-
 export interface Skill {
   name: string
-  value: number
+  /** The person's own 0–100 rating; null until they rate it — never a made-up starting value. */
+  value: number | null
 }
-
-export const defaultSkills: Skill[] = [
-  { name: 'Visual thinking', value: 82 },
-  { name: 'Communication', value: 74 },
-  { name: 'Problem solving', value: 68 },
-  { name: 'Research', value: 62 },
-  { name: 'Coding fundamentals', value: 48 },
-]
 
 /**
  * Display names for built-in skills. Skill names stay English in storage because the career
@@ -170,6 +161,11 @@ export function toExperiment(entry: CatalogExperiment, lang: Lang): Omit<Experim
 /** Duration chip text, e.g. minutes(25) → "25 นาที" / "25 MIN". */
 export const minutes = (count: number): Localized => L(`${count} นาที`, `${count} MIN`)
 
+/**
+ * Experiments the old template seeded for every new user. Nobody is seeded with them any more;
+ * they stay in the catalog only so anyone who kept one still sees it in their language.
+ * Stored ids match the part of the key after "default:".
+ */
 export const defaultExperimentCatalog: CatalogExperiment[] = [
   {
     key: 'default:portfolio',
@@ -198,13 +194,6 @@ export const defaultExperimentCatalog: CatalogExperiment[] = [
     icon: 'map',
     tone: 'mint',
   },
-]
-
-/** Ids of the seeded experiments match the part of their key after "default:". */
-export const defaultExperiments: Experiment[] = [
-  { id: 'portfolio', ...toExperiment(defaultExperimentCatalog[0], 'en'), done: false },
-  { id: 'interview', ...toExperiment(defaultExperimentCatalog[1], 'en'), done: false },
-  { id: 'learning-map', ...toExperiment(defaultExperimentCatalog[2], 'en'), done: false },
 ]
 
 /** "Add a tiny experiment" on the roadmap's starting-point node. */

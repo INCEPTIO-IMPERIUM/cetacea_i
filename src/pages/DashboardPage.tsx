@@ -2,7 +2,9 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { useLocation, useSearchParams } from 'react-router'
 import { Heart, PenLine } from 'lucide-react'
 import { useToast } from '../components/toastContext'
-import { careers, isCareerId, type NodeId, CAREER_IDS, DEFAULT_ROADMAP_CAREERS } from '../data/careers'
+import { careers, isCareerId, type NodeId, CAREER_IDS } from '../data/careers'
+import { categories } from '../features/assessment/registry'
+import { getCategoryRecord } from '../store/whoAmIStore'
 import { ikigaiCards, selfDiscoveryStarter, skillLabel, toExperiment } from '../data/dashboard'
 import { L, useLang, useT } from '../i18n/language'
 import { actions, useWhoAmI } from '../store/whoAmIStore'
@@ -30,13 +32,14 @@ export function DashboardPage() {
 
   const recommendations = recommendationsFor(state)
   const suggestedCareer = recommendations.matches[0]?.id ?? null
-  const roadmapCareers = recommendations.matches.length ? recommendations.matches.slice(0, MAX_ROADMAP_CAREERS).map((match) => match.id) : DEFAULT_ROADMAP_CAREERS
+  // Only careers the matcher actually suggested — no example careers before the assessment is done.
+  const roadmapMatches = recommendations.matches.slice(0, MAX_ROADMAP_CAREERS)
 
   // ?career= wins (deep link from the summary), then the career the user picked, then the best match.
   const [activeCareer, setActiveCareer] = useState<NodeId>(() => {
     const requested = searchParams.get('career')
     if (isCareerId(requested)) return requested
-    return state.recommendedCareer ?? suggestedCareer ?? roadmapCareers[0]
+    return state.recommendedCareer ?? suggestedCareer ?? 'you'
   })
   const [activeSection, setActiveSection] = useState<SectionId>('overview')
   const [sidebarOpen, setSidebarOpen] = useState(false)
@@ -45,7 +48,10 @@ export function DashboardPage() {
   const searchRef = useRef<HTMLInputElement>(null)
 
   const doneCount = state.experiments.filter((item) => item.done).length
-  const progress = Math.min(100, Math.round(20 + state.ikigai.length * 7 + doneCount * 10))
+  // Progress = discovery-form sections actually finished; minutes left = their own estimates.
+  const unfinished = categories.filter((category) => !getCategoryRecord(state, category.id).result)
+  const progress = Math.round(((categories.length - unfinished.length) / categories.length) * 100)
+  const minutesLeft = unfinished.reduce((sum, category) => sum + category.estimatedMinutes, 0)
   const interestsSelected = loveOptions.filter((option) => state.ikigai.includes(option)).length
   const latestReflection = state.reflections[0]
 
@@ -133,7 +139,8 @@ export function DashboardPage() {
     showToast(t(L('เพิ่มการทดลองเส้นทางอาชีพในรายการแล้ว', 'A career experiment was added to your list.')))
   }
 
-  const closeModal = useCallback(() => setModalOpen(false), [])
+  // The React Compiler memoizes this; a manual useCallback here could not be preserved.
+  const closeModal = () => setModalOpen(false)
 
   return (
     <>
@@ -145,7 +152,6 @@ export function DashboardPage() {
           activeSection={activeSection}
           progress={progress}
           onNavigate={goToSection}
-          onProfile={() => showToast(t(L('การตั้งค่าโปรไฟล์จะเชื่อมกับบัญชีของคุณในภายหลัง', 'Profile settings can be connected to your account later.')))}
         />
 
         <main className="min-w-0 px-4 sm:px-6 lg:px-8 pb-12">
@@ -154,7 +160,6 @@ export function DashboardPage() {
             onOpenMenu={() => setSidebarOpen(true)}
             onSearch={handleSearch}
             onReflect={() => setModalOpen(true)}
-            onNotifications={() => showToast(t(L('ไม่มีอะไรค้างอยู่ สำรวจต่อได้ตามจังหวะของคุณ', 'You’re all caught up. Keep exploring at your own pace.')))}
           />
 
           <OverviewSection
@@ -164,13 +169,18 @@ export function DashboardPage() {
             experimentsDone={doneCount}
             experimentsTotal={state.experiments.length}
             suggestedCareer={suggestedCareer}
+            minutesLeft={minutesLeft}
           />
           <IkigaiSection selected={state.ikigai} />
-          <SkillMatrixSection skills={state.skills} highlighted={highlightedSkill} onExplorePaths={() => goToSection('roadmap')} />
+          <SkillMatrixSection
+            skills={state.skills}
+            suggestedSkills={[...new Set(roadmapMatches.flatMap((match) => careers[match.id].skills))]}
+            highlighted={highlightedSkill}
+            onExplorePaths={() => goToSection('roadmap')}
+          />
           <RoadmapSection
             activeId={activeCareer}
-            careerIds={roadmapCareers}
-            personalised={recommendations.matches.length > 0}
+            matches={roadmapMatches}
             onSelect={setActiveCareer}
             onReset={() => {
               setActiveCareer('you')
@@ -185,14 +195,14 @@ export function DashboardPage() {
               <div className="relative z-10 flex-1">
                 <div className="eyebrow text-lemon">{t(L('หยุดพักสักครู่', 'A moment to pause'))}</div>
                 <h2 id="reflect-heading" className="section-title text-2xl sm:text-3xl font-extrabold mt-2">{t(L('วันนี้คุณได้เรียนรู้อะไรเกี่ยวกับตัวเอง?', 'What did you learn about yourself today?'))}</h2>
-                <p className="text-xs text-white/60 mt-2 max-w-xl leading-relaxed">
+                <p className="text-read text-white/60 mt-2 max-w-xl leading-relaxed">
                   {t(L('ประโยคเดียวก็พอ สังเกตว่าอะไรให้พลัง อะไรยาก หรืออยากสำรวจอะไรต่อ', 'One sentence is enough. Notice what felt energizing, what felt hard, or what you want to explore next.'))}
                 </p>
                 {latestReflection && (
-                  <div className="mt-4 rounded-xl bg-white/10 border border-white/10 p-3 text-xs text-white/80">
+                  <div className="mt-4 rounded-xl bg-white/10 border border-white/10 p-3 text-read text-white/80">
                     “{latestReflection.text}”
                     {state.reflections.length > 1 && (
-                      <span className="block mt-1 text-[10px] text-white/45">
+                      <span className="block mt-1 text-ui text-white/45">
                         {t({
                           th: `+ บันทึกก่อนหน้า ${state.reflections.length - 1} รายการ`,
                           en: `+ ${state.reflections.length - 1} earlier ${state.reflections.length === 2 ? 'reflection' : 'reflections'} saved`,
@@ -205,7 +215,7 @@ export function DashboardPage() {
               <button
                 type="button"
                 onClick={() => setModalOpen(true)}
-                className="relative z-10 inline-flex items-center justify-center gap-2 rounded-full bg-lemon text-ink px-5 py-3 text-xs font-bold hover:-translate-y-0.5 transition shrink-0"
+                className="relative z-10 inline-flex items-center justify-center gap-2 rounded-full bg-lemon text-ink px-5 py-3 text-ui font-bold hover:-translate-y-0.5 transition shrink-0"
               >
                 {t(L('เขียนบันทึก', 'Write a reflection'))} <PenLine size={24} aria-hidden="true" />
               </button>
@@ -214,7 +224,7 @@ export function DashboardPage() {
             </div>
           </section>
 
-          <footer className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 pt-8 text-[10px] text-muted">
+          <footer className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 pt-8 text-ui text-muted">
             <span>{t(L('© 2026 Who Am I? · สร้างเพื่อคนช่างสงสัย', '© 2026 Who Am I? · Built for curious minds.'))}</span>
             <span className="flex items-center gap-1.5">
               <Heart size={24} aria-hidden="true" /> {t(L('สำรวจอย่างอ่อนโยน เติบโตตามจังหวะของคุณ', 'Explore gently. Grow at your own pace.'))}

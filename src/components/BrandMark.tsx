@@ -27,7 +27,8 @@ export function BrandMark({ to = '/', tagline: taglineProp, ariaLabel: ariaLabel
         </span>
         <span>
           <span className="block section-title text-[19px] font-extrabold leading-tight">Who Am I?</span>
-          <span className="text-[10px] text-muted tracking-wide">{tagline}</span>
+          {/* Hidden on phones rather than shrunk below the 14px floor. */}
+          <span className="hidden sm:block text-ui text-muted tracking-wide">{tagline}</span>
         </span>
       </Link>
     )
@@ -45,7 +46,7 @@ export function BrandMark({ to = '/', tagline: taglineProp, ariaLabel: ariaLabel
       </span>
       <span>
         <span className="block display text-lg font-extrabold leading-tight">Who Am I?</span>
-        <span className="block text-[9px] text-muted tracking-[.14em] font-bold">{tagline}</span>
+        <span className="block text-ui text-muted tracking-[.14em] font-bold">{tagline}</span>
       </span>
     </Link>
   )

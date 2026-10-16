@@ -1,17 +1,12 @@
 import { useSyncExternalStore } from 'react'
 import { isCareerId, type CareerId } from '../data/careers'
-import {
-  defaultExperiments,
-  defaultIkigai,
-  defaultSkills,
-  type Experiment,
-  type Skill,
-} from '../data/dashboard'
+import type { Experiment, Skill } from '../data/dashboard'
 import type { AnswerValue, CategoryAnswers, CategoryResult, StoredCategoryResult } from '../features/assessment/types'
 
 /**
  * Single source of truth for everything the user creates, shared by every page.
  * Persisted to localStorage on this device only — there is no backend or sync yet.
+ * Everything here comes from the user: a new user starts empty, never with sample data.
  */
 
 export interface Reflection {
@@ -28,7 +23,7 @@ export interface CategoryRecord {
 }
 
 export interface WhoAmIState {
-  version: 2
+  version: 3
   /** Keyed by category id. */
   assessment: Record<string, CategoryRecord>
   /** Category the user was last working in, for "continue where you left off". */
@@ -40,19 +35,47 @@ export interface WhoAmIState {
   reflections: Reflection[]
 }
 
+/** The key kept its v2 name; the `version` field inside says which shape it holds. */
 export const STORAGE_KEY = 'whoAmI:v2'
 export const LEGACY_STORAGE_KEY = 'whoAmI:v1'
 
 export function createDefaultState(): WhoAmIState {
   return {
-    version: 2,
+    version: 3,
     assessment: {},
     lastCategory: null,
     recommendedCareer: null,
-    ikigai: [...defaultIkigai],
-    skills: defaultSkills.map((skill) => ({ ...skill })),
-    experiments: defaultExperiments.map((experiment) => ({ ...experiment })),
+    ikigai: [],
+    skills: [],
+    experiments: [],
     reflections: [],
+  }
+}
+
+/**
+ * Sample data the old template put into every new user's dashboard (v1 and v2). It was never the
+ * user's own, so v3 removes it — but only where the user left it untouched: a skill whose value
+ * still equals the sample, a sample experiment not marked done, a selection identical to the sample.
+ */
+const LEGACY_SAMPLE = {
+  ikigai: ['Design', 'Technology', 'Teaching', 'Visual thinking'],
+  skills: [
+    { name: 'Visual thinking', value: 82 },
+    { name: 'Communication', value: 74 },
+    { name: 'Problem solving', value: 68 },
+    { name: 'Research', value: 62 },
+    { name: 'Coding fundamentals', value: 48 },
+  ],
+  experimentIds: ['portfolio', 'interview', 'learning-map'],
+}
+
+export function removeUntouchedSamples<T extends Pick<WhoAmIState, 'ikigai' | 'skills' | 'experiments'>>(state: T): T {
+  const sameSet = (a: string[], b: string[]) => a.length === b.length && a.every((item) => b.includes(item))
+  return {
+    ...state,
+    ikigai: sameSet(state.ikigai, LEGACY_SAMPLE.ikigai) ? [] : state.ikigai,
+    skills: state.skills.filter((skill) => !LEGACY_SAMPLE.skills.some((sample) => sample.name === skill.name && sample.value === skill.value)),
+    experiments: state.experiments.filter((experiment) => !(LEGACY_SAMPLE.experimentIds.includes(experiment.id) && !experiment.done)),
   }
 }
 
@@ -94,7 +117,11 @@ function sanitizeShared(parsed: Record<string, unknown>, defaults: WhoAmIState) 
   return {
     recommendedCareer: isCareerId(parsed.recommendedCareer) ? parsed.recommendedCareer : null,
     ikigai: arrayOr<string>(parsed.ikigai, defaults.ikigai),
-    skills: arrayOr<Skill>(parsed.skills, defaults.skills),
+    skills: arrayOr<unknown>(parsed.skills, defaults.skills).flatMap((skill): Skill[] =>
+      isRecord(skill) && typeof skill.name === 'string'
+        ? [{ name: skill.name, value: typeof skill.value === 'number' && Number.isFinite(skill.value) ? Math.min(100, Math.max(0, skill.value)) : null }]
+        : [],
+    ),
     experiments: arrayOr<Experiment>(parsed.experiments, defaults.experiments),
     reflections: arrayOr<Reflection>(parsed.reflections, []),
   }
@@ -107,7 +134,7 @@ function sanitizeShared(parsed: Record<string, unknown>, defaults: WhoAmIState) 
  */
 export function migrateV1(parsed: Record<string, unknown>): WhoAmIState {
   const defaults = createDefaultState()
-  const state: WhoAmIState = { ...defaults, ...sanitizeShared(parsed, defaults) }
+  const state: WhoAmIState = { ...defaults, ...removeUntouchedSamples(sanitizeShared(parsed, defaults)) }
   const draft = sanitizeAnswers(parsed.draft)
   const legacy = isRecord(parsed.assessment) ? parsed.assessment : null
   const ranked = legacy && Array.isArray(legacy.ranked) ? (legacy.ranked as unknown[]) : null
@@ -131,7 +158,10 @@ export function migrateV1(parsed: Record<string, unknown>): WhoAmIState {
   return state
 }
 
-/** Reads stored JSON (v2 first, then v1). Anything unrecognised falls back to defaults field by field. */
+/**
+ * Reads stored JSON (the main key first, then v1). Anything unrecognised falls back to defaults
+ * field by field. v2 data loses its untouched sample entries on the way to v3.
+ */
 export function parseStoredState(rawV2: string | null, rawV1: string | null = null): WhoAmIState {
   const defaults = createDefaultState()
   const parse = (raw: string | null): Record<string, unknown> | null => {
@@ -144,13 +174,14 @@ export function parseStoredState(rawV2: string | null, rawV1: string | null = nu
     }
   }
 
-  const v2 = parse(rawV2)
-  if (v2?.version === 2) {
+  const current = parse(rawV2)
+  if (current?.version === 3 || current?.version === 2) {
+    const shared = sanitizeShared(current, defaults)
     return {
       ...defaults,
-      ...sanitizeShared(v2, defaults),
-      assessment: sanitizeAssessment(v2.assessment),
-      lastCategory: typeof v2.lastCategory === 'string' ? v2.lastCategory : null,
+      ...(current.version === 2 ? removeUntouchedSamples(shared) : shared),
+      assessment: sanitizeAssessment(current.assessment),
+      lastCategory: typeof current.lastCategory === 'string' ? current.lastCategory : null,
     }
   }
   const v1 = parse(rawV1)
@@ -176,8 +207,16 @@ function writeStorage(value: WhoAmIState) {
 
 // The v1 key is left in place after migrating, so a rollback to the old build still finds its data.
 let state = parseStoredState(readStorage(STORAGE_KEY), readStorage(LEGACY_STORAGE_KEY))
-// Persist a migration straight away so later loads read v2 rather than migrating again.
-if (readStorage(STORAGE_KEY) === null && readStorage(LEGACY_STORAGE_KEY) !== null) writeStorage(state)
+// Persist a migration straight away so later loads read v3 rather than migrating again —
+// otherwise a user who picks the old sample values on purpose would lose them on the next load.
+const storedVersion = (() => {
+  try {
+    return (JSON.parse(readStorage(STORAGE_KEY) ?? 'null') as { version?: unknown } | null)?.version
+  } catch {
+    return undefined
+  }
+})()
+if ((readStorage(STORAGE_KEY) === null && readStorage(LEGACY_STORAGE_KEY) !== null) || storedVersion === 2) writeStorage(state)
 const listeners = new Set<() => void>()
 
 function emit() {
@@ -278,7 +317,7 @@ export const actions = {
   addSkill(name: string): boolean {
     const exists = state.skills.some((skill) => skill.name.toLowerCase() === name.toLowerCase())
     if (exists) return false
-    update((s) => ({ ...s, skills: [...s.skills, { name, value: 35 }] }))
+    update((s) => ({ ...s, skills: [...s.skills, { name, value: null }] }))
     return true
   },
 

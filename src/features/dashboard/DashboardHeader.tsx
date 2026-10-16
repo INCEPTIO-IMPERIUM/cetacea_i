@@ -1,5 +1,5 @@
 import type { RefObject } from 'react'
-import { Bell, Menu, NotebookPen, Search } from 'lucide-react'
+import { Menu, NotebookPen, Search } from 'lucide-react'
 import { L, useLang, useT, type Lang } from '../../i18n/language'
 import { LanguageToggle } from '../../i18n/LanguageToggle'
 
@@ -8,14 +8,13 @@ interface DashboardHeaderProps {
   onOpenMenu: () => void
   onSearch: (query: string) => void
   onReflect: () => void
-  onNotifications: () => void
 }
 
 const dateLabel = (lang: Lang) =>
   (lang === 'th' ? 'พื้นที่ของคุณ · ' : 'YOUR SPACE · ') +
   new Intl.DateTimeFormat(lang === 'th' ? 'th-TH' : 'en', { weekday: 'long', month: 'short', day: 'numeric' }).format(new Date()).toUpperCase()
 
-export function DashboardHeader({ searchRef, onOpenMenu, onSearch, onReflect, onNotifications }: DashboardHeaderProps) {
+export function DashboardHeader({ searchRef, onOpenMenu, onSearch, onReflect }: DashboardHeaderProps) {
   const t = useT()
   const lang = useLang()
   const today = dateLabel(lang)
@@ -46,29 +45,20 @@ export function DashboardHeader({ searchRef, onOpenMenu, onSearch, onReflect, on
               ref={searchRef}
               type="search"
               placeholder={t(L('ค้นหาอาชีพ ทักษะ...', 'Search careers, skills...'))}
-              className="min-w-0 w-full outline-none bg-transparent text-xs"
+              className="min-w-0 w-full outline-none bg-transparent text-read"
               aria-label={t(L('ค้นหาอาชีพและทักษะ (กด Enter)', 'Search careers and skills (press Enter)'))}
               onKeyDown={(event) => {
                 if (event.key === 'Enter') onSearch(event.currentTarget.value.trim().toLocaleLowerCase())
               }}
             />
-            <kbd className="text-[9px] text-muted bg-paper border border-black/10 rounded px-1">/</kbd>
+            <kbd className="font-sans text-ui text-muted bg-paper border border-black/10 rounded px-1">/</kbd>
           </label>
           <button
             type="button"
             onClick={onReflect}
-            className="hidden sm:flex items-center gap-2 rounded-full bg-ink text-white px-4 py-2.5 text-xs font-semibold hover:bg-black/80 transition"
+            className="hidden sm:flex items-center gap-2 rounded-full bg-ink text-white px-4 py-2.5 text-ui font-semibold hover:bg-black/80 transition"
           >
             <NotebookPen size={24} aria-hidden="true" /> {t(L('สะท้อนคิดสั้น ๆ', 'Quick reflection'))}
-          </button>
-          <button
-            type="button"
-            onClick={onNotifications}
-            className="relative grid place-items-center w-10 h-10 rounded-full border border-black/10 bg-white hover:bg-lemon transition"
-            aria-label={t(L('การแจ้งเตือน', 'Notifications'))}
-          >
-            <Bell size={24} aria-hidden="true" />
-            <span className="absolute right-2 top-2 w-1.5 h-1.5 rounded-full bg-[#ef7657] border border-white" />
           </button>
         </div>
       </div>

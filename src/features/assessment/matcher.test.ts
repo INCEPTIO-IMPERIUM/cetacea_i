@@ -94,6 +94,12 @@ describe('career matcher', () => {
     expect(front?.skillsToGrow).toEqual(['HTML / CSS'])
   })
 
+  it('ignores skills the person has not rated yet', () => {
+    const front = matchCareers(inputs({ interest: profile({ I: 70, C: 70 }), skills: [{ name: 'Coding fundamentals', value: null }] })).matches.find((match) => match.id === 'front')
+    expect(front?.skillsFit).toBeNull()
+    expect(front?.skillsToGrow).toContain('Coding fundamentals')
+  })
+
   it('reads everything from the store; a fresh user gets no suggestions', () => {
     expect(recommendationsFor(createDefaultState()).matches).toHaveLength(0)
   })

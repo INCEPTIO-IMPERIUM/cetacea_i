@@ -35,7 +35,7 @@ export function StrengthsResult({ result, onReview }: ResultViewProps) {
       <div className="bg-mint p-5 sm:p-6">
         <div className="eyebrow text-black/60">{t(L('หมวด 05 · จุดแข็งและศักยภาพ', 'Section 05 · Strengths & Potential'))}</div>
         <h3 className="section-title text-2xl font-extrabold mt-1">{t(L('แผนที่จุดแข็งและศักยภาพของคุณ', 'Your map of strengths and potential'))}</h3>
-        <p className="text-xs text-black/65 mt-2 max-w-2xl">
+        <p className="text-read text-black/65 mt-2 max-w-2xl">
           {t(
             L(
               'แต่ละด้านถูกเทียบกับค่าเฉลี่ยของตัวคุณเอง ไม่ได้เทียบกับคนอื่น ความมั่นใจเปลี่ยนได้เสมอ ยิ่งได้ลองทำสำเร็จทีละขั้น ความมั่นใจก็ยิ่งเพิ่มขึ้น',
@@ -52,20 +52,20 @@ export function StrengthsResult({ result, onReview }: ResultViewProps) {
             const items = placements.filter((placement) => placement.quadrant === quadrant)
             return (
               <section key={quadrant} className={`rounded-2xl p-4 ${quadrantTone[quadrant]}`} aria-labelledby={`quadrant-${quadrant}`}>
-                <h4 id={`quadrant-${quadrant}`} className="font-bold text-sm">
+                <h4 id={`quadrant-${quadrant}`} className="font-bold text-read">
                   <span aria-hidden="true">{copy.icon}</span> {t(copy.title)}
                 </h4>
-                <p className="text-[11px] text-black/60 mt-1">{t(copy.hint)}</p>
+                <p className="text-read text-black/60 mt-1">{t(copy.hint)}</p>
                 {items.length === 0 ? (
-                  <p className="text-[11px] text-muted mt-3">{t(L('ยังไม่มีด้านไหนอยู่ช่องนี้', 'No areas here yet.'))}</p>
+                  <p className="text-ui text-muted mt-3">{t(L('ยังไม่มีด้านไหนอยู่ช่องนี้', 'No areas here yet.'))}</p>
                 ) : (
                   <ul className="mt-3 space-y-2">
                     {items.map(({ type, interest: interestScore, confidence: confidenceScore }) => {
                       const action = GROWTH_ACTIONS[type]
                       const added = hasExperiment(state.experiments, action.key)
                       return (
-                        <li key={type} className="rounded-xl bg-white/80 p-3 text-[11px]">
-                          <div className="font-bold text-xs">
+                        <li key={type} className="rounded-xl bg-white/80 p-3 text-read">
+                          <div className="font-bold text-read">
                             {type} — {typeName(type)}
                           </div>
                           <div className="text-muted mt-0.5">
@@ -79,7 +79,7 @@ export function StrengthsResult({ result, onReview }: ResultViewProps) {
                                 type="button"
                                 onClick={() => addExperiment(type)}
                                 disabled={added}
-                                className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-ink text-white px-3.5 py-2 text-[11px] font-bold hover:bg-black/80 disabled:bg-white disabled:text-ink disabled:border disabled:border-black/15 disabled:cursor-default"
+                                className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-ink text-white px-3.5 py-2 text-ui font-bold hover:bg-black/80 disabled:bg-white disabled:text-ink disabled:border disabled:border-black/15 disabled:cursor-default"
                               >
                                 {added ? <Check size={24} className="w-3.5 h-3.5" aria-hidden="true" /> : <Plus size={24} className="w-3.5 h-3.5" aria-hidden="true" />}
                                 {t(added ? L('เพิ่มแล้ว', 'Added') : L('เพิ่มเป็นการทดลอง', 'Add as an experiment'))}
@@ -99,7 +99,7 @@ export function StrengthsResult({ result, onReview }: ResultViewProps) {
         <div className="p-5 sm:p-6">
           <ul className="space-y-3">
             {RIASEC_TYPES.map((type) => (
-              <li key={type} className="grid grid-cols-[minmax(130px,.7fr)_1fr_36px] items-center gap-3 text-xs">
+              <li key={type} className="grid grid-cols-[minmax(130px,.7fr)_1fr_36px] items-center gap-3 text-ui">
                 <span className="font-semibold">
                   {type} — {typeName(type)}
                 </span>
@@ -110,7 +110,7 @@ export function StrengthsResult({ result, onReview }: ResultViewProps) {
               </li>
             ))}
           </ul>
-          <p className="mt-4 rounded-xl bg-paper p-3 text-[11px]">
+          <p className="mt-4 rounded-xl bg-paper p-3 text-read">
             {t(
               L(
                 'ทำหมวด 04 สำรวจความสนใจด้านอาชีพให้เสร็จ แล้วเราจะรวมความสนใจกับความมั่นใจเป็นแผนที่จุดแข็งให้ ',
@@ -124,7 +124,7 @@ export function StrengthsResult({ result, onReview }: ResultViewProps) {
         </div>
       )}
 
-      <p className="border-t border-black/10 px-5 sm:px-6 py-4 text-[10px] leading-relaxed text-muted">
+      <p className="border-t border-black/10 px-5 sm:px-6 py-4 text-read text-muted">
         {t(
           L(
             'ความมั่นใจในความสามารถ (self-efficacy) ตามแนวคิดของ Bandura (1977) บนกรอบ Holland RIASEC · ข้อคำถามเขียนขึ้นใหม่โดย Who Am I? และยังอยู่ระหว่างตรวจสอบคุณภาพ · ความสนใจกับความมั่นใจเป็นคนละเรื่องที่สัมพันธ์กันปานกลาง จึงวัดทั้งสองอย่าง',

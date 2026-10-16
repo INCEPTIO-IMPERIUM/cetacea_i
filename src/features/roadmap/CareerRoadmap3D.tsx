@@ -43,7 +43,7 @@ export function CareerRoadmap3D({ activeId, careerIds, onSelect, resetSignal }: 
     // Card labels are drawn onto textures, so wait for the brand font first.
     document.fonts.ready.then(() => {
       if (cancelled) return
-      const scene = createCareerScene(canvas, (id) => onSelectRef.current(id), idsKey.split(',') as CareerId[], lang)
+      const scene = createCareerScene(canvas, (id) => onSelectRef.current(id), (idsKey ? idsKey.split(',') : []) as CareerId[], lang)
       if (!scene) {
         setFailed(true)
         return

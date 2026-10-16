@@ -117,7 +117,7 @@ export function VasInput({ id, value, onChange, labelledBy, describedBy, minLabe
           </span>
         )}
       </div>
-      <div className="flex justify-between gap-3 mt-2 text-[10px] font-semibold text-muted" aria-hidden="true">
+      <div className="flex justify-between gap-3 mt-2 text-ui font-semibold text-muted" aria-hidden="true">
         <span>{minLabel ?? t(L('ไม่ตรงกับฉันเลย', 'Not like me at all'))}</span>
         <span className="text-right">{maxLabel ?? t(L('ตรงกับฉันมาก', 'Very much like me'))}</span>
       </div>

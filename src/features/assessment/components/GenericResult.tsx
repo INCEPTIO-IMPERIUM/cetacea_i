@@ -10,7 +10,7 @@ export function GenericResult({ result, onReview }: ResultViewProps) {
       <div className="eyebrow">{t(L('คะแนนของคุณ', 'Your scores'))}</div>
       <ul className="mt-4 space-y-3">
         {result.ranking.map((key) => (
-          <li key={key} className="grid grid-cols-[minmax(110px,.6fr)_1fr_36px] items-center gap-3 text-xs">
+          <li key={key} className="grid grid-cols-[minmax(110px,.6fr)_1fr_36px] items-center gap-3 text-ui">
             <span className="font-semibold">{key}</span>
             <span className="meter" aria-hidden="true">
               <span style={{ width: `${result.scores[key] ?? 0}%` }} />

@@ -1,5 +1,7 @@
 import * as THREE from 'three'
-import { careers, type NodeId } from '../../data/careers'
+import { CSS2DObject, CSS2DRenderer } from 'three/examples/jsm/renderers/CSS2DRenderer.js'
+import { careers, type CareerId, type NodeId } from '../../data/careers'
+import type { Lang } from '../../i18n/language'
 
 /**
  * A true 3D career map: perspective camera, depth-separated cards, volumetric
@@ -24,28 +26,41 @@ interface CardSpec {
 
 type Point = [number, number, number]
 
-const cardSpecs: Record<Exclude<NodeId, 'you'>, CardSpec> = {
-  ux: { name: careers.ux.name, subtitle: careers.ux.focus, color: '#FFF66B', size: [3.5, 1.18], position: [-4.15, 2.0, -1.25], icon: '+' },
-  front: { name: 'Frontend Dev', subtitle: careers.front.focus, color: '#EDE5FF', size: [3.5, 1.18], position: [4.1, 2.0, 1.75], icon: '‹›' },
-  learning: { name: careers.learning.name, subtitle: careers.learning.focus, color: '#DDF1DB', size: [3.75, 1.18], position: [-4.2, -2.15, 1.65], icon: '▣' },
-  product: { name: careers.product.name, subtitle: careers.product.focus, color: '#F5DED1', size: [3.55, 1.18], position: [4.1, -1.95, -1.65], icon: '◇' },
-  coach: { name: careers.coach.name, subtitle: careers.coach.focus, color: '#FFFFFF', size: [3.0, 0.96], position: [1.85, -3.28, 2.8], icon: '●' },
-}
+/** Five fixed places around "you"; the careers shown in them come from the caller. */
+const slots: Omit<CardSpec, 'name' | 'subtitle' | 'icon'>[] = [
+  { color: '#FFF66B', size: [3.9, 1.45], position: [-4.15, 2.0, -1.25] },
+  { color: '#EDE5FF', size: [3.9, 1.45], position: [4.1, 2.0, 1.75] },
+  { color: '#DDF1DB', size: [3.9, 1.45], position: [-4.2, -2.15, 1.65] },
+  { color: '#F5DED1', size: [3.9, 1.45], position: [4.1, -1.95, -1.65] },
+  { color: '#FFFFFF', size: [3.5, 1.3], position: [1.85, -3.4, 2.8] },
+]
+export const MAX_ROADMAP_CAREERS = slots.length
 
-const routeSpecs: { from: NodeId; to: NodeId; color: string; points: Point[] }[] = [
-  { from: 'you', to: 'ux', color: '#FFF66B', points: [[-0.48, 0.42, 0.16], [-1.2, 1.04, -0.45], [-2.1, 2.0, -1.9], [-2.45, 2.0, -1.25]] },
-  { from: 'you', to: 'front', color: '#C9B2FF', points: [[0.48, 0.42, 0.18], [1.35, 1.2, 1.15], [2.25, 2.05, 2.5], [2.35, 2.0, 1.75]] },
-  { from: 'you', to: 'learning', color: '#DDF1DB', points: [[-0.48, -0.42, 0.15], [-1.35, -1.1, 1.55], [-2.25, -2.15, 2.45], [-2.35, -2.15, 1.65]] },
-  { from: 'you', to: 'product', color: '#F5DED1', points: [[0.48, -0.42, 0.15], [1.35, -1.05, -0.65], [2.25, -1.95, -2.55], [2.32, -1.95, -1.65]] },
-  { from: 'ux', to: 'product', color: '#C9B2FF', points: [[-2.55, 2.0, -1.25], [-1.7, 1.0, -2.4], [0.7, -0.3, -3.1], [2.45, -1.95, -1.65]] },
-  { from: 'learning', to: 'coach', color: '#C9B2FF', points: [[-2.35, -2.15, 1.65], [-1.1, -3.1, 2.45], [0.15, -3.7, 3.6], [0.35, -3.28, 2.8]] },
-  { from: 'front', to: 'product', color: '#C9B2FF', points: [[2.35, 2.0, 1.75], [3.4, 1.0, 2.8], [3.65, -0.6, 0.7], [2.35, -1.95, -1.65]] },
+/** Routes between slots (-1 = "you"); the first career is always the primary match. */
+const routeSlots: { from: number; to: number; color: string; points: Point[] }[] = [
+  { from: -1, to: 0, color: '#FFF66B', points: [[-0.48, 0.42, 0.16], [-1.2, 1.04, -0.45], [-2.1, 2.0, -1.9], [-2.45, 2.0, -1.25]] },
+  { from: -1, to: 1, color: '#C9B2FF', points: [[0.48, 0.42, 0.18], [1.35, 1.2, 1.15], [2.25, 2.05, 2.5], [2.35, 2.0, 1.75]] },
+  { from: -1, to: 2, color: '#DDF1DB', points: [[-0.48, -0.42, 0.15], [-1.35, -1.1, 1.55], [-2.25, -2.15, 2.45], [-2.35, -2.15, 1.65]] },
+  { from: -1, to: 3, color: '#F5DED1', points: [[0.48, -0.42, 0.15], [1.35, -1.05, -0.65], [2.25, -1.95, -2.55], [2.32, -1.95, -1.65]] },
+  { from: 0, to: 3, color: '#C9B2FF', points: [[-2.55, 2.0, -1.25], [-1.7, 1.0, -2.4], [0.7, -0.3, -3.1], [2.45, -1.95, -1.65]] },
+  { from: 2, to: 4, color: '#C9B2FF', points: [[-2.35, -2.15, 1.65], [-1.1, -3.1, 2.45], [0.15, -3.7, 3.6], [0.35, -3.28, 2.8]] },
+  { from: 1, to: 3, color: '#C9B2FF', points: [[2.35, 2.0, 1.75], [3.4, 1.0, 2.8], [3.65, -0.6, 0.7], [2.35, -1.95, -1.65]] },
 ]
 
 const INITIAL_CAMERA = new THREE.Vector3(5.7, 4.8, 15.5)
 
 /** Returns null when WebGL is unavailable so the caller can show the list fallback. */
-export function createCareerScene(canvas: HTMLCanvasElement, onSelect: (id: NodeId) => void): CareerScene | null {
+/** `careerIds` fills the slots in order (best match first); extra ids beyond the five slots are ignored. */
+export function createCareerScene(canvas: HTMLCanvasElement, onSelect: (id: NodeId) => void, careerIds: CareerId[], lang: Lang): CareerScene | null {
+  const shown = careerIds.slice(0, slots.length)
+  const cardSpecs = shown.map((id, index): [CareerId, CardSpec] => [
+    id,
+    { ...slots[index], name: careers[id].short[lang], subtitle: careers[id].focus[lang], icon: careers[id].icon },
+  ])
+  const routeSpecs = routeSlots
+    .filter((route) => route.to < shown.length && route.from < shown.length)
+    .map((route) => ({ from: (route.from < 0 ? 'you' : shown[route.from]) as NodeId, to: shown[route.to] as NodeId, color: route.color, points: route.points }))
+
   let renderer: THREE.WebGLRenderer
   try {
     renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true, powerPreference: 'high-performance' })
@@ -53,6 +68,26 @@ export function createCareerScene(canvas: HTMLCanvasElement, onSelect: (id: Node
     console.warn('3D roadmap unavailable; showing the accessible career list instead.', error)
     return null
   }
+  /*
+   * Card names are real HTML laid over the canvas (CSS2DRenderer), not text painted into the card
+   * texture: painted text shrinks with the camera and fell to about 8px, while these stay at the
+   * interface's 14px at every zoom level.
+   */
+  const labelRenderer = new CSS2DRenderer()
+  labelRenderer.domElement.className = 'roadmap-labels'
+  labelRenderer.domElement.setAttribute('aria-hidden', 'true')
+  canvas.parentElement?.appendChild(labelRenderer.domElement)
+  const htmlLabel = (title: string, subtitle: string, extraClass = '') => {
+    const element = document.createElement('div')
+    element.className = `roadmap-label ${extraClass}`.trim()
+    const strong = document.createElement('strong')
+    strong.textContent = title
+    const small = document.createElement('span')
+    small.textContent = subtitle
+    element.append(strong, small)
+    return element
+  }
+
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.8))
   renderer.setClearColor(0x000000, 0)
   renderer.outputColorSpace = THREE.SRGBColorSpace
@@ -71,6 +106,7 @@ export function createCareerScene(canvas: HTMLCanvasElement, onSelect: (id: Node
     frame = requestAnimationFrame(() => {
       frame = 0
       renderer.render(scene, camera)
+      labelRenderer.render(scene, camera)
     })
   }
   const updateCamera = () => {
@@ -160,17 +196,18 @@ export function createCareerScene(canvas: HTMLCanvasElement, onSelect: (id: Node
   }
 
   function cardTexture(title: string, subtitle: string, icon: string, central = false) {
+    // Words are drawn only for the central coin's fallback; cards carry HTML labels instead.
     const texCanvas = document.createElement('canvas')
     texCanvas.width = 900
     texCanvas.height = 300
     const ctx = texCanvas.getContext('2d')!
     if (central) {
       ctx.fillStyle = '#171717'
-      ctx.font = '800 74px Inter, sans-serif'
+      ctx.font = '800 74px Inter, "IBM Plex Sans Thai", sans-serif'
       ctx.textAlign = 'center'
       ctx.fillText(title, 450, 118)
       ctx.fillStyle = 'rgba(23,23,23,.62)'
-      ctx.font = '500 40px Inter, sans-serif'
+      ctx.font = '500 40px Inter, "IBM Plex Sans Thai", sans-serif'
       ctx.fillText(subtitle, 450, 178)
     } else {
       ctx.fillStyle = 'rgba(255,255,255,.88)'
@@ -181,17 +218,10 @@ export function createCareerScene(canvas: HTMLCanvasElement, onSelect: (id: Node
       ctx.fill()
       ctx.stroke()
       ctx.fillStyle = '#171717'
-      ctx.font = `700 ${icon.length > 1 ? 42 : 58}px Inter, sans-serif`
+      ctx.font = `700 ${icon.length > 1 ? 42 : 58}px Inter, "IBM Plex Sans Thai", sans-serif`
       ctx.textAlign = 'center'
       ctx.textBaseline = 'middle'
       ctx.fillText(icon, 88, 106)
-      ctx.textAlign = 'left'
-      ctx.textBaseline = 'alphabetic'
-      ctx.font = '800 48px Inter, sans-serif'
-      ctx.fillText(title, 155, 112)
-      ctx.fillStyle = 'rgba(23,23,23,.66)'
-      ctx.font = '500 35px Inter, sans-serif'
-      ctx.fillText(subtitle, 70, 207)
     }
     const texture = new THREE.CanvasTexture(texCanvas)
     texture.colorSpace = THREE.SRGBColorSpace
@@ -222,15 +252,14 @@ export function createCareerScene(canvas: HTMLCanvasElement, onSelect: (id: Node
       group.add(eye)
     }
     const smile = makeTube([[-0.23, -0.06, 0.282], [-0.12, -0.16, 0.29], [0, -0.19, 0.29], [0.12, -0.16, 0.29], [0.23, -0.06, 0.282]], 0.025, eyeMaterial, 28, 8)
-    const label = new THREE.Sprite(new THREE.SpriteMaterial({ map: cardTexture('YOU', 'your clues', '', true), transparent: true, depthWrite: false }))
-    label.scale.set(2.15, 0.72, 1)
-    label.position.set(0, -1.15, 0.1)
+    const label = new CSS2DObject(htmlLabel(lang === 'th' ? 'คุณ' : 'YOU', lang === 'th' ? 'เบาะแสของคุณ' : 'your clues', 'roadmap-label-you'))
+    label.position.set(0, -1.35, 0.1)
     group.add(outer, face, smile, label)
     nodeGroup.add(group)
     hitTargets.push(outer)
   }
 
-  const roleCards = (Object.entries(cardSpecs) as [Exclude<NodeId, 'you'>, CardSpec][]).map(([id, spec]) => {
+  const roleCards = cardSpecs.map(([id, spec]) => {
     const group = new THREE.Group()
     group.position.set(...spec.position)
     const [width, height] = spec.size
@@ -255,10 +284,14 @@ export function createCareerScene(canvas: HTMLCanvasElement, onSelect: (id: Node
     )
     front.position.z = 0.205
     front.userData.nodeId = id
-    group.add(base, edge, front)
+    const labelElement = htmlLabel(spec.name, spec.subtitle)
+    const label = new CSS2DObject(labelElement)
+    // Centre of the area right of the icon (the icon sits in the card's left fifth).
+    label.position.set(width * 0.1, 0, 0.3)
+    group.add(base, edge, front, label)
     nodeGroup.add(group)
     hitTargets.push(base)
-    return { id, group, baseMaterial, edgeMaterial }
+    return { id, group, baseMaterial, edgeMaterial, labelElement }
   })
 
   /* ---------- XYZ axes ---------- */
@@ -287,24 +320,24 @@ export function createCareerScene(canvas: HTMLCanvasElement, onSelect: (id: Node
     ctx.lineWidth = 4
     ctx.stroke()
     ctx.fillStyle = '#171717'
-    ctx.font = '800 54px Inter, sans-serif'
+    ctx.font = '800 54px Inter, "IBM Plex Sans Thai", sans-serif'
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
     ctx.fillText(text, 64, 67)
     const texture = new THREE.CanvasTexture(c)
     texture.colorSpace = THREE.SRGBColorSpace
     const sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: texture, transparent: true, depthTest: false }))
-    sprite.scale.set(0.34, 0.34, 1)
+    sprite.scale.set(0.75, 0.75, 1)
     sprite.position.set(...position)
     axisGroup.add(sprite)
   }
   axisGroup.position.set(-5.35, -2.78, 1.25)
   axisLine([1.15, 0, 0], '#171717')
-  axisLabel('X', '#FFF66B', [1.38, 0, 0])
+  axisLabel('X', '#FFF66B', [1.6, 0, 0])
   axisLine([0, 1.15, 0], '#8B76CF')
-  axisLabel('Y', '#C9B2FF', [0, 1.38, 0])
+  axisLabel('Y', '#C9B2FF', [0, 1.6, 0])
   axisLine([0, 0, 1.15], '#D5C64B')
-  axisLabel('Z', '#DDF1DB', [0, 0, 1.38])
+  axisLabel('Z', '#DDF1DB', [0, 0, 1.6])
 
   /* ---------- Selection ---------- */
   function setActive(id: NodeId) {
@@ -323,6 +356,7 @@ export function createCareerScene(canvas: HTMLCanvasElement, onSelect: (id: Node
       card.baseMaterial.emissive.set(active ? '#161616' : '#000000')
       card.baseMaterial.emissiveIntensity = active ? 0.055 : 0
       card.group.scale.setScalar(active ? 1.035 : 1)
+      card.labelElement.classList.toggle('active', active)
     }
     requestRender()
   }
@@ -397,6 +431,7 @@ export function createCareerScene(canvas: HTMLCanvasElement, onSelect: (id: Node
     const rect = canvas.getBoundingClientRect()
     if (!rect.width || !rect.height) return
     renderer.setSize(rect.width, rect.height, false)
+    labelRenderer.setSize(rect.width, rect.height)
     camera.aspect = rect.width / rect.height
     camera.updateProjectionMatrix()
     requestRender()
@@ -429,6 +464,7 @@ export function createCareerScene(canvas: HTMLCanvasElement, onSelect: (id: Node
         }
       })
       renderer.dispose()
+      labelRenderer.domElement.remove()
     },
   }
 }

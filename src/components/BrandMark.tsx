@@ -1,4 +1,5 @@
 import { Link } from 'react-router'
+import { L, useT } from '../i18n/language'
 
 interface BrandMarkProps {
   to?: string
@@ -9,7 +10,10 @@ interface BrandMarkProps {
 }
 
 /** Logo tile + wordmark used in every page header. */
-export function BrandMark({ to = '/', tagline = 'YOUR PERSONAL COMPASS', ariaLabel = 'Who Am I home', variant = 'landing' }: BrandMarkProps) {
+export function BrandMark({ to = '/', tagline: taglineProp, ariaLabel: ariaLabelProp, variant = 'landing' }: BrandMarkProps) {
+  const t = useT()
+  const tagline = taglineProp ?? t(L('เข็มทิศส่วนตัวของคุณ', 'YOUR PERSONAL COMPASS'))
+  const ariaLabel = ariaLabelProp ?? t(L('หน้าแรก Who Am I', 'Who Am I home'))
   if (variant === 'app') {
     return (
       <Link to={to} className="flex items-center gap-3" aria-label={ariaLabel}>
@@ -23,7 +27,8 @@ export function BrandMark({ to = '/', tagline = 'YOUR PERSONAL COMPASS', ariaLab
         </span>
         <span>
           <span className="block section-title text-[19px] font-extrabold leading-tight">Who Am I?</span>
-          <span className="text-[10px] text-muted tracking-wide">{tagline}</span>
+          {/* Hidden on phones rather than shrunk below the 14px floor. */}
+          <span className="hidden sm:block text-ui text-muted tracking-wide">{tagline}</span>
         </span>
       </Link>
     )
@@ -41,7 +46,7 @@ export function BrandMark({ to = '/', tagline = 'YOUR PERSONAL COMPASS', ariaLab
       </span>
       <span>
         <span className="block display text-lg font-extrabold leading-tight">Who Am I?</span>
-        <span className="block text-[9px] text-muted tracking-[.14em] font-bold">{tagline}</span>
+        <span className="block text-ui text-muted tracking-[.14em] font-bold">{tagline}</span>
       </span>
     </Link>
   )

@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link } from 'react-router'
 import { ArrowRight, CircleCheck, Clock3, ShieldCheck, Trash2 } from 'lucide-react'
 import { useToast } from '../../../components/toastContext'
 import { L, useT } from '../../../i18n/language'
@@ -138,7 +139,10 @@ export function AssessmentHub({ onOpenCategory, onOpenSummary }: AssessmentHubPr
               'คำตอบของคุณเก็บไว้ในอุปกรณ์นี้เท่านั้น นี่คือแบบสำรวจเพื่อรู้จักตัวเอง ไม่ใช่การวินิจฉัยหรือแบบทดสอบมาตรฐาน',
               'Your answers stay on this device. This is a self-discovery survey, not a diagnosis or a standardised test.',
             ),
-          )}
+          )}{' '}
+          <Link to="/docs#privacy" className="font-semibold text-ink underline underline-offset-4">
+            {t(L('รายละเอียดเพิ่มเติม', 'More details'))}
+          </Link>
         </p>
         {confirmingDelete ? (
           <div className="flex items-center gap-2" role="group" aria-label={t(L('ยืนยันการลบข้อมูลแบบประเมินทั้งหมด', 'Confirm deleting all assessment data'))}>

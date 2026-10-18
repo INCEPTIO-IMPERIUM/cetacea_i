@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { CAREER_IDS, careers, startingPoint } from '../data/careers'
 import { defaultExperimentCatalog, ikigaiCards, selfDiscoveryStarter } from '../data/dashboard'
 import { experimentText } from '../data/experimentText'
+import { DOC_SECTIONS } from '../docs/docsContent'
 import { bigFiveCopy } from '../features/assessment/categories/bigFive'
 import { riasecCopy } from '../features/assessment/categories/careerInterest'
 import { COMPASS_SIDES } from '../features/assessment/categories/personalityCompass'
@@ -36,6 +37,7 @@ describe('translations', () => {
     GROWTH_ACTIONS,
     DIRECTIONS,
     sectionNav,
+    DOC_SECTIONS,
   }
 
   it('fills in both Thai and English for every piece of text', () => {

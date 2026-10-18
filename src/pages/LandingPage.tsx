@@ -89,6 +89,7 @@ export function LandingPage() {
             <a className="nav-a" href="#how-it-works">{t(L('ใช้งานอย่างไร', 'How it works'))}</a>
             <a className="nav-a" href="#your-journey">{t(L('เส้นทางของคุณ', 'Your journey'))}</a>
             <a className="nav-a" href="#why-compass">{t(L('สิ่งที่เราเชื่อ', 'Our belief'))}</a>
+            <Link className="nav-a" to="/docs">{t(L('รายละเอียดเพิ่มเติม', 'More details'))}</Link>
           </nav>
           <div className="flex items-center gap-2">
             <LanguageToggle />
@@ -304,7 +305,10 @@ export function LandingPage() {
           <span>{t(L('© 2026 Who Am I? · เข็มทิศส่วนตัวของคุณ', '© 2026 Who Am I? · Your personal compass.'))}</span>
           <span>
             {t(L('สำรวจอย่างอ่อนโยน เติบโตตามจังหวะของคุณ', 'Explore gently. Grow at your own pace.'))}{' '}
-            <Link className="underline underline-offset-4 ml-2" to="/dashboard">
+            <Link className="underline underline-offset-4 ml-2" to="/docs">
+              {t(L('รายละเอียดเพิ่มเติม', 'More details'))}
+            </Link>
+            <Link className="underline underline-offset-4 ml-4" to="/dashboard">
               {t(L('เปิด Dashboard', 'Open dashboard'))}
             </Link>
           </span>

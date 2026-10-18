@@ -67,7 +67,12 @@ export function DashboardSidebar({ open, activeSection, progress, onNavigate }: 
       <div className="mt-auto pt-8">
         <div className="rounded-[18px] bg-paper border border-black/10 p-4 flex items-start gap-3">
           <ShieldCheck size={24} className="shrink-0" aria-hidden="true" />
-          <p className="text-read text-muted">{t(L('ข้อมูลทั้งหมดของคุณเก็บไว้ในเครื่องนี้เท่านั้น ไม่มีบัญชีและไม่ได้ส่งไปที่ไหน', 'Everything you add stays on this device — no account, nothing sent anywhere.'))}</p>
+          <p className="text-read text-muted">
+            {t(L('ข้อมูลทั้งหมดของคุณเก็บไว้ในเครื่องนี้เท่านั้น ไม่มีบัญชีและไม่ได้ส่งไปที่ไหน', 'Everything you add stays on this device — no account, nothing sent anywhere.'))}{' '}
+            <Link to="/docs#privacy" className="font-semibold text-ink underline underline-offset-4">
+              {t(L('รายละเอียดเพิ่มเติม', 'More details'))}
+            </Link>
+          </p>
         </div>
         <p className="text-read text-muted px-2 mt-4">{t(L('เครื่องมือสะท้อนคิด ไม่ใช่คำตัดสิน คุณเป็นคนกำหนดเองว่าอนาคตที่ดีหน้าตาเป็นอย่างไร', 'A reflection tool, not a verdict. You get to define what a good future looks like.'))}</p>
       </div>

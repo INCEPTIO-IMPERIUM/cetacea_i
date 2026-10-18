@@ -309,7 +309,12 @@ export function AssessmentSummary({ onBack, onOpenCategory }: { onBack: () => vo
           </div>
         )}
         <div className="mt-4 rounded-2xl bg-lemon-soft/70 px-4 py-3">
-          <div className="text-read font-bold">{t(L('ข้อจำกัดของคำแนะนำนี้', 'Limits of these suggestions'))}</div>
+          <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+            <div className="text-read font-bold">{t(L('ข้อจำกัดของคำแนะนำนี้', 'Limits of these suggestions'))}</div>
+            <Link to="/docs#matching" className="text-read font-semibold underline underline-offset-4">
+              {t(L('คำนวณอย่างไร · รายละเอียดเพิ่มเติม', 'How this is calculated · more details'))}
+            </Link>
+          </div>
           <ul className="mt-1 list-disc pl-4 text-read leading-relaxed text-black/70 space-y-0.5">
             {recommendations.limitations.map((line) => (
               <li key={line.en}>{t(line)}</li>

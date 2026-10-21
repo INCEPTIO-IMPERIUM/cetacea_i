@@ -1,0 +1,32 @@
+/* Design tokens — change brand colours here, not inline across components. */
+@theme {
+  --color-ink: #171717;
+  --color-paper: #f7f6f2;
+  --color-lemon: #fff66b;
+  --color-lemon-soft: #fff9b4;
+  --color-lavender: #c9b2ff;
+  --color-lilac: #ede5ff;
+  --color-mint: #ddf1db;
+  --color-peach: #f5ded1;
+  --color-muted: #77766f;
+  --color-accent: #806ad0;
+  --color-danger: #d65c4d;
+
+  /* Inter draws Latin text; IBM Plex Sans Thai fills in every Thai glyph Inter lacks. */
+  --font-sans: Inter, 'IBM Plex Sans Thai', ui-sans-serif, system-ui, sans-serif;
+  --font-display: Inter, 'IBM Plex Sans Thai', ui-sans-serif, system-ui, sans-serif;
+
+  /*
+   * Two text sizes carry the whole interface. Nothing on screen is smaller than text-ui.
+   *   text-ui   (14px) — buttons, chips, labels, navigation, captions, credits
+   *   text-read (16px) — anything people read in earnest: questions, explanations, results, reasons
+   * The taller line height on text-read leaves room for Thai vowel and tone marks.
+   */
+  --text-ui: 0.875rem;
+  --text-ui--line-height: 1.45;
+  --text-read: 1rem;
+  --text-read--line-height: 1.65;
+
+  --shadow-panel: 0 3px 0 rgba(23, 23, 23, 0.92);
+  --shadow-soft: 0 12px 30px rgba(23, 23, 23, 0.07);
+}

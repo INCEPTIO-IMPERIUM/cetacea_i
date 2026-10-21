@@ -1,4 +1,5 @@
 import type { Lang } from '../i18n/language'
+import { STORY_ACTIONS } from '../features/assessment/categories/strengthStories'
 import { GROWTH_ACTIONS } from '../features/assessment/categories/strengths'
 import { CAREER_IDS, careers } from './careers'
 import { defaultExperimentCatalog, ownIdeaCatalog, selfDiscoveryStarter, type CatalogExperiment, type Experiment } from './dashboard'
@@ -9,6 +10,7 @@ const catalog = new Map<string, CatalogExperiment>([
   [selfDiscoveryStarter.key, selfDiscoveryStarter],
   ...CAREER_IDS.map((id) => [careers[id].starter.key, careers[id].starter] as const),
   ...Object.values(GROWTH_ACTIONS).map((entry) => [entry.key, entry] as const),
+  ...Object.values(STORY_ACTIONS).map((entry) => [entry.key, entry] as const),
 ])
 
 const keyByTitle = new Map<string, string>([...catalog.values()].flatMap((entry) => [[entry.title.th, entry.key] as const, [entry.title.en, entry.key] as const]))

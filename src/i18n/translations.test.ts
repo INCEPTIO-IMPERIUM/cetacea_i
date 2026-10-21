@@ -6,6 +6,7 @@ import { DOC_SECTIONS } from '../docs/docsContent'
 import { bigFiveCopy } from '../features/assessment/categories/bigFive'
 import { riasecCopy } from '../features/assessment/categories/careerInterest'
 import { COMPASS_SIDES } from '../features/assessment/categories/personalityCompass'
+import { AGE_BANDS, GROUP_COPY, STORY_ACTIONS, STORY_STRENGTHS } from '../features/assessment/categories/strengthStories'
 import { GROWTH_ACTIONS, QUADRANTS } from '../features/assessment/categories/strengths'
 import { DIRECTIONS } from '../features/assessment/categories/workStyle'
 import { categories } from '../features/assessment/registry'
@@ -35,6 +36,10 @@ describe('translations', () => {
     COMPASS_SIDES,
     QUADRANTS,
     GROWTH_ACTIONS,
+    STORY_STRENGTHS,
+    GROUP_COPY,
+    AGE_BANDS,
+    STORY_ACTIONS,
     DIRECTIONS,
     sectionNav,
     DOC_SECTIONS,

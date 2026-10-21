@@ -131,6 +131,17 @@ export const DOC_SECTIONS: DocSection[] = [
               'Asks how confident you are that you would do each kind of work well, then combines it with your interests from section 04 into a four-box map. The items do not repeat section 04 and were written anew for the same licensing reason.',
             ),
           },
+          {
+            title: L('หมวด 06 · เรื่องเล่าจุดแข็ง', 'Section 06 · Strength Stories'),
+            meta: L(
+              `แบบฝึกสะท้อนคิด · ${count('strengthStories')} ข้อ · ประมาณ ${minutes('strengthStories')} นาที · ข้อความเขียนขึ้นใหม่`,
+              `Reflection exercise · ${count('strengthStories')} items · about ${minutes('strengthStories')} minutes · newly written`,
+            ),
+            body: L(
+              'ให้คะแนนว่าจุดแข็งในชีวิตประจำวัน 20 ข้อ (4 กลุ่ม กลุ่มละ 5 ข้อ) เหมือนตัวคุณแค่ไหน แล้วเล่าเหตุการณ์ที่คุณเห็นจุดแข็งนั้นครั้งแรก พร้อมช่วงอายุ รูปแบบแบบฝึกนี้ได้แรงบันดาลใจจากใบงานสะท้อนคิดที่ใช้กับแบบประเมินจุดแข็งเชิงพาณิชย์ แต่ชื่อจุดแข็งและชื่อกลุ่มของเครื่องมือนั้นเป็นเครื่องหมายการค้า เราจึงตั้งชื่อและเขียนคำอธิบายทุกข้อขึ้นเอง ผลเป็นการบรรยายตัวเอง ไม่ใช่คะแนนที่ผ่านการตรวจสอบ',
+              'Rate how much 20 everyday strengths (4 groups of 5) sound like you, then tell the story of when you first saw one, with your age at the time. The format was inspired by a reflection worksheet used with a commercial strengths inventory, but that inventory’s strength and group names are trademarks, so we named and described every one ourselves. The result is self-description, not a validated score.',
+            ),
+          },
         ],
       },
     ],

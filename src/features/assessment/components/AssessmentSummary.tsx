@@ -10,6 +10,7 @@ import { actions, getCategoryRecord, useWhoAmI, type WhoAmIState } from '../../.
 import { bigFiveCopy, toBigFiveScores } from '../categories/bigFive'
 import { readInterests, riasecCopy, toRiasecProfile } from '../categories/careerInterest'
 import { personalityCompass } from '../categories/personalityCompass'
+import { strengthByKey } from '../categories/strengthStories'
 import { QUADRANTS, strengthsMap } from '../categories/strengths'
 import { DIRECTIONS, workStyleFromScores } from '../categories/workStyle'
 import { MATCH_TAGS, recommendationsFor, type CareerMatch, type Confidence } from '../matcher'
@@ -56,6 +57,7 @@ function sectionRows(state: WhoAmIState): SectionRow[] {
   }
   const topDimension = bigFive.result?.ranking[0] as keyof typeof bigFiveCopy | undefined
   const interestReading = interest ? readInterests(interest) : null
+  const topStrengths = (record('strengthStories').result?.ranking ?? []).flatMap((key) => strengthByKey.get(key) ?? []).slice(0, 3)
   const love = interest && confidence ? strengthsMap(interest, confidence).filter((placement) => placement.quadrant === 'love') : []
 
   const detail = (id: string) => {
@@ -120,6 +122,18 @@ function sectionRows(state: WhoAmIState): SectionRow[] {
           : L('ดูแผนที่จุดแข็งในรายละเอียด', 'See the strengths map in the details')
         : null,
       detail: detail('strengths'),
+    },
+    {
+      number: '06',
+      title: L('เรื่องเล่าจุดแข็ง', 'Strength Stories'),
+      categoryId: 'strengthStories',
+      line: topStrengths.length
+        ? {
+            th: `จุดแข็งเด่น: ${topStrengths.map((strength) => strength.name.th).join(', ')}`,
+            en: `Top strengths: ${topStrengths.map((strength) => strength.name.en).join(', ')}`,
+          }
+        : null,
+      detail: detail('strengthStories'),
     },
   ]
 }

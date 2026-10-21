@@ -3,6 +3,7 @@ import { CareerInterestResult } from './CareerInterestResult'
 import { GenericResult } from './GenericResult'
 import type { ResultViewProps } from './resultViewTypes'
 import { StrengthsResult } from './StrengthsResult'
+import { StrengthStoriesResult } from './StrengthStoriesResult'
 import { WorkStyleResult } from './WorkStyleResult'
 
 /** Result card per category id; categories without their own card get a plain score list. */
@@ -16,6 +17,8 @@ export function CategoryResultView({ categoryId, ...props }: ResultViewProps & {
       return <CareerInterestResult {...props} />
     case 'strengths':
       return <StrengthsResult {...props} />
+    case 'strengthStories':
+      return <StrengthStoriesResult {...props} />
     default:
       return <GenericResult {...props} />
   }

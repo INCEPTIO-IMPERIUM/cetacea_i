@@ -6,7 +6,8 @@ services:
     runtime: static
     name: cetacea-i
     branch: main
-    autoDeployTrigger: commit # redeploy on every push to main
+    # Redeploy a push to main only after the GitHub Actions CI check (lint, tests, build) passes.
+    autoDeployTrigger: checksPass
 
     # `npm ci` installs exactly what package-lock.json says. Vite 8 needs Node ^20.19 or >=22.12.
     buildCommand: npm ci && npm run build
